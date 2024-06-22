@@ -1,0 +1,71 @@
+ul.tree {
+    margin: 0 auto;
+    padding-top: 40px;
+}
+
+ul li {
+    list-style: none;
+    position: relative;
+    margin: 0.5rem;
+}
+
+li:before,
+li:after {
+    content: '';
+    position: absolute;
+    left: -28px;
+    /* background-color:#979797; */
+}
+
+li:before {
+    height: 1px;
+    width: 16px;
+    top: 12px;
+}
+
+li:after {
+    height: 26px;
+    width: 1px;
+    top: -14px;
+}
+
+li.parent:after {
+    height: 100%;
+    top: 12px;
+}
+
+li.parent:last-child:after {
+    content: none;
+}
+
+details {
+    margin: 0 auto;
+}
+
+summary {
+    cursor: pointer;
+    display: block;
+    position: relative;
+}
+
+summary span {
+    border-radius: 7px;
+}
+
+summary:before {
+    content: '+';
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    top: 0;
+    left: -22px;
+}
+
+details[open]>summary:before {
+    content: '-';
+}
+
+details>ul {
+    padding: 15px;
+    padding-left: 4rem;
+}
