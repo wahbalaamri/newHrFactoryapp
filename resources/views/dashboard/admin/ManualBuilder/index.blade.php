@@ -78,7 +78,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">
-                                    {{ __('Manage Manual Builder: ') }}({{ $sections?$sections[0]->country->country_name:'' }})</h3>
+                                    {{ __('Manage Manual Builder: ') }}({{ count($sections)>0?$sections[0]->country->country_name:'' }})</h3>
                                 {{-- tool --}}
                             </div>
                             <div class="card-body">

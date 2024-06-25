@@ -39,21 +39,21 @@
                                     </div>
                                     {{-- body --}}
                                     <div class="card-body">
+                                        @if(count($outcomes)>0)
                                         <div class="row d-flex justify-content-center align-items-center text-center">
                                             <div class="col-12">
-                                                <div class="speedometer
-                                        @if ($outcomes[0]['outcome_index']>=75)
-                                        speed-5
-                                        @elseif($outcomes[0]['outcome_index']>=60)
-                                        speed-4
-                                        @elseif($outcomes[0]['outcome_index']>=50)
-                                        speed-3
-                                        @elseif($outcomes[0]['outcome_index']>=40)
-                                        speed-2
-                                        @else
-                                        speed-1
-                                        @endif
-                                        ">
+                                                <div class="speedometer @if ($outcomes[0]['outcome_index']>=75)
+                                                    speed-5
+                                                        @elseif($outcomes[0]['outcome_index']>=60)
+                                                        speed-4
+                                                        @elseif($outcomes[0]['outcome_index']>=50)
+                                                        speed-3
+                                                        @elseif($outcomes[0]['outcome_index']>=40)
+                                                        speed-2
+                                                        @else
+                                                        speed-1
+                                                        @endif
+                                                ">
                                                     <div class="pointer"></div>
                                                 </div>
                                                 <h3 class="caption">{{ $outcomes[0]['outcome_index'] }}%</h3>
@@ -93,7 +93,7 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        @endif
                                     </div>
                                 </div>
                             </div>

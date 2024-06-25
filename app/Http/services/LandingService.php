@@ -22,6 +22,7 @@ class LandingService
         //using api detect current location
         $url = "https://extreme-ip-lookup.com/json/?key=sswCYj3OKfeIuxY1C3Bd";
         $json = file_get_contents($url);
+        Log::info($json);
         $data = json_decode($json);
         Log::info($data->countryCode);
         $countryCode = $data->countryCode;

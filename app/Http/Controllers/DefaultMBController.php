@@ -22,6 +22,7 @@ class DefaultMBController extends Controller
         $user_id = auth()->user()->id;
         //get current user type
         $user_type = auth()->user()->user_type;
+        $available_countries =[];
         //
         if (auth()->user()->isAdmin) {
             //get all terms
@@ -38,10 +39,12 @@ class DefaultMBController extends Controller
             abort(403);
         }
         $sections = DefaultMB::where('country_id', $country)->whereNull('paren_id')->where('language', app()->isLocale('en') ? 'en' : 'ar')->orderBy('ordering')->get();
-        //get countries which has DefaultMB
-        $available_countries = Countries::whereHas('defaultMB', function ($query) {
-            $query->where('language', app()->isLocale('en') ? 'en' : 'ar');
-        })->get();
+        if (count($sections) > 0) {
+            //get countries which has DefaultMB
+            $available_countries = Countries::whereHas('defaultMB', function ($query) {
+                $query->where('language', app()->isLocale('en') ? 'en' : 'ar');
+            })->get();
+        }
         $data = [
             'sections' => $sections,
             'countries' => $countries,
@@ -240,12 +243,11 @@ class DefaultMBController extends Controller
     {
         try {
             $sections = UserSections::where('user_id', $id)->whereNull('paren_id')->get();
-            if(count($sections)<=0)
-            {
+            if (count($sections) <= 0) {
                 //get focal point
                 $focal_point = FocalPoints::where('client_id', $id)->first();
                 //check if remote has for this user
-                $contents = json_decode(file_get_contents('https://www.hrfactoryapp.com/Home/UserSctions?email='.$focal_point->email.'&lang=1'), true);
+                $contents = json_decode(file_get_contents('https://www.hrfactoryapp.com/Home/UserSctions?email=' . $focal_point->email . '&lang=1'), true);
                 dd($contents);
             }
         } catch (\Exception $e) {

@@ -203,13 +203,16 @@ class PartnersController extends Controller
     {
         $decrypted_id = $this->decrypt_data($id);
         try {
+            $email="";
+            $name=$request->focal_name;
             if (TempURL::getIsValidUrl($request)) {
                 if ($request->focal_id)
-                    $focal_point = PartnerFocalPoint::find($request->focal_id);
+                   { $focal_point = PartnerFocalPoint::find($request->focal_id);
+                    $email=$focal_point->email;}
                 else
                     $focal_point = new PartnerFocalPoint();
                 $focal_point->partner_id = $decrypted_id;
-                $focal_point->name = $request->focal_name;
+                $focal_point->name =$name;
                 $focal_point->name_ar = $request->focal_name_ar;
                 $focal_point->phone = $request->focal_phone;
                 $focal_point->email = $request->focal_email;
@@ -219,14 +222,16 @@ class PartnersController extends Controller
                 //add user
                 if ($request->focal_id) {
                     //find user
-                    $user = User::where('email', $request->focal_email)->first();
+                    $user = User::where('email', $email)->first();
                     $focal_points_count = PartnerFocalPoint::where('partner_id', $decrypted_id)->count();
-                } else {
+                }
+                if ($user==null) {
                     $user = new User();
                     //get count of focalpoint for current partner
                     $focal_points_count = PartnerFocalPoint::where('partner_id', $decrypted_id)->count();
                 }
-                $user->name = $request->focal_name;
+                Log::info($user);
+                $user->name = $name;
                 $user->email = $request->focal_email;
                 $user->client_id = null;
                 // $user->partner_id = $decrypted_id;
@@ -271,7 +276,7 @@ class PartnersController extends Controller
             if ($request->signature) {
                 if (TempURL::getIsValidUrl($request)) {
                     $decrypted_id = $this->decrypt_data($id);
-                    $partnerships = Partners::find($decrypted_id)->partnerships->append(['exclusive','active']);
+                    $partnerships = Partners::find($decrypted_id)->partnerships->append(['exclusive', 'active']);
 
                     foreach ($partnerships as $pratnerShip) {
                         $pratnerShip->country_name = $pratnerShip->country->country_name;

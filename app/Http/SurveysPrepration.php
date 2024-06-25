@@ -1229,14 +1229,16 @@ class SurveysPrepration
     function SurveyResults($Client_id, $Service_type, $survey_id, $vtype, $vtype_id = null, $by_admin = false)
     {
         try {
-            if ($vtype == 'comp') {
-                $data = $this->get_resultd($Service_type, $survey_id, $vtype, $vtype_id);
-            } elseif ($vtype == 'sec') {
-                $data = $this->get_SectorResult($Service_type, $survey_id, $vtype, $vtype_id);
-            } else {
-                $data = $this->get_GroupResult($Service_type, $survey_id, $vtype, $vtype_id);
+            if ($Service_type == 3) {
+                if ($vtype == 'comp') {
+                    $data = $this->get_resultd($Service_type, $survey_id, $vtype, $vtype_id);
+                } elseif ($vtype == 'sec') {
+                    $data = $this->get_SectorResult($Service_type, $survey_id, $vtype, $vtype_id);
+                } else {
+                    $data = $this->get_GroupResult($Service_type, $survey_id, $vtype, $vtype_id);
+                }
+                return view('dashboard.client.EESurveyresults')->with($data);
             }
-            return view('dashboard.client.EESurveyresults')->with($data);
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
@@ -2712,8 +2714,7 @@ class SurveysPrepration
                     Respondents::where('survey_id', $request->survey)->where('rater_id', $rater->id)->first()->delete();
                     $rater->delete();
                 }
-            }
-            else{
+            } else {
                 if ($request->action == "add") {
                     $rater = new CustomizedSurveyRaters();
                     $rater->candidate_id = $request->cid;
