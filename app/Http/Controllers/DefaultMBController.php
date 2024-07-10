@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DefaultMB;
 use App\Http\Requests\StoreDefaultMBRequest;
 use App\Http\Requests\UpdateDefaultMBRequest;
+use App\Models\Clients;
 use App\Models\Countries;
 use App\Models\FocalPoints;
 use App\Models\Partnerships;
@@ -22,7 +23,7 @@ class DefaultMBController extends Controller
         $user_id = auth()->user()->id;
         //get current user type
         $user_type = auth()->user()->user_type;
-        $available_countries =[];
+        $available_countries = [];
         //
         if (auth()->user()->isAdmin) {
             //get all terms
@@ -242,15 +243,178 @@ class DefaultMBController extends Controller
     public function ClientSections(Request $request, $id)
     {
         try {
-            $sections = UserSections::where('user_id', $id)->whereNull('paren_id')->get();
-            if (count($sections) <= 0) {
-                //get focal point
-                $focal_point = FocalPoints::where('client_id', $id)->first();
-                //check if remote has for this user
-                $contents = json_decode(file_get_contents('https://www.hrfactoryapp.com/Home/UserSctions?email=' . $focal_point->email . '&lang=1'), true);
-                dd($contents);
-            }
+            $sections = UserSections::where('user_id', $id)->whereNull('paren_id')->where('language', app()->getLocale())->get();
+            $contents = [];
+            // if (count($sections) <= 0) {
+            //     //get focal point
+            //     $focal_point = FocalPoints::where('client_id', $id)->first();
+            //     //check if remote has for this user
+            //     $contents = json_decode(file_get_contents('https://www.hrfactoryapp.com/Home/UserSctions?email=' . $focal_point->email . '&lang=1'), true);
+            // }
+            $data = [
+                'sections' => $sections->sortBy('ordering'),
+                'contents' => $contents,
+                'id' => $id,
+                'client' => Clients::find($id),
+            ];
+            return view('dashboard.admin.ManualBuilder.ClientSections')->with($data);
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Something went wrong, please try again later', 'stat' => false], 500);
+        }
+    }
+    //copysections function
+    public function copysections(Request $request, $id)
+    {
+        try {
+            //find client
+            $client = Clients::find($id);
+            //get client country
+            $country = $client->country;
+            $sections = DefaultMB::where('country_id', $country)->whereNull('paren_id')->get();
+            //check if $sections has value
+            $sections = count($sections) > 0 ? $sections : DefaultMB::where('country_id', 155)->whereNull('paren_id')->get();
+            foreach ($sections as $section) {
+                $new_section = new UserSections();
+                $new_section->paren_id = $section->paren_id;
+                $new_section->title = $section->title;
+                $new_section->content = $section->content;
+                $new_section->IsHaveLineBefore = $section->IsHaveLineBefore;
+                $new_section->country_id = $country;
+                $new_section->language = $section->language;
+                $new_section->default_MB_id = $section->id;
+                $new_section->IsActive = $section->IsActive;
+                $new_section->company_size = $section->company_size;
+                $new_section->company_industry = $section->company_industry;
+                $new_section->ordering = $section->ordering;
+                $new_section->user_id = $id;
+                Log::info($section->ordering);
+                $new_section->save();
+                //get children
+                if (count($section->children) > 0) {
+                    foreach ($section->children as $child) {
+                        $new_child = new UserSections();
+                        $new_child->paren_id = $new_section->id;
+                        $new_child->title = $child->title;
+                        $new_child->content = $child->content;
+                        $new_child->IsHaveLineBefore = $child->IsHaveLineBefore;
+                        $new_child->country_id = $country;
+                        $new_child->language = $child->language;
+                        $new_child->default_MB_id = $child->id;
+                        $new_child->IsActive = $child->IsActive;
+                        $new_child->company_size = $child->company_size;
+                        $new_child->company_industry = $child->company_industry;
+                        $new_child->ordering = $child->ordering;
+                        $new_child->user_id = $id;
+                        $new_child->save();
+                    }
+                }
+            }
+            return redirect()->route('manualBuilder.ClientSections',$id);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Something went wrong, please try again later', 'stat' => false], 500);
+        }
+    }
+    public function clientSectionsreorder(Request $request)
+    {
+        $orderData = $request->orderData;
+        foreach ($orderData as $key => $value) {
+            $section = UserSections::find($value['id']);
+            $section->ordering = $value['ordering'];
+            $section->save();
+        }
+        return response()->json(['message' => 'Sections reordered successfully']);
+    }
+    public function clientSectionsupdate(Request $request)
+    {
+        try {
+            $IsHaveLineBefore = $request->IsHaveLineBefore == "true" ? true : false;
+            $lang = app()->getLocale();
+            //find section by id
+            $section = UserSections::find($request->id);
+            //update title, content and IsHaveLineBefore
+            $section->title = $request->title;
+            $section->content = $request->content;
+            $section->IsHaveLineBefore = $IsHaveLineBefore;
+            $section->save();
+            return response()->json(['message' => 'Section updated successfully', 'stat' => true]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Something went wrong, please try again later', 'stat' => false], 500);
+        }
+    }
+    //storeSection function
+    public function clientSectionsstore(Request $request)
+    {
+        try {
+            Log::info($request->all());
+            $IsHaveLineBefore = $request->IsHaveLineBefore == "true" ? true : false;
+            $lang = app()->getLocale();
+            //find max ordering
+            $maxOrdering = UserSections::where('country_id', $request->country)->where('paren_id', $request->parent)->where('language', $lang == 'en' ? 'en' : 'ar')->max('ordering');
+            //create new section
+            $section = new UserSections();
+            $section->paren_id = $request->parent;
+            $section->user_id = $request->user_id;
+            $section->title = $request->title;
+            $section->content = $request->content;
+            $section->IsHaveLineBefore = $IsHaveLineBefore;
+            $section->country_id = $request->country;
+            $section->language = $lang == 'en' ? 'en' : 'ar';
+            $section->default_MB_id = 0;
+            $section->IsActive = true;
+            $section->company_size = 1;
+            $section->company_industry = 1;
+            $section->ordering = $maxOrdering + 1;
+            $section->save();
+            return response()->json(['message' => 'Section created successfully', 'stat' => true]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Something went wrong, please try again later', 'stat' => false], 500);
+        }
+    }
+    //updateSectionAvailablity function
+    public function updateclientSectionAvailablity(Request $request)
+    {
+        try {
+            $section = UserSections::find($request->id);
+            $section->IsActive = $request->IsActive == "true" ? true : false;
+            $section->save();
+            return response()->json(['message' => 'Section updated successfully', 'stat' => true]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Something went wrong, please try again later', 'stat' => false], 500);
+        }
+    }
+    //deleteSection function
+    public function deleteclientSection(Request $request)
+    {
+        try {
+            $section = UserSections::find($request->id);
+            if ($request->type == "p" && (count($section->children) > 0) && $section) {
+                foreach ($section->children as $child) {
+                    $child->delete();
+                }
+            }
+            $section->delete();
+            return response()->json(['message' => 'Section deleted successfully', 'stat' => true]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Something went wrong, please try again later', 'stat' => false], 500);
+        }
+    }
+    //downloadClientPolicy function
+    public function downloadClientPolicy(Request $request, $id)
+    {
+        try {
+            //get client sections
+            $sections = UserSections::where('user_id', $id)->whereNull('paren_id')->where('language', app()->getLocale())->get();
+            $contents = [];
+            //export sections to download pdf
+
+        }
+        catch (\Exception $e) {
             Log::error($e->getMessage());
             return response()->json(['message' => 'Something went wrong, please try again later', 'stat' => false], 500);
         }

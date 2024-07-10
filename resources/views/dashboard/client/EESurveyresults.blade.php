@@ -1,8 +1,8 @@
 {{-- extends --}}
 @extends('dashboard.layouts.main')
-{{-- @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/style22.css') }}">
-@endpush --}}
+@push('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/CircularProgress.css') }}">
+@endpush
 {{-- content --}}
 @section('content')
 {{-- container --}}
@@ -113,14 +113,11 @@
                                     <div class="card-body">
                                         <div class="row d-flex justify-content-center align-items-center text-center">
                                             <div class="col-12">
-                                                <div
-                                                @class(['speedometer',
-                                                 'speed-5' => $ENPS_data_array['ENPS_index']>0,
+                                                <div @class(['speedometer', 'speed-5'=>
+                                                    $ENPS_data_array['ENPS_index']>0,
                                                     'speed-3' => $ENPS_data_array['ENPS_index']==0,
-                                                    'speed-1' => $ENPS_data_array['ENPS_index']<0,
-                                                 ])
-                                                >
-                                                    <div class="pointer"></div>
+                                                    'speed-1' => $ENPS_data_array['ENPS_index']<0, ])>
+                                                        <div class="pointer"></div>
                                                 </div>
                                                 <h3 class="caption">{{ $ENPS_data_array['ENPS_index'] }}%</h3>
                                             </div>
@@ -168,7 +165,7 @@
                             @endif
                         </div>
                         <div class="row">
-                            <div class="card bg-light p-3 mb-3 rounded">
+                            <div class="card bg-light p-3 mb-3 rounded w-100">
                                 {{-- header with blue background --}}
                                 <div class="card-header bg-info">
                                     {{-- centerlize items --}}
@@ -259,14 +256,12 @@
                                     {{-- body --}}
                                     <div class="card-body">
 
-                                        <div class="row">
+                                        <div class="">
                                             @foreach ($driver_practice_desc as $parctice)
 
                                             @if ($parctice['Favorable_score']>=75)
-                                            <span class="caption"> {{ $parctice['practice_title']
-                                                }}</span>
-
-                                            <div class="progress" role="progressbar" aria-label="Warning example"
+                                            <span class="caption"> {{ $parctice['practice_title']}}</span>
+                                            <div class="progress rounded" role="progressbar" aria-label="Warning example"
                                                 aria-valuenow="{{  $parctice['Favorable_score'] }}" aria-valuemin="0"
                                                 aria-valuemax="100" style="height: 20px; padding: 0;">
                                                 <div class="progress-bar bg-success"
@@ -292,10 +287,11 @@
                                         <div class="row-">
                                             <div class="progress-bar bg-success" style="width: 25%"></div>
                                             @foreach ($driver_practice_asc as $parctice)
-                                            @if ($parctice['Favorable_score']<75) <span class="caption">{{$parctice['Favorable_score'] }} {{
-                                                $parctice['practice_title']
-                                                }}</span>
-                                                <div class="progress" role="progressbar" aria-label="Warning example"
+                                            @if ($parctice['Favorable_score']<75)
+                                            <span class="caption">
+                                                {{$parctice['practice_title']}}
+                                            </span>
+                                                <div class="progress rounded" role="progressbar" aria-label="Warning example"
                                                     aria-valuenow="{{  $parctice['Favorable_score'] }}"
                                                     aria-valuemin="0" aria-valuemax="100"
                                                     style="height: 20px; padding: 0;">
@@ -307,7 +303,7 @@
                                     @else
                                     bg-danger
                                     @endif
-                                    " style="width: {{  $parctice['Favorable_score'] }}% ; font-size: 0.9rem;">
+                                    " style="min-width: 10%; width: {{  $parctice['Favorable_score'] }}% ; font-size: 0.9rem;">
                                                         {{$parctice['Favorable_score'] }}%</div>
                                                 </div>
                                                 @endif

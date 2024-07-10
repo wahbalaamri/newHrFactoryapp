@@ -306,8 +306,8 @@
                                             <div class="my-wizard-continar">
                                                 @endif
                                                 @foreach ($function->practices as $practice)
-                                                @if ($practice->questions->first()->respondent==6 && ($user_type==1 ||
-                                                $user_type==2))
+                                                @if ($practice->questions->first())
+                                                @if ($practice->questions->first()->respondent==6 && ($user_type==1 ||$user_type==2))
                                                 <fieldset>
                                                     <legend class="mb-5 pb-5 mt-5 pt-5">{{ $index++ }}.
                                                         {{$practice->questions->first()->translated_title }}
@@ -476,7 +476,7 @@
                                                     </div>
                                                 </fieldset>
                                                 @endif
-
+                                                @endif
                                                 @endforeach
 
                                                 @if ($loop->last && count($open_end_q)==0 &&
@@ -524,15 +524,9 @@
 
                                                 <fieldset>
                                                     <legend class="mb-5 pb-5 mt-5 pt-5">{{ $loop->iteration
-                                                        }}.@if(app()->getLocale()=='en')
-                                                        {{$function->FunctionTitle }}
-                                                        <p>{{ $function->Description }}</p>
-                                                        @elseif (app()->getLocale()=='ar')
-                                                        {{$function->FunctionTitleAr }}
-                                                        <p>{{ $function->Description_ar }}</p>
-                                                        @elseif (app()->getLocale()=='in')
-                                                        {{$function->QuestionIn }}
-                                                        @endif
+                                                        }}.
+                                                        {{$function->translated_title }}
+                                                        <p>{!! $function->translated_description  !!}</p>
                                                     </legend>
                                                     <div class="container-rad mb-5 pb-5 mt-5 pt-5">
 

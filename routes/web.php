@@ -78,6 +78,7 @@ Route::get('lang/{locale}', function () {
 //get all industries route
 Route::get('/industries/all/{id}', [IndustryController::class, 'allIndustries'])->name('industries.all');
 Route::post('clients/saveSCD', [ClientsController::class, 'saveSCD'])->name('clients.saveSCD');
+Route::post('clients/changeLogo', [ClientsController::class, 'changeLogo'])->name('clients.changeLogo');
 Route::get('client/sectors/{id}', [SectorsController::class, 'sectors'])->name('sector.sectors');
 Route::get('client/getRaters/{id}/{survey}/{type?}', [ClientsController::class, 'getRaters'])->name('sector.getRaters');
 Route::get('client/companies/{id}', [ClientsController::class, 'companies'])->name('client.companies');
@@ -350,6 +351,7 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     // Route::get('clients/showSendSurvey/{id}/{type}/{survey}', [ClientsController::class, 'showSendSurvey'])->name('clients.showSendSurvey');
     Route::post('clients/sendSurvey/{id}/{type}/{survey}', [ClientsController::class, 'sendSurvey'])->name('clients.sendSurvey');
     Route::get('clients/SurveyResults/{id}/{type}/{survey}/{vtype}/{vtype_id?}', [ClientsController::class, 'SurveyResults'])->name('clients.SurveyResults');
+    Route::get('clients/candidateResult/{id}/{sid}', [Leader360ReviewController::class, 'candidateResult'])->name('clients.candidateResult');
     Route::post('clients/SaveRaters', [ClientsController::class, 'SaveRaters'])->name('clients.SaveRaters');
     Route::post('clients/candidates', [ClientsController::class, 'candidates'])->name('client.candidates');
     Route::post('clients/schedule360', [ClientsController::class, 'schedule360'])->name('client.schedule360');
@@ -450,7 +452,13 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
       Route::post('manualBuilder/newCountry/', [DefaultMBController::class, 'newCountry'])->name('manualBuilder.newCountry');
       Route::post('manualBuilder/updateSectionAvailablity/', [DefaultMBController::class, 'updateSectionAvailablity'])->name('manualBuilder.updateSectionAvailablity');
       Route::post('manualBuilder/deleteSection/', [DefaultMBController::class, 'deleteSection'])->name('manualBuilder.deleteSection');
-
+      Route::get('manualBuilder/copysections/{id}', [DefaultMBController::class, 'copysections'])->name('manualBuilder.copysections');
+      Route::post('manualBuilder/clientSectionsreorder/', [DefaultMBController::class, 'clientSectionsreorder'])->name('manualBuilder.clientSectionsreorder');
+      Route::post('manualBuilder/clientSectionsupdate/', [DefaultMBController::class, 'clientSectionsupdate'])->name('manualBuilder.clientSectionsupdate');
+      Route::post('manualBuilder/clientSectionsstore/', [DefaultMBController::class, 'clientSectionsstore'])->name('manualBuilder.clientSectionsstore');
+      Route::post('manualBuilder/updateclientSectionAvailablity/', [DefaultMBController::class, 'updateclientSectionAvailablity'])->name('manualBuilder.updateclientSectionAvailablity');
+      Route::post('manualBuilder/deleteclientSection/', [DefaultMBController::class, 'deleteclientSection'])->name('manualBuilder.deleteclientSection');
+      Route::get('manualBuilder/downloadClientPolicy/{id}', [DefaultMBController::class, 'downloadClientPolicy'])->name('manualBuilder.downloadClientPolicy');
     /*==================================================================================================================
       =                                                                                                                =
       =                                                                                                                =

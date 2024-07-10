@@ -7,6 +7,7 @@ use App\Http\Requests\StoreClientsRequest;
 use App\Http\Requests\UpdateClientsRequest;
 use App\Http\SurveysPrepration;
 use App\Models\Departments;
+use App\Models\Partners;
 use App\Models\Plans;
 use App\Models\Services;
 use App\Models\Surveys;
@@ -310,5 +311,34 @@ class ClientsController extends Controller
     public function CustomizedsurveyRespondents(Request $request, SurveysPrepration $surveysPrepration, $id, $type, $survey_id)
     {
         return $surveysPrepration->CustomizedsurveyRespondents($request, $id, $type, $survey_id, true);
+    }
+    //changeLogo function
+    public function changeLogo(Request $request)
+    {
+        //get current user client_id
+        if (Auth()->user()->user_type == 'partner') {
+            $partner_id = Auth()->user()->partner_id;
+            //get partner
+            $object = Partners::find($partner_id);
+        } else {
+            $client_id = Auth()->user()->client_id;
+            //get client
+            $object = Clients::find($client_id);
+        }
+        //check if request has file
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
+            $extension = $file->getClientOriginalExtension();
+            $filename = $object->name . '-' . time() . '.' . $extension;
+            $file->move('uploads/companies/logos/', $filename);
+            //update object logo
+            $object->logo_path = $filename;
+            $object->save();
+            //return json
+            return response()->json(['message' => 'Logo Updated Successfully', 'status' => true], 200);
+        } else {
+            //return json
+            return response()->json(['message' => 'No file found', 'status' => false], 400);
+        }
     }
 }

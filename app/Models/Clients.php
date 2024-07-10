@@ -46,7 +46,6 @@ class Clients extends Model
                 foreach ($company->departments as $department) {
                     $departments[] = $department;
                 }
-
             }
         }
         return $departments;
@@ -65,5 +64,10 @@ class Clients extends Model
     public function subscriptions()
     {
         return $this->hasMany(ClientSubscriptions::class, 'client_id');
+    }
+    //translated name
+    public function getClientNameAttribute()
+    {
+        return app()->isLocale('en') ? $this->name : $this->name_ar;
     }
 }

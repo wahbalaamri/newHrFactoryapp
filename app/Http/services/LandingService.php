@@ -2,6 +2,7 @@
 
 namespace App\Http\services;
 
+use App\Models\Clients;
 use App\Models\ClientSubscriptions;
 use App\Models\Countries;
 use App\Models\Partners;
@@ -20,17 +21,16 @@ class LandingService
     public function getCurrentCountry()
     {
         //get client country
-        $ipAddress = request()->ip()??null; // Get client's IP address
+        $ipAddress = request()->ip() ?? null; // Get client's IP address
         $clientCountry = $ipAddress ? "http://ipinfo.io/$ipAddress/json" : null; // Get client's country
-       if($clientCountry)
-       {
-              $json = file_get_contents($clientCountry);
-              $data = json_decode($json);
-              $countryCode = $data->country;
+        if ($clientCountry) {
+            $json = file_get_contents($clientCountry);
+            $data = json_decode($json);
+            $countryCode = $data->country;
             //   Log::info( $countryCode );
-              $country = Countries::where('country_code', $countryCode)->first();
-              return $country->id;
-       }
+            $country = Countries::where('country_code', $countryCode)->first();
+            return $country->id;
+        }
         //using api detect current location
         $url = "https://extreme-ip-lookup.com/json/?key=sswCYj3OKfeIuxY1C3Bd";
         $json = file_get_contents($url);
@@ -65,6 +65,25 @@ class LandingService
             }
         } else {
             return false;
+        }
+    }
+    //get client logo
+    public function getClientLogo()
+    {
+        if (Auth()->user()->user_type == 'partner') {
+            $partner = Partners::find(auth()->user()->partner_id);
+            if ($partner) {
+                return $partner->logo_path;
+            } else {
+                return null;
+            }
+        } else {
+            $client = Clients::find(auth()->user()->client_id);
+            if ($client) {
+                return $client->logo_path;
+            } else {
+                return null;
+            }
         }
     }
 }

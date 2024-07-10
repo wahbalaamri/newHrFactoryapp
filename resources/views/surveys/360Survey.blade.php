@@ -879,7 +879,7 @@
                             // console.log(oe_qeustions_ans);
                         }
                         var reply = [{
-                            "survey_id": '{{ $SurveyId }}',
+                            "survey_id": '{{ $survey_id }}',
                             "PlanID": '{{ $plan_id }}',
                             "priorities": null,
                             "oe_ans": oe_qeustions_ans,

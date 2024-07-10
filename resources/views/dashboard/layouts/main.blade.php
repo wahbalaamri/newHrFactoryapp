@@ -43,6 +43,7 @@
         <div class="preloader flex-column justify-content-center align-items-center">
             <img class="animation__shake" src="{{ asset('assets/img/logo-1.png') }}" alt="AdminLTELogo" height=""
                 width="">
+
         </div>
 
         <!-- Navbar -->
@@ -50,8 +51,7 @@
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i
-                            class="fas fa-bars"></i></a>
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="index3.html" class="nav-link">Home</a>
@@ -181,12 +181,12 @@
                     </a>
                 </li>
                 @if (Auth()->user()->isAdmin)
-                    <li class="nav-item">
-                        <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true"
-                            href="#" role="button">
-                            <i class="fas fa-th-large"></i>
-                        </a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#"
+                        role="button">
+                        <i class="fas fa-th-large"></i>
+                    </a>
+                </li>
                 @endif
             </ul>
         </nav>
@@ -195,12 +195,15 @@
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
-            <a href="index3.html" class="brand-link">
-                <img src="{{ asset('assets/img/logo-1.png') }}" alt="HR Factory App logo"
-                    class="brand-image img-circle elevation-3" style="opacity: .8">
-                <span class="brand-text font-weight-light">HR Factory App</span>
-            </a>
-
+            <div class="custom-hover brand-link">
+                <a href="#" class="brand-link col-12">
+                    <img src="{{ App\Http\Facades\Landing::getClientLogo()?asset('uploads/companies/logos/'.App\Http\Facades\Landing::getClientLogo()):asset('assets/img/logo-1.png') }}"
+                        alt="HR Factory App logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                    <span class="brand-text font-weight-light">HR Factory App</span>
+                </a>
+                <button class="btn btn-warning btn-xs custom-btn-hover text-white" data-target="#changeLogoModal"
+                    data-toggle="modal">{{ __('Change Logo') }}<i class="fa fa-upload"></i></button>
+            </div>
             <!-- Sidebar -->
             <div class="sidebar">
                 <!-- Sidebar user panel (optional) -->
@@ -263,70 +266,70 @@
                             </ul>
                         </li> --}}
                         @if (auth()->user()->isAdmin || Auth()->user()->user_type == 'partner')
-                            <li class="nav-item">
-                                <a href="{{ route('Emails.AutomatedEmails') }}" class="nav-link">
-                                    <i class="nav-icon fa fa-mail-bulk"></i>
-                                    <p>
-                                        {{ __('Emails') }}
-                                        {{-- <span class="right badge badge-danger">New</span> --}}
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('services.index') }}" class="nav-link">
-                                    <i class="nav-icon fas fa-th"></i>
-                                    <p>
-                                        {{ __('Services') }}
-                                        {{-- <span class="right badge badge-danger">New</span> --}}
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('clients.index') }}" class="nav-link">
-                                    <i class="nav-icon fas fa-users"></i>
-                                    <p>
-                                        {{ __('Clients') }}
-                                        {{-- <span class="right badge badge-danger">New</span> --}}
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('ManageHrDiagnosis.index') }}" class="nav-link">
-                                    <i class="nav-icon fas fa-user-md"></i>
-                                    <p>
-                                        {{ __('Manager Hr Diagnosis') }}
-                                        {{-- <span class="right badge badge-danger">New</span> --}}
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('Leader360Review.index') }}" class="nav-link">
-                                    <i class="nav-icon fas fa-compress-arrows-alt"></i>
-                                    <p>
-                                        {{ __('360 Review') }}
-                                        {{-- <span class="right badge badge-danger">New</span> --}}
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('EmployeeEngagment.index') }}" class="nav-link">
-                                    <i class="nav-icon fas fa-laugh-beam"></i>
-                                    <p>
-                                        {{ __('Employee Engagment') }}
-                                        {{-- <span class="right badge badge-danger">New</span> --}}
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('manualBuilder.index') }}" class="nav-link">
-                                    <i class="nav-icon fa fa-file-alt"></i>
-                                    <p>
-                                        {{ __('Manual Builder') }}
-                                        {{-- <span class="right badge badge-danger">New</span> --}}
-                                    </p>
-                                </a>
-                            </li>
-                            {{-- <li class="nav-item">
+                        <li class="nav-item">
+                            <a href="{{ route('Emails.AutomatedEmails') }}" class="nav-link">
+                                <i class="nav-icon fa fa-mail-bulk"></i>
+                                <p>
+                                    {{ __('Emails') }}
+                                    {{-- <span class="right badge badge-danger">New</span> --}}
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('services.index') }}" class="nav-link">
+                                <i class="nav-icon fas fa-th"></i>
+                                <p>
+                                    {{ __('Services') }}
+                                    {{-- <span class="right badge badge-danger">New</span> --}}
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('clients.index') }}" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>
+                                    {{ __('Clients') }}
+                                    {{-- <span class="right badge badge-danger">New</span> --}}
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('ManageHrDiagnosis.index') }}" class="nav-link">
+                                <i class="nav-icon fas fa-user-md"></i>
+                                <p>
+                                    {{ __('Manager Hr Diagnosis') }}
+                                    {{-- <span class="right badge badge-danger">New</span> --}}
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('Leader360Review.index') }}" class="nav-link">
+                                <i class="nav-icon fas fa-compress-arrows-alt"></i>
+                                <p>
+                                    {{ __('360 Review') }}
+                                    {{-- <span class="right badge badge-danger">New</span> --}}
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('EmployeeEngagment.index') }}" class="nav-link">
+                                <i class="nav-icon fas fa-laugh-beam"></i>
+                                <p>
+                                    {{ __('Employee Engagment') }}
+                                    {{-- <span class="right badge badge-danger">New</span> --}}
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('manualBuilder.index') }}" class="nav-link">
+                                <i class="nav-icon fa fa-file-alt"></i>
+                                <p>
+                                    {{ __('Manual Builder') }}
+                                    {{-- <span class="right badge badge-danger">New</span> --}}
+                                </p>
+                            </a>
+                        </li>
+                        {{-- <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-copy"></i>
                                 <p>
@@ -919,28 +922,28 @@
                                 <p>Informational</p>
                             </a>
                         </li> --}}
-                            @if (auth()->user()->isAdmin)
-                                <li class="nav-item">
-                                    <a href="{{ route('partners.index') }}" class="nav-link">
-                                        <i class="nav-icon fa fa-business-time"></i>
-                                        <p>
-                                            {{ __('Partners') }}
-                                            {{-- <span class="right badge badge-danger">New</span> --}}
-                                        </p>
-                                    </a>
-                                </li>
-                            @endif
+                        @if (auth()->user()->isAdmin)
+                        <li class="nav-item">
+                            <a href="{{ route('partners.index') }}" class="nav-link">
+                                <i class="nav-icon fa fa-business-time"></i>
+                                <p>
+                                    {{ __('Partners') }}
+                                    {{-- <span class="right badge badge-danger">New</span> --}}
+                                </p>
+                            </a>
+                        </li>
+                        @endif
                         @else
-                            <li class="nav-item">
-                                <a href="{{ route('client.manage') }}" class="nav-link">
-                                    <i class="nav-icon fa fa-business-time"></i>
-                                    <p>
-                                        {{ __('Manage') }}
-                                        {{-- <span class="right badge badge-danger">New</span> --}}
-                                    </p>
-                                </a>
-                            </li>
-                            {{-- <li class="nav-item"><a href="{{ route('Client.startup') }}" class="nav-link">
+                        <li class="nav-item">
+                            <a href="{{ route('client.manage') }}" class="nav-link">
+                                <i class="nav-icon fa fa-business-time"></i>
+                                <p>
+                                    {{ __('Manage') }}
+                                    {{-- <span class="right badge badge-danger">New</span> --}}
+                                </p>
+                            </a>
+                        </li>
+                        {{-- <li class="nav-item"><a href="{{ route('Client.startup') }}" class="nav-link">
                                 <i class="fa fa-folder"></i>
                                 <p>StartUp</p>
                             </a>
@@ -973,8 +976,37 @@
         </aside>
         <!-- /.control-sidebar -->
     </div>
-    <!-- ./wrapper -->
+    {{-- create modal changeLogoModal --}}
+    <div class="modal fade" id="changeLogoModal" tabindex="-1" aria-labelledby="changeLogoModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title fs-5" id="changeLogoModalLabel">{{ ('Change Your Company Logo') }}</h3>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <form action="" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        {{-- upload logo --}}
 
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="logo">{{ __('Company Logo') }}</label>
+                            <input type="file" name="logo" id="logo" class="form-control">
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')
+                            }}</button>
+                        <button type="button" class="btn btn-primary" id="saveLogo">{{ __('Save changes') }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- ./wrapper -->
     <!-- jQuery -->
     <script src="{{ asset('dashboard/plugins/jquery/jquery.min.js') }}"></script>
     <!-- jQuery UI 1.11.4 -->
@@ -999,7 +1031,8 @@
     <script src="{{ asset('dashboard/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('dashboard/plugins/daterangepicker/daterangepicker.js') }}"></script>
     <!-- Tempusdominus Bootstrap 4 -->
-    <script src="{{ asset('dashboard/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+    <script src="{{ asset('dashboard/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}">
+    </script>
     <script src="{{ asset('dashboard/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
     <script src="{{ asset('dashboard/plugins/bs-stepper/js/bs-stepper.min.js') }}"></script>
     <!-- Summernote -->
@@ -1021,6 +1054,33 @@
     <script src="{{ asset('dashboard/plugins/select2/js/select2.full.min.js') }}"></script>
     <script src="{{ asset('dashboard/plugins/toastr/toastr.min.js') }}"></script>
     @yield('scripts')
+    <script>
+        //on saveLogo click
+        $('#saveLogo').on('click', function() {
+            //get the form data
+            var form = new FormData();
+            var logo = $('#logo')[0].files[0];
+            //append csrf
+            form.append('_token', '{{ csrf_token() }}');
+            form.append('logo', logo);
+            //send the request
+            $.ajax({
+                url: "{{ route('clients.changeLogo') }}",
+                type: 'POST',
+                data: form,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    if (data.status) {
+                        toastr.success(data.message);
+                        $('#changeLogoModal').modal('hide');
+                    } else {
+                        toastr.error(data.message);
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

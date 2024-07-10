@@ -24,4 +24,9 @@ class Functions extends Model
     {
         return app()->getLocale() == 'en' ? $this->title : $this->{'title_' . app()->getLocale()};
     }
+    // attribute translated description
+    public function getTranslatedDescriptionAttribute($value)
+    {
+        return app()->getLocale() == 'en' ? $this->description : $this->{'description_' . app()->getLocale()};
+    }
 }

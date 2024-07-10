@@ -77,7 +77,6 @@ class SurveysController extends Controller
     {
         //from the id get the survey id
         $respondent = Respondents::find($id);
-        Log::info("message");
         //if not found return 404
         if (!$respondent) {
             return abort(404);
@@ -129,17 +128,17 @@ class SurveysController extends Controller
             $can_ansewer_to_priorities = false;
             foreach ($functions as $function) {
                 if ($user->department->is_hr) {
-                    if ($function->Respondent == 1 || $function->Respondent == 4 || $function->Respondent == 6 || $function->Respondent == 7 || $function->Respondent == 8) {
+                    if ($function->respondent == 1 || $function->respondent == 4 || $function->respondent == 6 || $function->respondent == 7 || $function->respondent == 8) {
                         $can_ansewer_to_priorities = true;
                     }
                     $user_type = 2;
                 } elseif ($user->employee_type == 1) {
-                    if ($function->Respondent == 3 || $function->Respondent == 5 || $function->Respondent == 6 || $function->Respondent == 7 || $function->Respondent == 8) {
+                    if ($function->respondent == 3 || $function->respondent == 5 || $function->respondent == 6 || $function->respondent == 7 || $function->respondent == 8) {
                         $can_ansewer_to_priorities = true;
                     }
                     $user_type = 1;
                 } else {
-                    if ($function->Respondent == 2 || $function->Respondent == 4 || $function->Respondent == 5 || $function->Respondent == 7 || $function->Respondent == 8) {
+                    if ($function->respondent == 2 || $function->respondent == 4 || $function->respondent == 5 || $function->respondent == 7 || $function->respondent == 8) {
                         $can_ansewer_to_priorities = true;
                     }
                     $user_type = 3;
@@ -169,7 +168,7 @@ class SurveysController extends Controller
         $oe_ans = $reply[0]['oe_ans'];
         $gender = $reply[0]['gender'];
         $agegroup = $reply[0]['agegroup'];
-        $type = $reply[0]['type'];
+        // $type = $reply[0]['type'];
         $ansAva = SurveyAnswers::where([['answered_by', $EmailId], ['survey_id', $SurveyId]])->get();
         if ($SurveyId == null) {
             // $Count = freeSurveyAnswers::select('SurveyId')->distinct('SurveyId')->count('SurveyId');
@@ -201,7 +200,7 @@ class SurveysController extends Controller
                     $Priority_answer = new PrioritiesAnswers();
                     $Priority_answer->survey_id = $SurveyId;
                     $Priority_answer->answered_by = $EmailId;
-                    $Priority_answer->question_id = $value['function'];
+                    $Priority_answer->question_id = $value['functionId'];
                     $Priority_answer->answer_value = $value['priority'];
                     $Priority_answer->save();
                 }
@@ -267,7 +266,7 @@ class SurveysController extends Controller
             foreach ($QuestionAnswers as $key => $value) {
                 $survey_answer = new SurveyAnswers();
                 $survey_answer->survey_id = $SurveyId;
-                $survey_answer->candidate = Raters::find($EmailId)->candidate_id;
+                $survey_answer->candidate = Respondents::find($EmailId)->candidate_id;
                 $survey_answer->answered_by = $EmailId;
                 $survey_answer->question_id = $value['question_id'];
                 $survey_answer->answer_value = $value['answer'];

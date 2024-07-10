@@ -38,7 +38,7 @@
                         <div class="card-header">
                             <h3 class="card-title">
                                 <i class="fas fa-users mr-1"></i>
-                                {{ __("Client's Tools") }}
+                                {{ $client->name."'s Tools" }}
                             </h3>
                             <div class="card-tools">
                             </div>
@@ -142,7 +142,7 @@
                                 </div>
                                 <div class="col-lg-3 col-6">
 
-                                    <div class="small-box bg-success">
+                                    <div class="small-box bg-olive">
                                         <div class="inner" style="min-height: 123px">
                                             <h3 style="font-size: 1.2rem">{{ __('360 Leader Review Customized') }}</h3>
                                             <p class="w-75">{{ __('Assess Your Leaders From 360 Degree') }}</p>
@@ -157,7 +157,7 @@
                                 </div>
                                 <div class="col-lg-3 col-6">
 
-                                    <div class="small-box bg-danger">
+                                    <div class="small-box bg-orange">
                                         <div class="inner" style="min-height: 123px">
                                             <h3 style="font-size: 1.2rem">{{ ('HR Templates') }}</h3>
                                             <p class="w-75">{{ ("Access Most Used HR Templates") }}</p>
@@ -165,7 +165,7 @@
                                         <div class="icon">
                                             <i class="fas fa-folder-open"></i>
                                         </div>
-                                        <a href="#" class="small-box-footer">
+                                        <a href="{{\App\Http\Facades\Landing::CheckUserSubscription($id,1)? route('manualBuilder.ClientSections',[$id,1]):'#'}}" class="small-box-footer">
                                             {{ __('Get Started') }} <i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>

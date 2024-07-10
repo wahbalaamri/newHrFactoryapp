@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserSections extends Model
 {
+    protected $table = 'user_sections';
     use HasFactory, SoftDeletes;
     //one to many relationship, create children relationship
     public function children()
     {
-        return $this->hasMany(UserSections::class, 'ParenId')->orderBy('Ordering');
+        return $this->hasMany(UserSections::class, 'paren_id')->orderBy('Ordering');
     }
 }

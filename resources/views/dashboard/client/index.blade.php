@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 @section('content')
 <!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
+{{-- <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <div class="content-header">
         <div class="container-fluid">
@@ -43,18 +43,18 @@
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="fas fa-minus"></i>
-                                </button>
+                                </button> --}}
                                 {{--
                                 <button type="button" class="btn btn-tool" data-card-widget="remove">
                                     <i class="fas fa-times"></i>
                                 </button> --}}
                             </div>
-                        </div><!-- /.card-header -->
+                        {{-- </div><!-- /.card-header -->
                         <div class="card-body">
 
-                            @if (count($active_sub)>0)
+                            @if (count($active_sub)>0) --}}
                             {{-- create responsive table --}}
-                            <div class="table-responsive">
+                            {{-- <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover table-success">
                                     <thead>
                                         <tr>
@@ -85,9 +85,9 @@
                                     </tbody>
                                 </table>
                             </div>
-                            @else
+                            @else --}}
                             {{-- info alert --}}
-                            <div class="alert alert-info alert-dismissible">
+                            {{-- <div class="alert alert-info alert-dismissible">
                                 <h5><i class="icon fas fa-info"></i> Alert!</h5>
                                 <p>There is no active subscription</p>
                             </div>
@@ -109,17 +109,17 @@
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="fas fa-minus"></i>
-                                </button>
+                                </button> --}}
                                 {{--
                                 <button type="button" class="btn btn-tool" data-card-widget="remove">
                                     <i class="fas fa-times"></i>
                                 </button> --}}
                             </div>
-                        </div><!-- /.card-header -->
+                        {{-- </div><!-- /.card-header -->
                         <div class="card-body">
-                            @if (count($notactive_sub)>0)
+                            @if (count($notactive_sub)>0) --}}
                             {{-- create responsive table --}}
-                            <div class="table-responsive">
+                            {{-- <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover table-danger">
                                     <thead>
                                         <tr>
@@ -148,9 +148,9 @@
                                     </tbody>
                                 </table>
                             </div>
-                            @else
+                            @else --}}
                             {{-- info alert --}}
-                            <div class="alert alert-info alert-dismissible">
+                            {{-- <div class="alert alert-info alert-dismissible">
                                 <h5><i class="icon fas fa-info"></i> Alert!</h5>
                                 No previous subscriptions.
                             </div>
@@ -305,11 +305,11 @@
                                 World Map
                             </h3>
                             <!-- card tools -->
-                            <div class="card-tools">
+                            <div class="card-tools"> --}}
                                 {{-- <button type="button" class="btn btn-primary btn-sm daterange" title="Date range">
                                     <i class="far fa-calendar-alt"></i>
                                 </button> --}}
-                                <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse"
+                                {{-- <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse"
                                     title="Collapse">
                                     <i class="fas fa-minus"></i>
                                 </button>
@@ -323,20 +323,20 @@
                         <div class="card-footer bg-transparent">
                             <div class="row">
                                 <div class="col-4 text-center">
-                                    <div id="sparkline-1"></div>
+                                    <div id="sparkline-1"></div> --}}
                                     {{-- <div class="text-white">Visitors</div> --}}
-                                </div>
+                               {{-- </div>
                                 <!-- ./col -->
                                 <div class="col-4 text-center">
                                     <div id="sparkline-2"></div>
                                     {{-- <div class="text-white">Online</div>
                                     --}}
-                                </div>
+                              {{--  </div>
                                 <!-- ./col -->
                                 <div class="col-4 text-center">
                                     <div id="sparkline-3"></div>
                                     {{-- <div class="text-white">Sales</div> --}}
-                                </div>
+                               {{-- </div>
                                 <!-- ./col -->
                             </div>
                             <!-- /.row -->
@@ -395,7 +395,56 @@
         </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-</div>
+</div> --}}
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Blank Page</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Blank Page</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <!-- Default box -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Title</h3>
+
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          Start creating your amazing application!
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+          Footer
+        </div>
+        <!-- /.card-footer-->
+      </div>
+      <!-- /.card -->
+
+    </section>
+    <!-- /.content -->
+  </div>
 <!-- /.content-wrapper -->
 
 @endsection

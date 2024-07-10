@@ -222,6 +222,20 @@
                                             <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
+                                        <div class="form-group col-md-6 col-sm-12">
+                                            <label for="phone">{{ __('Do you have multiple sectors?') }}</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" role="switch" id="multiple_sectors" name="multiple_sectors">
+                                                <label class="form-check-label" for="multiple_sectors">{{ __('No, Only one sector') }}</label>
+                                              </div>
+                                        </div>
+                                        <div class="form-group col-md-6 col-sm-12">
+                                            <label for="phone">{{ __('Do you have multiple companies?') }}</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" role="switch" id="multiple_companies" name="multiple_companies">
+                                                <label class="form-check-label" for="multiple_companies">{{ __('No, Only one company') }}</label>
+                                              </div>
+                                        </div>
                                         {{-- logo_path --}}
                                         {{-- <div class="form-group col-md-6 col-sm-12">
                                             <label for="logo_path">{{ __('Company Logo') }}</label>
@@ -249,7 +263,7 @@
                                         </div> --}}
                                     </div>
                                     <div class="pt-2 pb-4">
-                                        <a href="javascript:void(0)" class="btn btn-primary float-end pb-2"
+                                        <a href="javascript:void(0)" class="btn btn-primary btn-sm float-end pb-2"
                                             onclick="stepper.next()">{{ __('Next') }}</a>
                                     </div>
                                 </div>
@@ -300,9 +314,9 @@
                                         </div>
                                     </div>
                                     <div class="pt-2 pb-4">
-                                        <a href="javascript:void(0)" class="btn btn-primary  float-start"
+                                        <a href="javascript:void(0)" class="btn btn-primary btn-sm float-start"
                                             onclick="stepper.previous()">Previous</a>
-                                        <button type="submit" class="btn btn-primary  float-end">Submit</button>
+                                        <button type="submit" class="btn btn-primary btn-sm float-end">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -328,5 +342,25 @@
       passwordInput.setAttribute('type', type);
       this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
     });
+    //on multiple_companies change
+    $('#multiple_companies').change(function(){
+        if($(this).is(':checked')){
+            //get lable
+            $('#multiple_companies').next().text("{{ __('Yes, We have multiple companies') }}");
+        }
+        else{
+            $('#multiple_companies').next().text("{{ __('No, Only one company') }}");
+        }
+    })
+    //on multiple_sectors change
+    $('#multiple_sectors').change(function(){
+        if($(this).is(':checked')){
+            //get lable
+            $('#multiple_sectors').next().text("{{ __('Yes, We have multiple sectors') }}");
+        }
+        else{
+            $('#multiple_sectors').next().text("{{ __('No, Only one sector') }}");
+        }
+    })
 </script>
 @endsection

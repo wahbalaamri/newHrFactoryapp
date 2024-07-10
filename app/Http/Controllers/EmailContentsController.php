@@ -91,7 +91,7 @@ class EmailContentsController extends Controller
                 //get partner
                 $partner = Partners::find($partner_id);
                 //get partner partnerships
-                $partnerships = $partner->partnerships->where('is_active', true);
+                $partnerships = Partnerships::where('partner_id',$partner_id)->where('is_active', true)->get();
                 //get partnerships country id
                 $countries = Countries::whereIn('id', $partnerships->pluck('country_id')->toArray())->get();
             } else {
@@ -101,17 +101,18 @@ class EmailContentsController extends Controller
             }
             //if request is ajax
             if (request()->ajax()) {
-
+                Log::info($request->country);
                 //build where
                 $where = [];
                 //if country is not null
-                if ($country != "all")
-                    if ($country) {
-                        $where[] = ['country_id', $country];
+                if ($request->country != "all")
+                Log::info($request->country);
+                    if ($request->country) {
+                        $where[] = ['country', $request->country];
                     }
                 //if type is not null
-                if ($type) {
-                    $where[] = ['email_type', $type];
+                if ($request->type) {
+                    $where[] = ['email_type', $request->type];
                 }
                 //get email contents
                 $emailContents = EmailContents::where($where)->get();
@@ -144,7 +145,27 @@ class EmailContentsController extends Controller
     {
         try {
             //get countries
-            $countries = Countries::all()->groupBy('IsArabCountry');
+            $countries = null;
+            //get current user isadmin?
+            if (!auth()->user()->isAdmin) {
+                //check if user partner otherwise throw 403
+                if (!auth()->user()->user_type == 'partner') {
+                    //abort not autherized
+                    abort(403, 'Unauthorized action.');
+                }
+                //get partner id
+                $partner_id = auth()->user()->partner_id;
+                //get partner
+                $partner = Partners::find($partner_id);
+                //get partner partnerships
+                $partnerships = Partnerships::where('partner_id',$partner_id)->where('is_active', true)->get();
+                //get partnerships country id
+                $countries = Countries::whereIn('id', $partnerships->pluck('country_id')->toArray())->get();
+            } else {
+                //is admin
+
+                $countries = Countries::all()->groupBy('IsArabCountry');
+            }
             //return view
             return view('dashboard.admin.emails.createInstantEmail', compact('countries'));
         } catch (Exception $e) {
@@ -232,7 +253,27 @@ class EmailContentsController extends Controller
     {
         try {
             //get countries
-            $countries = Countries::all()->groupBy('IsArabCountry');
+            $countries = null;
+            //get current user isadmin?
+            if (!auth()->user()->isAdmin) {
+                //check if user partner otherwise throw 403
+                if (!auth()->user()->user_type == 'partner') {
+                    //abort not autherized
+                    abort(403, 'Unauthorized action.');
+                }
+                //get partner id
+                $partner_id = auth()->user()->partner_id;
+                //get partner
+                $partner = Partners::find($partner_id);
+                //get partner partnerships
+                $partnerships = Partnerships::where('partner_id',$partner_id)->where('is_active', true)->get();
+                //get partnerships country id
+                $countries = Countries::whereIn('id', $partnerships->pluck('country_id')->toArray())->get();
+            } else {
+                //is admin
+
+                $countries = Countries::all()->groupBy('IsArabCountry');
+            }
             //return view
             return view('dashboard.admin.emails.createAutomatedEmails', compact('countries'));
         } catch (Exception $e) {
