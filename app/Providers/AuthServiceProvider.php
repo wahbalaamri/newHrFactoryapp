@@ -4,12 +4,18 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 
+use App\Models\FunctionPractices;
+use App\Models\Functions;
 use App\Models\Plans;
+use App\Models\PracticeQuestions;
 use App\Models\ServiceApproaches;
 use App\Models\ServiceFeatures;
 use App\Models\Services;
 use App\Models\TermsConditions;
+use App\Policies\FunctionPracticesPolicy;
+use App\Policies\FunctionsPolicy;
 use App\Policies\PlansPolicy;
+use App\Policies\PracticeQuestionsPolicy;
 use App\Policies\ServiceApproachesPolicy;
 use App\Policies\ServiceFeaturesPolicy;
 use App\Policies\ServicesPolicy;
@@ -30,6 +36,9 @@ class AuthServiceProvider extends ServiceProvider
         ServiceApproaches::class => ServiceApproachesPolicy::class,
         Plans::class => PlansPolicy::class,
         TermsConditions::class => TermsConditionsPolicy::class,
+        Functions::class => FunctionsPolicy::class,
+        FunctionPractices::class => FunctionPracticesPolicy::class,
+        PracticeQuestions::class => PracticeQuestionsPolicy::class
     ];
 
     /**

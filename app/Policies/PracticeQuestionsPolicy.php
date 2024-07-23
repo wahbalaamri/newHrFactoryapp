@@ -14,6 +14,7 @@ class PracticeQuestionsPolicy
     public function viewAny(User $user): bool
     {
         //
+        return true;
     }
 
     /**
@@ -22,6 +23,7 @@ class PracticeQuestionsPolicy
     public function view(User $user, PracticeQuestions $practiceQuestions): bool
     {
         //
+        return true;
     }
 
     /**
@@ -30,6 +32,7 @@ class PracticeQuestionsPolicy
     public function create(User $user): bool
     {
         //
+        return $user->isAdmin;
     }
 
     /**
@@ -38,6 +41,7 @@ class PracticeQuestionsPolicy
     public function update(User $user, PracticeQuestions $practiceQuestions): bool
     {
         //
+        return $user->isAdmin;
     }
 
     /**
@@ -46,6 +50,7 @@ class PracticeQuestionsPolicy
     public function delete(User $user, PracticeQuestions $practiceQuestions): bool
     {
         //
+        return $user->isAdmin;
     }
 
     /**
@@ -54,6 +59,7 @@ class PracticeQuestionsPolicy
     public function restore(User $user, PracticeQuestions $practiceQuestions): bool
     {
         //
+        return $user->isAdmin;
     }
 
     /**
@@ -62,5 +68,6 @@ class PracticeQuestionsPolicy
     public function forceDelete(User $user, PracticeQuestions $practiceQuestions): bool
     {
         //
+        return $user->isAdmin;
     }
 }

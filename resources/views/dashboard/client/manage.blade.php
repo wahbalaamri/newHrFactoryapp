@@ -189,7 +189,7 @@
                             </div>
                         </div>
                     </div>
-                    @if(Auth::user()->isAdmin)
+                    @if(Auth::user()->isAdmin || Auth::user()->user_type == 'partner')
                     <div class="card card-outline card-primary mt-2">
                         <div class="card-header">
                             <h3 class="card-title">

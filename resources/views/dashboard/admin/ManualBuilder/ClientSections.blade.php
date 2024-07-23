@@ -436,7 +436,7 @@
             //set section_content
             $('.summernote').summernote('code', section.content);
             //set show_in_new_page
-            if (section.show_in_new_page == 1) {
+            if (section.IsHaveLineBefore == 1) {
                 $('[name="show_in_new_page"]').bootstrapSwitch('state', true);
             } else {
                 $('[name="show_in_new_page"]').bootstrapSwitch('state', false);

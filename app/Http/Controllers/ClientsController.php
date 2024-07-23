@@ -7,7 +7,9 @@ use App\Http\Requests\StoreClientsRequest;
 use App\Http\Requests\UpdateClientsRequest;
 use App\Http\SurveysPrepration;
 use App\Models\Departments;
+use App\Models\PartnerFocalPoint;
 use App\Models\Partners;
+use App\Models\Partnerships;
 use App\Models\Plans;
 use App\Models\Services;
 use App\Models\Surveys;
@@ -33,7 +35,16 @@ class ClientsController extends Controller
         //     }
         // }
         //get all undeleted clients
-        $clients = Clients::all();
+        if (Auth()->user()->user_type == 'partner') {
+            //find the partner focal point
+            $partner_id = PartnerFocalPoint::where('Email', Auth()->user()->email)->first()->partner_id;
+            //get countries id in partnerships
+            $Countries_id = Partnerships::where('partner_id', $partner_id)->pluck('country_id')->toArray();
+            //get all clients in the countries
+            $clients = Clients::whereIn('country', $Countries_id)->get();
+        } else {
+            $clients = Clients::all();
+        }
         $data = [
             'clients' => $clients,
         ];
@@ -340,5 +351,15 @@ class ClientsController extends Controller
             //return json
             return response()->json(['message' => 'No file found', 'status' => false], 400);
         }
+    }
+    //saveOrgInfo function
+    public function saveOrgInfo(Request $request, SurveysPrepration $surveysPrepration, $id)
+    {
+        return $surveysPrepration->saveOrgInfo($request, $id, true);
+    }
+    //uploadOrgChartExcel function
+    public function uploadOrgChartExcel(Request $request, SurveysPrepration $surveysPrepration, $id)
+    {
+        return $surveysPrepration->uploadOrgChartExcel($request, $id, true);
     }
 }

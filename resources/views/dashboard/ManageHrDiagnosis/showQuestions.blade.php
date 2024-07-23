@@ -47,6 +47,7 @@
                         <div class="card-header">
                             <h3 class="card-title">{{ __('Practice Questions') }}</h3>
                             <div class="card-tools">
+                                @can('view', $practice)
                                 <a href="@if($service_type == 4)
                                 {{ route('ManageHrDiagnosis.showPractices',$practice->function_id) }}
                                 @elseif($service_type == 5)
@@ -58,7 +59,9 @@
                                     class="btn btn-warning btn-sm">
                                     <i class="fas fa-arrow-left"></i>
                                 </a>
+                                @endcan
                                 {{-- button to add new practice --}}
+                                @can('create', new App\Models\PracticeQuestions)
                                 <a href="
                                 @if($service_type == 4)
                                 {{ route('ManageHrDiagnosis.createQuestion',$practice->id) }}
@@ -71,6 +74,7 @@
                                     class="btn btn-secondary btn-sm">
                                     <i class="fas fa-plus"></i>
                                 </a>
+                                @endcan
                             </div>
                         </div>
                         {{-- card body --}}
@@ -92,6 +96,7 @@
                                             <td>{{ $question->question }}</td>
                                             <td>
                                                 {{-- button to edit question --}}
+                                                @can('update',$question )
                                                 <a href="
                                                 @if($service_type == 4)
                                                 {{ route('ManageHrDiagnosis.editQuestion',$question->id) }}
@@ -105,7 +110,9 @@
                                                     class="btn btn-primary btn-sm">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
+                                                @endcan
                                                 {{-- button to show sweetalert to confirm delete question --}}
+                                                @can('delete',$question )
                                                 <button class="btn btn-danger btn-sm"
                                                     onclick="deleteQuestion({{ $question->id }})">
                                                     <i class="fas fa-trash"></i>
@@ -124,6 +131,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                 </form>
+                                                @endcan
                                             </td>
                                         </tr>
                                         @endforeach

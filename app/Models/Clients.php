@@ -70,4 +70,9 @@ class Clients extends Model
     {
         return app()->isLocale('en') ? $this->name : $this->name_ar;
     }
+    //belongs to countries
+    public function countryData()
+    {
+        return $this->belongsTo(Countries::class, 'country', 'id');
+    }
 }

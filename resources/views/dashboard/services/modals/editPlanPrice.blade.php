@@ -121,6 +121,10 @@
                                 </div>
                             </div>
                         </div>
+                        {{-- submit --}}
+                        <div class="form-group col-12">
+                            <a href="javascript:void(0)" @class(['btn btn-outline-success btn-sm', 'float-right' => app()->isLocale('en'), 'float-left' => app()->isLocale('ar')]) onclick="SavePlanPrice()">{{ __('Save') }}</a>
+                        </div>
                     </div>
                 </form>
             </div>

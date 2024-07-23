@@ -5,7 +5,7 @@
     <div class="row main-bg">
         <div class="col-lg-6 col-md-12 col-sm-12 p-0 m-0 text-center justify-content-center align-self-center">
             <h1 class="text-white" style="font-size: 3.4rem; line-height: 4.0rem">
-                {{ $service->slug}}
+                {{ $service->slug }}
             </h1>
             {{-- <span style="font-size: 2.4rem">{{ __('Maximize your return on people investment') }}
             </span> --}}
@@ -27,8 +27,7 @@
         </div>
         <div class="col-12 text-center justify-content-center align-self-center pt-5">
             <div class="row">
-                @foreach($service->approaches as $approach)
-
+                @foreach ($service->approaches as $approach)
                 <div class="col-lg-4 col-md-12 col-sm-12">
                     <div class="col-12">
                         <img src="{{ asset('uploads/services/icons/') }}/{{ $approach->icon }}" alt="" srcset=""
@@ -37,7 +36,7 @@
                     <div class="col-12">
                         <div class="w-75 m-auto p-3">
 
-                            <p class="">{!! $approach->approach!!}
+                            <p class="">{!! $approach->approach !!}
                             </p>
                         </div>
                     </div>
@@ -77,7 +76,7 @@
                                 <tbody>
                                     @foreach ($service->features as $feature)
                                     <tr>
-                                        <td>{{ $feature->feature }}</td>
+                                        <th>{{ $feature->feature }}</th>
                                         @foreach ($service->plans as $plan)
                                         <td>
                                             @if (in_array($feature->id, $plan->Features))
@@ -90,10 +89,20 @@
                                     </tr>
                                     @endforeach
                                     <tr>
+                                        <th>{{ __('Plan Example Report') }}</th>
+                                        @foreach ($service->plans as $plan)
+                                        <td>
+                                            <a href="{{ asset('uploads/services/sample_reports/' . $plan->sample_report) }}"
+                                                target="_blank" rel="noopener noreferrer">
+                                                <i class="fa fa-download"></i>
+                                            </a>
+                                        </td>
+                                        @endforeach
+                                    <tr>
                                         <th>{{ __('One time Subscription Fee') }}</th>
                                         @foreach ($service->plans as $plan)
-                                        <td>{{ $plan->plansPrices[0]->monthly_price }} {{
-                                            $plan->plansPrices[0]->currency_symbol }}
+                                        <td>{{ $plan->plansPrices[0]->monthly_price }}
+                                            {{ $plan->plansPrices[0]->currency_symbol }}
                                             <a href="javascript:void(0)" class="btn btn-sm btn-warning">{{ __('Subscripe
                                                 now') }}</a>
                                         </td>
@@ -104,17 +113,18 @@
                                         @foreach ($service->plans as $plan)
                                         @php
 
-                                        $TotalMonthlyprice = $plan->plansPrices[0]->monthly_price*12;
-                                        $diff= $TotalMonthlyprice - $plan->plansPrices[0]->annual_price ;
-                                        $percentage= number_format(($diff / $TotalMonthlyprice)*100,2)
+                                        $TotalMonthlyprice = $plan->plansPrices[0]->monthly_price * 12;
+                                        $diff = $TotalMonthlyprice - $plan->plansPrices[0]->annual_price;
+                                        $percentage = number_format(($diff / $TotalMonthlyprice) * 100, 2);
                                         @endphp
-                                        <td><del>{{ $TotalMonthlyprice}}
-                                            </del> {{ $plan->plansPrices[0]->annual_price }} {{
-                                            $plan->plansPrices[0]->currency_symbol }} <span class="text-success">({{
-                                                __('Save') }} {{
-                                                $percentage }}%)</span> <a href="javascript:void(0)"
+                                        <td><del>{{ $TotalMonthlyprice }}
+                                            </del> {{ $plan->plansPrices[0]->annual_price }}
+                                            {{ $plan->plansPrices[0]->currency_symbol }} <span class="text-success">({{
+                                                __('Save') }}
+                                                {{ $percentage }}%)</span> <a href="javascript:void(0)"
                                                 class="btn btn-sm btn-success">{{ __('Subscripe
-                                                now') }}</a></td>
+                                                now') }}</a>
+                                        </td>
                                         @endforeach
                                     </tr>
                                     {{-- if user loged in --}}
@@ -127,6 +137,27 @@
                                         </td>
                                         @endforeach
                                         @endif
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center">
+                                            {{ __('Demo') }}
+                                        </th>
+                                        @if ($service->service_type == 1)
+                                        @foreach ($service->plans as $plan)
+                                        <td class="text-center">
+                                            <a href="{{ route('tools.manualbuilderDemo', ['country' => \App\Http\Facades\Landing::getCurrentCountry(), 'plan' => $plan->id]) }}"
+                                                class="btn btn-sm btn-outline-dark w-75">
+                                                {{ __('Demo') }} {{ $plan->plan_name }}</a>
+                                        </td>
+                                        @endforeach
+                                        @else
+                                        <td colspan="{{ count($service->plans) }}" class="text-center">
+                                            <a href="javascript:void(0)" class="btn btn-sm btn-outline-dark"
+                                                data-bs-toggle="modal" data-bs-target="#requestDemo">{{ __('Demo')
+                                                }}</a>
+                                        </td>
+                                        @endif
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -143,11 +174,12 @@
 <div class="container-fluid p-5">
     <div class="row justify-content-center">
         <div class="col-6">
-            <h1 class="pt-3 pb-3 text-center text-capitalize">{{ __('Tool framework') }}<sup class="h5">TM</sup></h1>
+            <h1 class="pt-3 pb-3 text-center text-capitalize">{{ __('Tool framework') }}<sup class="h5">TM</sup>
+            </h1>
 
-            @if(App()->getLocale() == 'ar')
-            @if($service->FW_uploaded_video_ar)
-            <video id="myVid" src="{{ asset('uploads/services/videos')}}/{{ $service->framework_media_path_ar }}"
+            @if (App()->getLocale() == 'ar')
+            @if ($service->FW_uploaded_video_ar)
+            <video id="myVid" src="{{ asset('uploads/services/videos') }}/{{ $service->framework_media_path_ar }}"
                 autoplay="true" muted="muted">
             </video>
             @else
@@ -158,13 +190,12 @@
                 allowfullscreen></iframe>
             @endif
             @else
-            @if($service->FW_uploaded_video)
-
-            <video id="myVid" src="{{ asset('uploads/services/videos')}}/{{ $service->framework_media_path }}"
+            @if ($service->FW_uploaded_video)
+            <video id="myVid" src="{{ asset('uploads/services/videos') }}/{{ $service->framework_media_path }}"
                 autoplay="true" muted="muted">
             </video>
             @else
-            {{-- embad youtube video--}}
+            {{-- embad youtube video --}}
             <iframe width="100%" height="315" src="{{ $service->framework_media_path }}" title="YouTube video player"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -262,26 +293,85 @@
         </div>
     </div>
 </div>
+{{-- modal to request Demo --}}
+<div class="modal fade" id="requestDemo" tabindex="-1" aria-labelledby="requestDemoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="requestDemoLabel">{{ __('Request Demo For') }}
+                    {{ $service->service_name }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="">
+                    <div class="row">
+                        <input type="hidden" name="service_type_demo" id="service_type_demo" value="{{ $service->service_type }}">
+                        {{-- Company Name --}}
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="name">{{ __('Company Name') }}</label>
+                            <input type="text" name="company_name_demo" class="form-control" id="company_name_demo"
+                                placeholder="Enter Company Name">
+                        </div>
+                        {{-- company_phone --}}
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="name">{{ __('Company Phone') }}</label>
+                            <input type="text" name="company_phone_demo" class="form-control" id="company_phone_demo"
+                                placeholder="Enter Company Phone">
+                        </div>
+                        {{-- select type of raters --}}
+                        @if ($service->service_type == 5)
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="type">{{ __('Type') }}</label>
+                            <select class="form-control" name="rater_type_demo" id="rater_type_demo">
+                                <option value="">{{ __('Select Type') }}</option>
+                                <option value="SL">{{ __('Self') }}</option>
+                                <option value="LM">{{ __('Line Manager') }}</option>
+                                <option value="PE">{{ __('Peer') }}</option>
+                                <option value="DR">{{ __('Direct Report') }}</option>
+                                <option value="OT">{{ __('other') }}</option>
+                            </select>
+                        </div>
+                        @endif
+                        {{-- Email --}}
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="name">{{ __('Email') }}</label>
+                            <input type="email" name="demo_email" class="form-control" id="demo_email" placeholder="Enter Email">
+                            {{-- add hint --}}
+                            <div class="valid-feedback text-primary-emphasis">
+                                {{ __('This email will be used to generate a demo servuy.') }}
+                              </div>
+                        </div>
+                        {{-- submit --}}
+                        <div class="form-group col-sm-12">
+                            <button type="submit" id="SubmitDemoRequest" @class(['btn btn-outline-warning btn-sm', 'float-right' => app()->isLocale('en'), 'float-left' => app()->isLocale('ar')])>{{ __('Submit') }}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 {{-- scripts --}}
 @section('scripts')
 <script>
-    $(function () {
-  $('[data-toggle="popover"]').popover({
-    html : true,
+    $(function() {
+            $('[data-toggle="popover"]').popover({
+                html: true,
 
-        content: function() {
-            var content = $(this).attr("data-popover-content");
-            return $(content).children(".popover-body").html();
+                content: function() {
+                    var content = $(this).attr("data-popover-content");
+                    return $(content).children(".popover-body").html();
+                }
+            });
+
+        });
+
+        function SetUpthis(controle) {
+            console.log(controle);
+            // console.log(controle.attr('data-bs-content'));
         }
-  });
-
-});
-function SetUpthis(controle){
-    console.log(controle);
-    // console.log(controle.attr('data-bs-content'));
-}
-    $(document).ready(function() {
+        $(document).ready(function() {
             // if error is found
             if ($('.is-invalid').length > 0) {
                 $('#requestservice').modal('show');
@@ -304,17 +394,77 @@ function SetUpthis(controle){
             videoScroll();
 
         }
+
         function videoScroll() {
             var windowHeight = window.innerHeight;
-                                var thisVideoEl = document.getElementById('myVid');
-                                    videoHeight = thisVideoEl.clientHeight,
-                                    videoClientRect = thisVideoEl.getBoundingClientRect().top;
+            var thisVideoEl = document.getElementById('myVid');
+            videoHeight = thisVideoEl.clientHeight,
+                videoClientRect = thisVideoEl.getBoundingClientRect().top;
 
-                                if ( videoClientRect <= ( (windowHeight) - (videoHeight*.5) ) && videoClientRect >= ( 0 - ( videoHeight*.5 ) ) ) {
-                                    thisVideoEl.play();
-                                } else {
-                                    thisVideoEl.pause();
-                                }
-                    }
+            if (videoClientRect <= ((windowHeight) - (videoHeight * .5)) && videoClientRect >= (0 - (videoHeight * .5))) {
+                thisVideoEl.play();
+            } else {
+                thisVideoEl.pause();
+            }
+        }
+//on demo_email keypress up
+$('#demo_email').keyup(function(){
+    var email = $(this).val();
+    //check if valid email
+    if (email.length > 0) {
+        if (validateEmail(email)) {
+            $(this).removeClass('is-invalid');
+            $(this).addClass('is-valid');
+        } else {
+            $(this).addClass('is-invalid');
+            $(this).removeClass('is-valid');
+        }
+    }else
+    {
+        $(this).addClass('is-invalid');
+        $(this).removeClass('is-valid');
+    }
+});
+//validate email
+function validateEmail(email) {
+    var re = /\S+@\S+\.\S+/;
+    return re.test(email);
+}
+//on SubmitDemoRequest clicked
+$('#SubmitDemoRequest').click(function(e){
+    e.preventDefault();
+    var email = $('#demo_email').val();
+    var company_name = $('#company_name_demo').val();
+    var company_phone = $('#company_phone_demo').val();
+    var service_type = $('#service_type_demo').val();
+    var type = $('#type').val();
+    //check if valid email
+    if (email.length > 0 && validateEmail(email) && company_name.length > 0 && company_phone.length > 0) {
+        //send request
+        $.ajax({
+            type: "POST",
+            url: "{{ route('tools.SubmitDemoRequest') }}",
+            data: {
+                "_token": "{{ csrf_token() }}",
+                email: email,
+                company_name: company_name,
+                phone: company_phone,
+                service_type: service_type,
+                type: type
+            },
+            success: function(response) {
+                if (response.status == '200') {
+                    $('#requestDemo').modal('hide');
+                    toastr.success(response.message);
+                    toastr.success(response.email_prompt);
+                } else {
+                    toastr.error(response.message);
+                }
+            }
+        });
+    } else {
+        toastr.error('Please fill all fields correctly');
+    }
+});
 </script>
 @endsection

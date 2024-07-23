@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('logo_path')->nullable();
             $table->string('phone')->nullable();
             $table->string('webiste')->nullable();
+            $table->boolean('use_departments')->default(true);
             $table->boolean('use_sections')->default(false);
             $table->boolean('multiple_sectors')->default(false);
             $table->boolean('multiple_company')->default(false);

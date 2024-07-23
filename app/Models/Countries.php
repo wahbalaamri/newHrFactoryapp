@@ -64,4 +64,9 @@ class Countries extends Model
     {
         return $this->hasMany(DefaultMB::class, 'country_id');
     }
+    //hasMany Clients
+    public function clients()
+    {
+        return $this->hasMany(Clients::class, 'country');
+    }
 }

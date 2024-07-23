@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->integer('country_id')->references('id')->on('countries')->onDelete('cascade');
+            $table->integer('plan_id')->nullable()->references('id')->on('plans')->onDelete('cascade');
             $table->integer('ordering')->nullable();
             $table->integer('paren_id')->nullable()->references('id')->on('default_m_b_s')->onDelete('cascade');
             $table->longText('description')->nullable();

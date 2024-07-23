@@ -37,9 +37,9 @@
     </noscript>
     <!-- bootstrap -->
     <link rel="preload" href="{{ asset('assets/css/bootstrap.min.css')}}" as="style" onload="this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css')}}">
-    </noscript>
+    <link rel="stylesheet"
+    href="{{ asset('dashboard/dist/css/adminlte.min.css') }}">
+<!-- iCheck -->
     <!-- hover anmation -->
     <link rel="preload" href="{{ asset('assets/css/hover-min.css')}}" as="style" onload="this.rel='stylesheet'">
     <noscript>
@@ -221,7 +221,8 @@
                         @if ($partner)
                         <div class="">
                             Managed by:
-                            <img src="{{ asset('uploads/companies/logos/'.$partner->logo_path) }}" alt="" style="width: 100px">
+                            <img src="{{ asset('uploads/companies/logos/'.$partner->logo_path) }}" alt=""
+                                style="width: 100px">
                         </div>
                         @endif
                     </div>
@@ -291,7 +292,8 @@
                         @if ($partner)
                         <div class="text-white">
                             Managed by:
-                            <img src="{{ asset('uploads/companies/logos/'.$partner->logo_path) }}" alt="" style="width: 100px">
+                            <img src="{{ asset('uploads/companies/logos/'.$partner->logo_path) }}" alt=""
+                                style="width: 100px">
                         </div>
                         @endif
                     </div>
@@ -308,10 +310,14 @@
                         <li class="list-inline-item"><a class="linkedin cms" data-contentId="107" href="#"><i
                                     class="fab fa-linkedin"></i></a></li>
                     </ul>
-                    <a class="text-white" href="{{ $partner? 'tel:'.$partner->focalPoints[0]->phone:'tel:+96879178007' }}" dir=""><i class="fas fa-phone"></i>&nbsp;
+                    <a class="text-white"
+                        href="{{ $partner? 'tel:'.$partner->focalPoints[0]->phone:'tel:+96879178007' }}" dir=""><i
+                            class="fas fa-phone"></i>&nbsp;
                         {{ $partner? $partner->focalPoints[0]->phone:'+96879178007' }}</a><br />
-                    <a class="text-white" href="{{ $partner? 'mailto:'.$partner->focalPoints[0]->Email:'mailto:care@hrfactoryapp.com' }}" dir=""><i
-                            class="fas fa-envelope"></i>&nbsp; {{ $partner? $partner->focalPoints[0]->Email:'care@hrfactoryapp.com' }}</a>
+                    <a class="text-white"
+                        href="{{ $partner? 'mailto:'.$partner->focalPoints[0]->Email:'mailto:care@hrfactoryapp.com' }}"
+                        dir=""><i class="fas fa-envelope"></i>&nbsp; {{ $partner?
+                        $partner->focalPoints[0]->Email:'care@hrfactoryapp.com' }}</a>
                 </div>
             </div>
         </div>
@@ -374,15 +380,15 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="assets/js/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="assets/js/sticky-sidebar.js"></script>
-    <script type="text/javascript" src="assets/js/YouTubePopUp.jquery.js"></script>
-    <script type="text/javascript" src="assets/js/owl.carousel.min.js"></script>
-    <script type="text/javascript" src="assets/js/imagesloaded.min.js"></script>
-    <script type="text/javascript" src="assets/js/wow.min.js"></script>
-    <script type="text/javascript" src="assets/js/popper.min.js"></script>
-    <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="assets/js/custom.js"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/sticky-sidebar.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/YouTubePopUp.jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/imagesloaded.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/wow.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/popper.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/custom.js') }}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">

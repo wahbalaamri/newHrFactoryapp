@@ -14,6 +14,7 @@ class FunctionsPolicy
     public function viewAny(User $user): bool
     {
         //
+        return $user->isAdmin || $user->user_type == 'partner'|| $user->user_type == 'client';
     }
 
     /**
@@ -22,6 +23,7 @@ class FunctionsPolicy
     public function view(User $user, Functions $functions): bool
     {
         //
+        return $user->isAdmin || $user->user_type == 'partner'|| $user->user_type == 'client';
     }
 
     /**
@@ -30,6 +32,7 @@ class FunctionsPolicy
     public function create(User $user): bool
     {
         //
+        return $user->isAdmin;
     }
 
     /**
@@ -38,6 +41,7 @@ class FunctionsPolicy
     public function update(User $user, Functions $functions): bool
     {
         //
+        return $user->isAdmin;
     }
 
     /**
@@ -46,6 +50,7 @@ class FunctionsPolicy
     public function delete(User $user, Functions $functions): bool
     {
         //
+        return $user->isAdmin;
     }
 
     /**
@@ -54,6 +59,7 @@ class FunctionsPolicy
     public function restore(User $user, Functions $functions): bool
     {
         //
+        return $user->isAdmin;
     }
 
     /**
@@ -62,5 +68,6 @@ class FunctionsPolicy
     public function forceDelete(User $user, Functions $functions): bool
     {
         //
+        return $user->isAdmin;
     }
 }

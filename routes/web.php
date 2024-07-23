@@ -25,6 +25,7 @@ use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\SurveysController;
 use App\Http\Controllers\TermsConditionsController;
 use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\UserSectionsController;
 use App\Http\Facades\TempURLFacade;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -46,6 +47,7 @@ Route::get('/SetupNameRev', [HomeController::class, 'SetupNameRev'])->name("Setu
 Route::get('/about-us', [HomeController::class, 'aboutus'])->name("Home.about-us");
 Route::get('/profile', [HomeController::class, 'profile'])->name("Home.profile");
 Route::get('/training', [TrainingController::class, 'index'])->name("Training");
+Route::get('/setUpMissingUsers', [UserSectionsController::class, 'setUpMissingUsers'])->name("user.setUpMissingUsers");
 Route::get('/Surveys/takeSurvey/{id}', [SurveysController::class, 'takeSurvey'])->name("Surveys.takeSurvey");
 Route::get('Surveys/survey/{id}', [Leader360ReviewController::class, 'survey'])->name('Surveys.survey');
 Route::post('/Surveys/SaveAnswers', [SurveysController::class, 'SaveAnswers'])->name("Surveys.SaveAnswers");
@@ -70,6 +72,12 @@ Route::get('/client/dashboard', [HomeController::class, 'client'])->name('client
 Route::get('/client/manage', [HomeController::class, 'manage'])->name('client.manage')->middleware('auth:web');
 Route::post('Coupons/getCouponRate', [CouponsController::class, 'getCouponRate'])->name('coupon.getCouponRate');
 Route::get('tools/view/{id}', [HomeController::class, 'viewTool'])->name('tools.view');
+Route::get('tools/manualbuilderDemo/{country}/{plan}', [HomeController::class, 'manualbuilderDemo'])->name('tools.manualbuilderDemo');
+Route::get('tools/EmployeeEngagmentDemo/{id}', [HomeController::class, 'EmployeeEngagmentDemo'])->name('tools.EmployeeEngagmentDemo');
+Route::get('tools/EmployeeEngagmentResultDemo/{id}', [HomeController::class, 'EmployeeEngagmentResultDemo'])->name('tools.EmployeeEngagmentResultDemo');
+Route::get('tools/hrDiagnosisDemo/{id}', [HomeController::class, 'hrDiagnosisDemo'])->name('tools.hrDiagnosisDemo');
+Route::get('tools/leader360ReviewDemo/{id}', [HomeController::class, 'leader360ReviewDemo'])->name('tools.leader360ReviewDemo');
+Route::post('tools/SubmitDemoRequest', [HomeController::class, 'SubmitDemoRequest'])->name('tools.SubmitDemoRequest');
 Route::post('register/newclient', [RegisterController::class, 'registerNewClient'])->name('register.newclient');
 Route::get('lang/{locale}', function () {
     session()->put('locale', request()->locale);
@@ -162,6 +170,7 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
       ==================================================================================================================*/
     Route::get('service-plans/create/{id}', [PlansController::class, 'create'])->name('service-plans.create');
     Route::post('service-plans/store/{id}', [PlansController::class, 'store'])->name('service-plans.store');
+    Route::post('service-plans/savePlanPrice', [PlansController::class, 'savePlanPrice'])->name('service-plans.savePlanPrice');
     Route::get('service-plans/show/{id}', [PlansController::class, 'show'])->name('service-plans.show');
     Route::get('service-plans/edit/{id}', [PlansController::class, 'edit'])->name('service-plans.edit');
     Route::delete('service-plans/destroy/{id}', [PlansController::class, 'destroy'])->name('service-plans.destroy');
@@ -337,6 +346,8 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::get('clients/respondents/{id}/{type}/{survey}', [ClientsController::class, 'Respondents'])->name('clients.Respondents');
     Route::get('clients/CustomizedsurveyRespondents/{id}/{type}/{survey}', [ClientsController::class, 'CustomizedsurveyRespondents'])->name('clients.CustomizedsurveyRespondents');
     Route::get('clients/orgChart/{id}', [ClientsController::class, 'orgChart'])->name('clients.orgChart');
+    Route::post('clients/saveOrgInfo/{id}', [ClientsController::class, 'saveOrgInfo'])->name('clients.saveOrgInfo');
+    Route::post('clients/uploadOrgChartExcel/{id}', [ClientsController::class, 'uploadOrgChartExcel'])->name('clients.uploadOrgChartExcel');
     Route::get('clients/Employees/{id}', [ClientsController::class, 'Employees'])->name('clients.Employees');
     Route::get('clients/ShowCreateEmail/{id}/{type}/{survey}', [ClientsController::class, 'ShowCreateEmail'])->name('clients.ShowCreateEmail');
     Route::post('clients/storeSurveyEmail/{id}/{type}/{survey}/{emailid?}', [ClientsController::class, 'storeSurveyEmail'])->name('clients.storeSurveyEmail');
@@ -444,8 +455,9 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
       =                                                                                                                =
       =                                                                                                                =
       ==================================================================================================================*/
-      Route::get('manualBuilder/Default/{country?}', [DefaultMBController::class, 'index'])->name('manualBuilder.index');
+      Route::get('manualBuilder/Default/{country?}/{plan?}', [DefaultMBController::class, 'index'])->name('manualBuilder.index');
       Route::get('manualBuilder/ClientSections/{id}', [DefaultMBController::class, 'ClientSections'])->name('manualBuilder.ClientSections');
+      Route::get('manualBuilder/CopyPlanSections/{country}/{id}/{d_id}', [DefaultMBController::class, 'CopyPlanSections'])->name('manualBuilder.CopyPlanSections');
       Route::post('manualBuilder/reorder/', [DefaultMBController::class, 'reorder'])->name('manualBuilder.reorder');
       Route::post('manualBuilder/update/', [DefaultMBController::class, 'updateSection'])->name('manualBuilder.update');
       Route::post('manualBuilder/store/', [DefaultMBController::class, 'storeSection'])->name('manualBuilder.store');

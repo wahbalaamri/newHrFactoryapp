@@ -46,6 +46,7 @@
                         <div class="card-header">
                             <h3 class="card-title">{{ __('Functions') }}
                             </h3>
+                            @can('create',new App\Models\Functions)
                             <div class="card-tools">
                                 <a href="@if ($service_type==4)
                                     {{ route('ManageHrDiagnosis.createFunction') }}
@@ -58,6 +59,7 @@
                                     <i class="fas fa-plus"></i>
                                 </a>
                             </div>
+                            @endcan
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -78,7 +80,7 @@
                                             <td>{{ $function->title }}</td>
                                             <td>
                                                 {{-- button to view practices --}}
-
+                                                @can('view', $function)
                                                 <a href=" @if ($service_type==4)
                                                 {{ route('ManageHrDiagnosis.showPractices',$function->id) }}
                                                 @elseif($service_type==5)
@@ -89,8 +91,10 @@
                                                 " class="btn btn-info btn-sm">
                                                     <i class="fas fa-eye"></i> {{ __('View Practices')
                                                     }}</a>
+                                                @endcan
                                             </td>
                                             <td>
+                                                @can('update',$function)
                                                 <a href="@if ($service_type==4)
                                                     {{ route('ManageHrDiagnosis.editFunction',$function->id) }}
                                                     @elseif($service_type==5)
@@ -100,22 +104,23 @@
                                                     @endif" class="btn btn-primary btn-sm">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
+                                                @endcan
+                                                @can('delete',$function)
                                                 <button type="button" class="btn btn-danger btn-sm"
                                                     onclick="confirmDelete({{ $function->id }})">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-                                                <form id="delete-form-{{ $function->id }}"
-                                                    action="@if ($service_type==4)
+                                                <form id="delete-form-{{ $function->id }}" action="@if ($service_type==4)
                                                         {{ route('ManageHrDiagnosis.destroyFunction',$function->id) }}
                                                         @elseif($service_type==5)
                                                         {{ route('Leader360Review.destroyFunction',$function->id) }}
                                                         @elseif($service_type==3)
                                                         {{ route('EmployeeEngagment.destroyFunction',$function->id) }}
-                                                        @endif"
-                                                    method="POST" style="display: none;">
+                                                        @endif" method="POST" style="display: none;">
                                                     @csrf
                                                     @method('DELETE')
                                                 </form>
+                                                @endcan
                                             </td>
                                             @endforeach
                                             @else

@@ -14,6 +14,7 @@ class FunctionPracticesPolicy
     public function viewAny(User $user): bool
     {
         //
+        return true;
     }
 
     /**
@@ -22,6 +23,7 @@ class FunctionPracticesPolicy
     public function view(User $user, FunctionPractices $functionPractices): bool
     {
         //
+        return true;
     }
 
     /**
@@ -30,6 +32,7 @@ class FunctionPracticesPolicy
     public function create(User $user): bool
     {
         //
+        return $user->isAdmin;
     }
 
     /**
@@ -38,6 +41,7 @@ class FunctionPracticesPolicy
     public function update(User $user, FunctionPractices $functionPractices): bool
     {
         //
+        return $user->isAdmin;
     }
 
     /**
@@ -46,6 +50,7 @@ class FunctionPracticesPolicy
     public function delete(User $user, FunctionPractices $functionPractices): bool
     {
         //
+        return $user->isAdmin;
     }
 
     /**
@@ -54,6 +59,7 @@ class FunctionPracticesPolicy
     public function restore(User $user, FunctionPractices $functionPractices): bool
     {
         //
+        return $user->isAdmin;
     }
 
     /**
@@ -62,5 +68,6 @@ class FunctionPracticesPolicy
     public function forceDelete(User $user, FunctionPractices $functionPractices): bool
     {
         //
+        return $user->isAdmin;
     }
 }

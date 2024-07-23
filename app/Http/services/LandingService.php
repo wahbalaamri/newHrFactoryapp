@@ -22,14 +22,16 @@ class LandingService
     {
         //get client country
         $ipAddress = request()->ip() ?? null; // Get client's IP address
-        $clientCountry = $ipAddress ? "http://ipinfo.io/$ipAddress/json" : null; // Get client's country
-        if ($clientCountry) {
-            $json = file_get_contents($clientCountry);
-            $data = json_decode($json);
-            $countryCode = $data->country;
-            //   Log::info( $countryCode );
-            $country = Countries::where('country_code', $countryCode)->first();
-            return $country->id;
+        if ($ipAddress != '127.0.0.1') {
+            $clientCountry = $ipAddress ? "http://ipinfo.io/$ipAddress/json" : null; // Get client's country
+            if ($clientCountry) {
+                $json = file_get_contents($clientCountry);
+                $data = json_decode($json);
+                $countryCode = $data->country;
+                //   Log::info( $countryCode );
+                $country = Countries::where('country_code', $countryCode)->first();
+                return $country->id;
+            }
         }
         //using api detect current location
         $url = "https://extreme-ip-lookup.com/json/?key=sswCYj3OKfeIuxY1C3Bd";

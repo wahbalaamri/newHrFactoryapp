@@ -338,7 +338,7 @@ class PlansController extends Controller
             $plan->limitations_ar = $request->limitations_ar;
             if ($request->plan_id && $sample_report_name == "");
             else
-                $plan->sample_report = $request->sample_report;
+                $plan->sample_report = $sample_report_name;
             $plan->is_active = $request->is_active != null ? true : false;
             $plan->save();
             if ($request->plan_id)
@@ -389,7 +389,6 @@ class PlansController extends Controller
         }
         //get plan terms and conditions
         $terms = $plan->termsConditions;
-
         //if auth usertype partner
         if (Auth()->user()->user_type == 'partner') {
             //find the partner focal point
@@ -402,7 +401,11 @@ class PlansController extends Controller
         //if auth usertype admin
         else {
             //get all countries
-            $countries = Countries::all()->groupBy('IsArabCountry')->append('country_name');
+            $countries = Countries::all()->append('country_name');
+            //get Countries id
+            // $Countries_id[] = $countries[0]->pluck('id')->toArray();
+            $Countries_id = $countries->pluck('id')->toArray();
+            $countries = $countries->groupBy('IsArabCountry');
         }
         $data = [
             'plan' => $plan,
@@ -411,6 +414,7 @@ class PlansController extends Controller
             'features_id' => $features_id,
             'terms' => $terms,
             'countries' => $countries,
+            'Countries_id' => $Countries_id
         ];
         //return json response
         return response()->json($data);
@@ -452,5 +456,45 @@ class PlansController extends Controller
         $plan->delete();
         //return back
         return back();
+    }
+    //updatePlanPrice function
+    function savePlanPrice(Request $request)
+    {
+        try { //get plan price
+            if ($request->id == null) {
+                //get plans price
+                $plan_price = PlansPrices::where([['plan', $request->plan_id], ['country', $request->country_id]])->get();
+                if (count($plan_price) > 0) {
+                    //create new plan price
+                    return response()->json(['status' => false, 'error' => 'Plan price already exists']);
+                } else {
+                    $plan_price = new PlansPrices();
+                    $plan_price->plan = $request->plan_id;
+                    $plan_price->country = $request->country_id;
+                    $plan_price->monthly_price = $request->monthly_price;
+                    $plan_price->annual_price = $request->annual_price;
+                    $plan_price->currency = $request->currency;
+                    $plan_price->payment_methods = json_encode($request->payment_methods);
+                    $plan_price->is_active = true;
+                    $plan_price->save();
+                    //return json respons
+                    return response()->json(['status' => true, 'message' => 'Plan price created successfully']);
+                }
+            } else {
+                $plan_price = PlansPrices::find($request->id);
+                //update plan price
+                $plan_price->monthly_price = $request->monthly_price;
+                $plan_price->annual_price = $request->annual_price;
+                $plan_price->currency = $request->currency;
+                $plan_price->payment_methods = json_encode($request->payment_methods);
+                $plan_price->save();
+                //return json respons
+                return response()->json(['status' => true, 'message' => 'Plan price updated successfully']);
+            }
+        } catch (\Exception $e) {
+            //return error
+            Log::error($e->getMessage());
+            return response()->json(['status' => false, 'error' => $e->getMessage()]);
+        }
     }
 }

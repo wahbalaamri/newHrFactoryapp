@@ -62,6 +62,7 @@
                                                 <th>{{__('Focal Point Email')}}</th>
                                                 <th>{{__('Focal Point Phone')}}</th>
                                                 <th>{{__('Company Phone')}}</th>
+                                                <th>{{__('Country')}}</th>
                                                 <th>{{__('Status')}}</th>
                                                 <th>{{__('Subscription')}}</th>
                                                 <th>{{__('Created At')}}</th>
@@ -89,6 +90,9 @@
                                                 </td>
                                                 <td>
                                                     {{ $client->phone??'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ $client->countryData->country_name }}
                                                 </td>
                                                 <td>
                                                     @if($client->deleted_at==null) <span class='badge bg-success'>{{

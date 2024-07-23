@@ -47,6 +47,7 @@
                         <div class="card-header">
                             <h3 class="card-title">{{ __('Function Practices') }}</h3>
                             <div class="card-tools">
+                                @can('view', $function)
                                 <a href="
                                 @if($service_type==4)
                                 {{ route('ManageHrDiagnosis.index') }}
@@ -58,7 +59,9 @@
                                 " class="btn btn-warning btn-sm">
                                     <i class="fas fa-arrow-left"></i>
                                 </a>
+                                @endcan
                                 {{-- button to add new practice --}}
+                                @can('create', new App\Models\FunctionPractices)
                                 <a href="
                                 @if($service_type==4)
                                 {{ route('ManageHrDiagnosis.createPractice',$function->id) }}
@@ -71,6 +74,7 @@
                                     class="btn btn-secondary btn-sm">
                                     <i class="fas fa-plus"></i>
                                 </a>
+                                @endcan
                             </div>
                         </div>
                         {{-- card body --}}
@@ -93,6 +97,7 @@
                                             <td>{{ $practice->title }}</td>
                                             <td>
                                                 {{-- button to view questions --}}
+                                                @can('view',$practice)
                                                 <a href="
                                                 @if($service_type==4)
                                                 {{ route('ManageHrDiagnosis.showQuestions',$practice->id) }}
@@ -101,14 +106,14 @@
                                                 @elseif($service_type==3)
                                                 {{ route('EmployeeEngagment.showQuestions',$practice->id) }}
                                                 @endif
-                                                "
-                                                    class="btn btn-info btn-sm">
+                                                "class="btn btn-info btn-sm">
                                                     <i class="fas fa-eye"></i> {{ __('View Questions') }}</a>
-
+                                                    @endcan
                                             </td>
                                             <td>
                                                 <div class="row">
                                                     {{-- button to edit practice --}}
+                                                    @can('update',$practice)
                                                     <a href="
                                                     @if($service_type==4)
                                                     {{ route('ManageHrDiagnosis.editPractice',$practice->id) }}
@@ -121,8 +126,10 @@
                                                         class="btn btn-warning btn-sm m-1">
                                                         <i class="fa fa-edit text-xs"></i>
                                                     </a>
+                                                    @endcan
                                                     {{-- button to show sweetalert to confirm delete practice --}}
-                                                    <button class="btn btn-danger btn-sm"
+                                                    @can('delete',$practice)
+                                                    <button class="btn btn-danger btn-sm m-1"
                                                         onclick="deletePractice({{ $practice->id }})">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
@@ -141,6 +148,7 @@
                                                         @csrf
                                                         @method('DELETE')
                                                     </form>
+                                                    @endcan
                                                 </div>
                                             </td>
                                         </tr>
