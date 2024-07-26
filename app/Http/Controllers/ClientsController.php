@@ -362,4 +362,9 @@ class ClientsController extends Controller
     {
         return $surveysPrepration->uploadOrgChartExcel($request, $id, true);
     }
+    //uploadEmployeeExcel function
+    public function uploadEmployeeExcel(Request $request, SurveysPrepration $surveysPrepration, $id)
+    {
+        return $surveysPrepration->uploadEmployeeExcel($request, $id, true);
+    }
 }

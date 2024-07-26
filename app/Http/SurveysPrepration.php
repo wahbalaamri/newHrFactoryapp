@@ -13,6 +13,8 @@ use App\Models\{Clients, ClientSubscriptions, Functions, Services, FunctionPract
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Jobs\UploadEmployeeData;
+use App\Jobs\UploadOrgChart;
 
 class SurveysPrepration
 {
@@ -4188,15 +4190,15 @@ class SurveysPrepration
         return view('dashboard.client.CustomizedsurveyRespondents')->with($data);
     }
     //saveOrgInfo function
-    function saveOrgInfo(Request $request,$id,$is_admin = false)
+    function saveOrgInfo(Request $request, $id, $is_admin = false)
     {
         try {
             $client = Clients::find($id);
 
-            $client->multiple_sectors = ($request->multiple_sectors)==1?true:false;
-            $client->multiple_company = ($request->multiple_companies)==1?true:false;
-            $client->use_departments = ($request->use_departments)==1?true:false;
-            $client->use_sections = ($request->use_sections)==1?true:false;
+            $client->multiple_sectors = ($request->multiple_sectors) == 1 ? true : false;
+            $client->multiple_company = ($request->multiple_companies) == 1 ? true : false;
+            $client->use_departments = ($request->use_departments) == 1 ? true : false;
+            $client->use_sections = ($request->use_sections) == 1 ? true : false;
             $client->save();
             return response()->json(['message' => 'Organization info saved successfully', 'stat' => true], 200);
         } catch (\Exception $e) {
@@ -4205,13 +4207,43 @@ class SurveysPrepration
         }
     }
     //uploadOrgChartExcel function
-    function uploadOrgChartExcel(Request $request,$id,$is_admin = false)
+    function uploadOrgChartExcel(Request $request, $id, $is_admin = false)
+    {
+        try {
+            //check if $request has file
+            if ($request->hasFile('excel')) {
+                $file = $request->file('excel');
+                // $file_name = time() . '.' . $file->getClientOriginalExtension();
+                // $file->move(public_path('uploads/orgChart'), $file_name);
+                $filePath = $file->store('temp');
+                $job = (new UploadOrgChart($id, $filePath,  auth()->user()->id))->delay(now()->addSeconds(2));
+                dispatch($job);
+            }
+
+            //return back with success
+            return redirect()->back()->with('message', 'IT WORKS!');
+        } catch (\Exception $e) {
+            Log::error($e);
+            return response()->json(['message' => 'Error uploading Organization chart', 'stat' => false], 500);
+        }
+    }
+    function uploadEmployeeExcel(Request $request, $id, $is_admin = false)
     {
         try {
             //read excel sheet
+            if ($request->hasFile('excel')) {
+                //save file
+                $file = $request->file('excel');
+                // $file_name = time() . '.' . $file->getClientOriginalExtension();
+                // $file->move(public_path('uploads/orgChart'), $file_name);
+                $filePath = $file->store('temp');
 
-            $data = Excel::toArray([], $request->file('excel'));
-            dd(array_slice( $data[0],1));
+                //create job
+
+                $job = (new UploadEmployeeData($id, $filePath,  auth()->user()->id))->delay(now()->addSeconds(2));
+                dispatch($job);
+            }
+            return redirect()->back()->with('message', 'IT WORKS!');
         } catch (\Exception $e) {
             Log::error($e);
             return response()->json(['message' => 'Error uploading Organization chart', 'stat' => false], 500);

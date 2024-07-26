@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ClientSubscriptionsController;
 use App\Http\Controllers\CouponsController;
@@ -79,6 +80,7 @@ Route::get('tools/hrDiagnosisDemo/{id}', [HomeController::class, 'hrDiagnosisDem
 Route::get('tools/leader360ReviewDemo/{id}', [HomeController::class, 'leader360ReviewDemo'])->name('tools.leader360ReviewDemo');
 Route::post('tools/SubmitDemoRequest', [HomeController::class, 'SubmitDemoRequest'])->name('tools.SubmitDemoRequest');
 Route::post('register/newclient', [RegisterController::class, 'registerNewClient'])->name('register.newclient');
+Route::get('ChangePass', [ResetPasswordController::class, 'showResetForm'])->name('ChangePass');
 Route::get('lang/{locale}', function () {
     session()->put('locale', request()->locale);
     return redirect()->back();
@@ -348,6 +350,7 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::get('clients/orgChart/{id}', [ClientsController::class, 'orgChart'])->name('clients.orgChart');
     Route::post('clients/saveOrgInfo/{id}', [ClientsController::class, 'saveOrgInfo'])->name('clients.saveOrgInfo');
     Route::post('clients/uploadOrgChartExcel/{id}', [ClientsController::class, 'uploadOrgChartExcel'])->name('clients.uploadOrgChartExcel');
+    Route::post('clients/uploadEmployeeExcel/{id}', [ClientsController::class, 'uploadEmployeeExcel'])->name('clients.uploadEmployeeExcel');
     Route::get('clients/Employees/{id}', [ClientsController::class, 'Employees'])->name('clients.Employees');
     Route::get('clients/ShowCreateEmail/{id}/{type}/{survey}', [ClientsController::class, 'ShowCreateEmail'])->name('clients.ShowCreateEmail');
     Route::post('clients/storeSurveyEmail/{id}/{type}/{survey}/{emailid?}', [ClientsController::class, 'storeSurveyEmail'])->name('clients.storeSurveyEmail');

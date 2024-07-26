@@ -151,7 +151,7 @@
                                             </a>
                                         </div>
                                         <div class="col-md-4 col-sm-12">
-                                            <a href="javascript:void(0)" class="btn btn-xs btn-primary">
+                                            <a href="{{ route('manualBuilder.downloadClientPolicy') }}" class="btn btn-xs btn-primary">
                                                 <i class="fa fa-download">
                                                 </i>
                                                 {{ __('Download HR Policy') }}

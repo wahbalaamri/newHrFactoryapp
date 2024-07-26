@@ -193,4 +193,5 @@ class RegisterController extends Controller
             return redirect('/login')->with('success', 'You are registered successfully');
         }
     }
+
 }

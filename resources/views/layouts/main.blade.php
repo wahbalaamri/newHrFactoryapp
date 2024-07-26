@@ -37,9 +37,8 @@
     </noscript>
     <!-- bootstrap -->
     <link rel="preload" href="{{ asset('assets/css/bootstrap.min.css')}}" as="style" onload="this.rel='stylesheet'">
-    <link rel="stylesheet"
-    href="{{ asset('dashboard/dist/css/adminlte.min.css') }}">
-<!-- iCheck -->
+    <link rel="stylesheet" href="{{ asset('dashboard/dist/css/adminlte.min.css') }}">
+    <!-- iCheck -->
     <!-- hover anmation -->
     <link rel="preload" href="{{ asset('assets/css/hover-min.css')}}" as="style" onload="this.rel='stylesheet'">
     <noscript>
@@ -173,25 +172,23 @@
                             style="text-decoration: none">English</a>
                         @endif
                     </div>
-                    <div class="col-2 padding-tb-10px">
-                        <ul class="list-inline float-right text-white" dir="ltr">
-                            <li> <i class="fa fa-bell fa-1x"></i></li>
-                        </ul>
-                    </div>
-                    <div class="col-4 text-white text-right text-center padding-tb-10px" dir="ltr">
-                        <ul class="list-inline float-right text-white" dir="ltr">
-                            <li>{{ __('plans') }}</li>
-                        </ul>
+                    <div class="col-5 padding-tb-10px">
                     </div>
 
-                    <div class="col-4">
+                    <div class="col-5">
                         <div class="row user-area list-inline float-end margin-0px text-white padding-tb-10px">
                             @guest
                             <div class="col-4"><a href="{{ route('login') }}">{{ __('Login') }}</a></div>
                             <div class="col-4"><a href="{{ route('register') }}">{{ __('Register') }}</a></div>
                             @else
-                            <div class="col-8"><a href="#">{{ __('User Profile') }}</a></div>
-                            <div class="col-3">
+                            <div class="col-1 ml-3 mr-1 text-center"><a
+                                    href="{{ auth()->user()->isAdmin || auth()->user()->user_type=='partner'? route('admin.dashboard'):route('client.dashboard') }}">{{
+                                    __('Dashboard') }}</a></div>
+                            <div class="col-5 ml-5 mr-1 text-center">
+                                <a href="{{ route('password.request') }}">{{ __('Change Password') }}
+                                </a>
+                            </div>
+                            <div class="col-2 ml- mr-1 text-center">
                                 <a href="{{ route('logout') }}" class="text-white text-decoration-none" onclick="event.preventDefault();
                                     document.getElementById('logout-form').submit();">
                                     {{ __('Logout') }}

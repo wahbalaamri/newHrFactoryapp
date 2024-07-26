@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('mobile')->nullable();
             $table->string('emp_id')->nullable();
             $table->string('gender')->nullable();
+            $table->date('dob')->nullable();
+            $table->date('dos')->nullable();
             $table->string('age_generation')->nullable();
             $table->string('position')->nullable();
             $table->integer('employee_type');

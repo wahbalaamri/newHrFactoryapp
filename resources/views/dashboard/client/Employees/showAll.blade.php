@@ -51,6 +51,28 @@
                             </div>
                         </div>
                         <div class="card-body">
+                            {{-- card --}}
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">{{ __('Upload Your Employees Data') }}</h3>
+                                </div>
+                                <div class="card-body">
+                                    {{-- form to upload excel sheet --}}
+                                    <form action="{{ route('clients.uploadEmployeeExcel', $id) }}"
+                                        method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="form-group col-md-6 col-sm-12">
+                                            <label for="excel">{{ __('Upload Excel Sheet') }}</label>
+                                            <input type="file" name="excel" class="form-control" required>
+                                        </div>
+                                        <div class="form-group col-sm-12">
+                                            <button type="submit"
+                                                class="btn btn-outline-success btn-sm {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{
+                                                __('Upload') }}</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table id="Employee-data"
                                     class="table table-hover table-striped table-bordered text-center text-sm">
