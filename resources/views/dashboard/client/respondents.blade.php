@@ -53,7 +53,11 @@
 
                                         <tr>
                                             <th>#</th>
-                                            <th>{{ __('Respondents') }}</th>
+                                            <th>{{ __('Respondents') }}
+                                                {{-- select all button --}}
+                                                <label for="select-all">{{ __('Select All') }}</label>
+                                                <input type="checkbox" id="select-all" class="">
+                                            </th>
                                             <th>{{ __('Employee Name') }}</th>
                                             <th>{{ __('Email') }}</th>
                                             <th>{{ __('Phone') }}</th>
@@ -255,6 +259,9 @@
                 $('.row-select:checked').each(function() {
                     ids.push($(this).val());
                 });
+                //get if select-all is checked
+                isAll = $('#select-all').is(':checked')?'all':'';
+                console.log(ids.length);
                 if (ids.length > 0) {
                     $.ajax({
                         url: "{{ route('clients.saveSurveyRespondents') }}",
@@ -265,7 +272,8 @@
                             "survey": "{{ $survey_id }}",
                             "type": "{{ $type }}",
                             "client": "{{ $id }}",
-                            "tool_type":"normal"
+                            "tool_type":"normal",
+                            "isAll":isAll
                         },
                         success: function(data) {
                             if (data.status) {
@@ -374,7 +382,7 @@
             getdepartments(company_id);
         });
         getdepartments = (id) => {
-            url = "{{ route('client.departments', ':d') }}";
+            url = "{{ route('client.departments', [':d','d']) }}";
             url = url.replace(':d', id);
             if (id) {
                 $.ajax({
@@ -471,5 +479,17 @@
                 }
             });
         }
+        //on select-all change
+        $('#select-all').on('change', function() {
+            if (this.checked) {
+                $('.row-select').each(function() {
+                    this.checked = true;
+                });
+            } else {
+                $('.row-select').each(function() {
+                    this.checked = false;
+                });
+            }
+        });
 </script>
 @endsection

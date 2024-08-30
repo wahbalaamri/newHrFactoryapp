@@ -25,7 +25,7 @@ class Departments extends Model
     //has many employees
     public function employees()
     {
-        return $this->hasMany(Respondents::class, 'department_id', 'id');
+        return $this->hasMany(Employees::class, 'dep_id', 'id');
     }
     //has many relations to self
     public function subDepartments()
@@ -41,5 +41,22 @@ class Departments extends Model
     public function getNameAttribute()
     {
         return app()->getLocale() == 'ar' ? $this->name_ar : $this->name_en;
+    }
+    public function getBranchNameAttribute()
+    {
+        $parent=$this->parent;
+        if($parent->dep_level==4){
+            return $parent->name;
+        }
+        return $parent->getBranchNameAttribute();
+    }
+    //region
+    public function getRegionNameAttribute()
+    {
+        $parent=$this->parent;
+        if($parent->dep_level==3){
+            return $parent->name;
+        }
+        return $parent->getRegionNameAttribute();
     }
 }

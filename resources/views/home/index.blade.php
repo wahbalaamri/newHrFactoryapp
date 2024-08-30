@@ -114,13 +114,13 @@
             <div class="sectionInner">
                 <div class="container">
                     <div class="text-center margin-bottom-35px fadeInUp">
-                        <h1 class="text-center cms" data-contentId="10"><span style="color:#f39c12">{{ __('HR Tools')
+                        <h1 class="text-center cms" data-contentId="10"><span style="color:#f39c12">{{ __('HR Consulting Solutions')
                                 }}</span></h1>
                     </div>
                     <div class="row ">
                         @foreach ($services as $service)
                         @if ($service->service_type != 6)
-                            
+
                         @endif
                         <div class="col-lg-4 col-md-6 sm-mb-30px wow fadeInUp padding-bottom-42px">
                             <div class="blog-item thum-hover background-white hvr-float hvr-sh2 ">

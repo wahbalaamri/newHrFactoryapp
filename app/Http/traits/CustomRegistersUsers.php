@@ -3,12 +3,14 @@
 namespace App\Http\traits;
 
 use App\Enums\NumberOfEmployees;
+use App\Http\Facades\Landing;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\{Industry,Countries};
+use App\Models\{Industry, Countries, TermsConditions};
 use Illuminate\Foundation\Auth\RedirectsUsers;
+use Illuminate\Support\Facades\Log;
 
 trait CustomRegistersUsers
 {
@@ -21,11 +23,19 @@ trait CustomRegistersUsers
      */
     public function showRegistrationForm()
     {
+        //get current country
+        $current_country = Landing::getCurrentCountry();
+        //get Default country
+        $default_country = Landing::getDefaultCountry();
+        //get terms & conditions
+        $terms = TermsConditions::where('for', "Singup")->where('country_id', $current_country)->first();
+        $terms = $terms ? $terms : TermsConditions::where('for', "Singup")->where('country_id', $default_country)->first();
         $Employee = new NumberOfEmployees();
-        $data=[
-            'industries'=>Industry::all(),
-            'countries'=>Countries::all(),
-            'numberOfEmployees'=>$Employee->getList(),
+        $data = [
+            'industries' => Industry::all(),
+            'countries' => Countries::all(),
+            'numberOfEmployees' => $Employee->getList(),
+            'terms' => $terms
         ];
         return view('auth.register')->with($data);
     }
@@ -49,8 +59,8 @@ trait CustomRegistersUsers
         }
 
         return $request->wantsJson()
-                    ? new JsonResponse([], 201)
-                    : redirect($this->redirectPath());
+            ? new JsonResponse([], 201)
+            : redirect($this->redirectPath());
     }
 
     /**

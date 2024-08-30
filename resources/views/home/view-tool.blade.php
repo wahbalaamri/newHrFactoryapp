@@ -67,9 +67,9 @@
                             <table class="table table-hover table-bordered table-striped table-striped-columns">
                                 <thead>
                                     <tr>
-                                        <th scope="col">{{ __('Feature') }}</th>
+                                        <th scope="col"><h3>{{ __('Feature') }}</h3></th>
                                         @foreach ($service->plans as $plan)
-                                        <th scope="col">{{ $plan->name }}</th>
+                                        <th class="text-center" scope="col"><h3>{{ $plan->name }}</h3></th>
                                         @endforeach
                                     </tr>
                                 </thead>
@@ -78,7 +78,7 @@
                                     <tr>
                                         <th>{{ $feature->feature }}</th>
                                         @foreach ($service->plans as $plan)
-                                        <td>
+                                        <td class="text-center">
                                             @if (in_array($feature->id, $plan->Features))
                                             <i class="fas fa-check text-success"></i>
                                             @else
@@ -88,10 +88,10 @@
                                         @endforeach
                                     </tr>
                                     @endforeach
-                                    <tr>
+                                    <tr >
                                         <th>{{ __('Plan Example Report') }}</th>
                                         @foreach ($service->plans as $plan)
-                                        <td>
+                                        <td class="text-center">
                                             <a href="{{ asset('uploads/services/sample_reports/' . $plan->sample_report) }}"
                                                 target="_blank" rel="noopener noreferrer">
                                                 <i class="fa fa-download"></i>
@@ -103,7 +103,7 @@
                                         @foreach ($service->plans as $plan)
                                         <td>{{ $plan->plansPrices[0]->monthly_price }}
                                             {{ $plan->plansPrices[0]->currency_symbol }}
-                                            <a href="javascript:void(0)" class="btn btn-sm btn-warning">{{ __('Subscripe
+                                            <a href="javascript:void(0)" class="btn btn-sm btn-warning">{{ __('Subscribe
                                                 now') }}</a>
                                         </td>
                                         @endforeach
@@ -122,7 +122,7 @@
                                             {{ $plan->plansPrices[0]->currency_symbol }} <span class="text-success">({{
                                                 __('Save') }}
                                                 {{ $percentage }}%)</span> <a href="javascript:void(0)"
-                                                class="btn btn-sm btn-success">{{ __('Subscripe
+                                                class="btn btn-sm btn-success">{{ __('Subscribe
                                                 now') }}</a>
                                         </td>
                                         @endforeach
@@ -133,7 +133,14 @@
                                         <th>{{ __('Action') }}</th>
                                         @foreach ($service->plans as $plan)
                                         <td>
-                                            <a href="" class="btn btn-primary">{{ __('Get Started') }}</a>
+                                            @if(Auth::check())
+                                            <a href="@if(auth()->user()->isAdmin || auth()->user()->user_type="
+                                                partner") {{ route('admin.dashboard') }} @else {{
+                                                route('client.dashboard') }} @endif" class="btn btn-primary">{{ __('Get
+                                                Started') }}</a>
+                                            @else
+                                            "#"
+                                            @endif
                                         </td>
                                         @endforeach
                                         @endif
@@ -298,14 +305,15 @@
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="requestDemoLabel">{{ __('Request Demo For') }}
-                    {{ $service->service_name }}</h1>
+                <h4 class="modal-title" id="requestDemoLabel">{{ __('Start Demo Of') }}
+                    {{ $service->service_name }}</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="">
                     <div class="row">
-                        <input type="hidden" name="service_type_demo" id="service_type_demo" value="{{ $service->service_type }}">
+                        <input type="hidden" name="service_type_demo" id="service_type_demo"
+                            value="{{ $service->service_type }}">
                         {{-- Company Name --}}
                         <div class="form-group col-md-6 col-sm-12">
                             <label for="name">{{ __('Company Name') }}</label>
@@ -335,15 +343,18 @@
                         {{-- Email --}}
                         <div class="form-group col-md-6 col-sm-12">
                             <label for="name">{{ __('Email') }}</label>
-                            <input type="email" name="demo_email" class="form-control" id="demo_email" placeholder="Enter Email">
+                            <input type="email" name="demo_email" class="form-control" id="demo_email"
+                                placeholder="Enter Email">
                             {{-- add hint --}}
                             <div class="valid-feedback text-primary-emphasis">
                                 {{ __('This email will be used to generate a demo servuy.') }}
-                              </div>
+                            </div>
                         </div>
                         {{-- submit --}}
                         <div class="form-group col-sm-12">
-                            <button type="submit" id="SubmitDemoRequest" @class(['btn btn-outline-warning btn-sm', 'float-right' => app()->isLocale('en'), 'float-left' => app()->isLocale('ar')])>{{ __('Submit') }}</button>
+                            <button type="submit" id="SubmitDemoRequest" @class(['btn btn-outline-warning
+                                btn-sm', 'float-right'=> app()->isLocale('en'), 'float-left' =>
+                                app()->isLocale('ar')])>{{ __('Submit') }}</button>
                         </div>
                     </div>
                 </form>

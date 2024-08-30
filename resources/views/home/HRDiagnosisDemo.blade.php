@@ -1136,16 +1136,16 @@
 
             toastr.success('Survey submitted successfully');
                             Swal.fire(
-                                'Survey submitted successfully',
+                                'Survey submitted successfully, Just wait a few seconds to view your result report',
                                 'Thank you for your time',
                                 'success'
                             );
-                            if(data.url=='')
-                            {
+                            // if(data.url=='')
+                            // {
                                 setTimeout(function() {
-                                window.location.href = "{{ url('/') }}";
+                                window.location.href = "{{ asset('uploads/HR-Diagnostics-Demo.pdf') }}";
                                 }, 2000);
-                            }
+                            // }
             }
             else{
                 // ====== LOG START ======

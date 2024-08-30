@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\SurveysPrepration;
 use App\Jobs\SendDemoSurveyJob;
+use App\Jobs\SetEmployeeDataFromOldTools;
 use App\Jobs\SetupUsersIdInUsersOldSections;
 use App\Models\Content;
 use App\Models\Countries;
@@ -145,7 +146,7 @@ class HomeController extends Controller
         if ($request->service_type == 3) {
             $link = route('tools.EmployeeEngagmentDemo', $request_demo->id);
         } elseif ($request->service_type == 4) {
-            $link = route('tools.HRDiagnosisDemo', $request_demo->id);
+            $link = route('tools.hrDiagnosisDemo', $request_demo->id);
         } elseif ($request->service_type == 5) {
             $link = route('tools.leader360ReviewDemo', $request_demo->id);
         }
@@ -739,5 +740,10 @@ class HomeController extends Controller
                 }
             }
         }
+    }
+    public function GetDataFromOldTools($client_id,$tool,$use_dep){
+        //new job SetEmployeeDataFromOldTools
+        $job = new SetEmployeeDataFromOldTools($client_id,$use_dep,$tool);
+        dispatch($job);
     }
 }

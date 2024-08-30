@@ -80,13 +80,13 @@
                                                     {{ $client->name }}
                                                 </td>
                                                 <td>
-                                                    {{ $client->focalPoint->first()->name }}
+                                                    {{ $client->focalPoint->first()?$client->focalPoint->first()->name:'-' }}
                                                 </td>
                                                 <td>
-                                                    {{ $client->focalPoint->first()->email }}
+                                                    {{ $client->focalPoint->first()?$client->focalPoint->first()->email:'-' }}
                                                 </td>
                                                 <td>
-                                                    {{ $client->focalPoint->first()->phone }}
+                                                    {{ $client->focalPoint->first()?$client->focalPoint->first()->phone:'-' }}
                                                 </td>
                                                 <td>
                                                     {{ $client->phone??'N/A' }}

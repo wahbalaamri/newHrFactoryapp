@@ -276,6 +276,9 @@
                                                                 <option value="9" @if (old('type', $service ? $service->
                                                                     service_type : null) == '9') selected @endif>
                                                                     {{ __('Calculator') }}</option>
+                                                                <option value="10" @if (old('type', $service ? $service->
+                                                                    service_type : null) == '10') selected @endif>
+                                                                    {{ __('Customized Employee Engagment') }}</option>
                                                             </select>
                                                             {{-- validation --}}
                                                             @error('type')

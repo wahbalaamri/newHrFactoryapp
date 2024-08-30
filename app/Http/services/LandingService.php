@@ -88,4 +88,8 @@ class LandingService
             }
         }
     }
+    function getDefaultCountry()
+    {
+        return Countries::where('name', "Oman")->first()->id;
+    }
 }

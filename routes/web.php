@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ClientSubscriptionsController;
 use App\Http\Controllers\CouponsController;
+use App\Http\Controllers\CustomizedEmployeeEngagmentController;
 use App\Http\Controllers\DefaultMBController;
 use App\Http\Controllers\EmailContentsController;
 use App\Http\Controllers\FunctionPracticesController;
@@ -45,6 +46,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name("Home");
 
 Route::get('/SetupNameRev', [HomeController::class, 'SetupNameRev'])->name("SetupNameRev");
+Route::get('/GetDataFromOldTools/{cid}/{tool}/{use_dep}', [HomeController::class, 'GetDataFromOldTools'])->name("GetDataFromOldTools");
 Route::get('/about-us', [HomeController::class, 'aboutus'])->name("Home.about-us");
 Route::get('/profile', [HomeController::class, 'profile'])->name("Home.profile");
 Route::get('/training', [TrainingController::class, 'index'])->name("Training");
@@ -92,7 +94,8 @@ Route::post('clients/changeLogo', [ClientsController::class, 'changeLogo'])->nam
 Route::get('client/sectors/{id}', [SectorsController::class, 'sectors'])->name('sector.sectors');
 Route::get('client/getRaters/{id}/{survey}/{type?}', [ClientsController::class, 'getRaters'])->name('sector.getRaters');
 Route::get('client/companies/{id}', [ClientsController::class, 'companies'])->name('client.companies');
-Route::get('client/departments/{id}', [ClientsController::class, 'departments'])->name('client.departments');
+Route::get('client/departments/{id}/{type}', [ClientsController::class, 'departments'])->name('client.departments');
+Route::get('client/sections/{id}', [ClientsController::class, 'sections'])->name('client.sections');
 Route::get('client/getdep/{id}', [ClientsController::class, 'getDepartment'])->name('client.getDep');
 Route::get('function/setup', [FunctionsController::class, 'setup']);
 Route::get('practice/setup', [FunctionPracticesController::class, 'setup']);
@@ -195,9 +198,9 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
       =                                                                                                                =
       =                                                                                                                =
       ==================================================================================================================*/
-    Route::get('termsconditions/create/{id}', [TermsConditionsController::class, 'create'])->name('termsconditions.create');
-    Route::post('termsconditions/store/{id?}', [TermsConditionsController::class, 'store'])->name('termsconditions.store');
-    Route::get('termsconditions/show/{id}', [TermsConditionsController::class, 'show'])->name('termsconditions.show');
+    Route::get('termsconditions/create/{id}', [TermsConditionsController::class, 'CustomCreate'])->name('termsconditions.create');
+    Route::post('termsconditions/store/{id?}', [TermsConditionsController::class, 'Customstore'])->name('termsconditions.store');
+    Route::get('termsconditions/show/{id}', [TermsConditionsController::class, 'Customshow'])->name('termsconditions.show');
     /*==================================================================================================================
       =                                                                                                                =
       =                                                                                                                =
@@ -234,6 +237,7 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::put('ManageHrDiagnosis/updateQuestion/{id}', [ManageHrDiagnosisController::class, 'updateQuestion'])->name('ManageHrDiagnosis.updateQuestion');
     Route::delete('ManageHrDiagnosis/deleteQuestion/{id}', [ManageHrDiagnosisController::class, 'deleteQuestion'])->name('ManageHrDiagnosis.deleteQuestion');
     Route::put('ManageHrDiagnosis/updatePractice/{id}', [ManageHrDiagnosisController::class, 'updatePractice'])->name('ManageHrDiagnosis.updatePractice');
+    Route::get('Client/SurveyStat/{id}/{cid}/{type?}/{entity_id?}', [ManageHrDiagnosisController::class, 'SurveyStat'])->name('ManageHrDiagnosis.SurveyStat');
     /*==================================================================================================================
       =                                                                                                                =
       =                                                                                                                =
@@ -307,6 +311,26 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::put('EmployeeEngagment/updateQuestion/{id}', [ManageEmployeeEngagmentController::class, 'updateQuestion'])->name('EmployeeEngagment.updateQuestion');
     Route::delete('EmployeeEngagment/deleteQuestion/{id}', [ManageEmployeeEngagmentController::class, 'deleteQuestion'])->name('EmployeeEngagment.deleteQuestion');
     Route::put('EmployeeEngagment/updatePractice/{id}', [ManageEmployeeEngagmentController::class, 'updatePractice'])->name('EmployeeEngagment.updatePractice');
+    /*==================================================================================================================*/
+    Route::post('CEmployeeEngagment/CopyFunctions/{des_id}', [CustomizedEmployeeEngagmentController::class, 'CopyFunctions'])->name('CEmployeeEngagment.CopyFunctions');
+    Route::get('CEmployeeEngagment/index', [CustomizedEmployeeEngagmentController::class, 'index'])->name('CEmployeeEngagment.index');
+    Route::get('CEmployeeEngagment/createFunction', [CustomizedEmployeeEngagmentController::class, 'createFunction'])->name('CEmployeeEngagment.createFunction');
+    Route::post('CEmployeeEngagment/storeFunction', [CustomizedEmployeeEngagmentController::class, 'storeFunction'])->name('CEmployeeEngagment.storeFunction');
+    Route::get('CEmployeeEngagment/showPractices/{id}', [CustomizedEmployeeEngagmentController::class, 'showPractices'])->name('CEmployeeEngagment.showPractices');
+    Route::get('CEmployeeEngagment/createPractice/{id}', [CustomizedEmployeeEngagmentController::class, 'createPractice'])->name('CEmployeeEngagment.createPractice');
+    Route::post('CEmployeeEngagment/storePractice/{id}', [CustomizedEmployeeEngagmentController::class, 'storePractice'])->name('CEmployeeEngagment.storePractice');
+    Route::get('CEmployeeEngagment/showQuestions/{id}', [CustomizedEmployeeEngagmentController::class, 'showQuestions'])->name('CEmployeeEngagment.showQuestions');
+    Route::get('CEmployeeEngagment/editPractice/{id}', [CustomizedEmployeeEngagmentController::class, 'editPractice'])->name('CEmployeeEngagment.editPractice');
+    Route::delete('CEmployeeEngagment/destroyPractice/{id}', [CustomizedEmployeeEngagmentController::class, 'destroyPractice'])->name('CEmployeeEngagment.destroyPractice');
+    Route::get('CEmployeeEngagment/editFunction/{id}', [CustomizedEmployeeEngagmentController::class, 'editFunction'])->name('CEmployeeEngagment.editFunction');
+    Route::put('CEmployeeEngagment/updateFunction/{id}', [CustomizedEmployeeEngagmentController::class, 'updateFunction'])->name('CEmployeeEngagment.updateFunction');
+    Route::delete('CEmployeeEngagment/destroyFunction/{id}', [CustomizedEmployeeEngagmentController::class, 'destroyFunction'])->name('CEmployeeEngagment.destroyFunction');
+    Route::get('CEmployeeEngagment/createQuestion/{id}', [CustomizedEmployeeEngagmentController::class, 'createQuestion'])->name('CEmployeeEngagment.createQuestion');
+    Route::post('CEmployeeEngagment/storeQuestion/{id}', [CustomizedEmployeeEngagmentController::class, 'storeQuestion'])->name('CEmployeeEngagment.storeQuestion');
+    Route::get('CEmployeeEngagment/editQuestion/{id}', [CustomizedEmployeeEngagmentController::class, 'editQuestion'])->name('CEmployeeEngagment.editQuestion');
+    Route::put('CEmployeeEngagment/updateQuestion/{id}', [CustomizedEmployeeEngagmentController::class, 'updateQuestion'])->name('CEmployeeEngagment.updateQuestion');
+    Route::delete('CEmployeeEngagment/deleteQuestion/{id}', [CustomizedEmployeeEngagmentController::class, 'deleteQuestion'])->name('CEmployeeEngagment.deleteQuestion');
+    Route::put('CEmployeeEngagment/updatePractice/{id}', [CustomizedEmployeeEngagmentController::class, 'updatePractice'])->name('CEmployeeEngagment.updatePractice');
     /*==================================================================================================================
       =                                                                                                                =
       =                                                                                                                =
@@ -352,6 +376,7 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::post('clients/uploadOrgChartExcel/{id}', [ClientsController::class, 'uploadOrgChartExcel'])->name('clients.uploadOrgChartExcel');
     Route::post('clients/uploadEmployeeExcel/{id}', [ClientsController::class, 'uploadEmployeeExcel'])->name('clients.uploadEmployeeExcel');
     Route::get('clients/Employees/{id}', [ClientsController::class, 'Employees'])->name('clients.Employees');
+    Route::get('clients/AssignAsUser/{id}/{cid}', [ClientsController::class, 'AssignAsUser'])->name('clients.AssignAsUser');
     Route::get('clients/ShowCreateEmail/{id}/{type}/{survey}', [ClientsController::class, 'ShowCreateEmail'])->name('clients.ShowCreateEmail');
     Route::post('clients/storeSurveyEmail/{id}/{type}/{survey}/{emailid?}', [ClientsController::class, 'storeSurveyEmail'])->name('clients.storeSurveyEmail');
     Route::get('clients/getClientLogo/{id}', [ClientsController::class, 'getClientLogo'])->name('clients.getClientLogo');
@@ -361,9 +386,9 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::post('clients/saveSurveyCandidates', [ClientsController::class, 'saveSurveyCandidates'])->name('clients.saveSurveyCandidates');
     Route::get('clients/view-Subscriptions/{id}', [ClientsController::class, 'viewSubscriptions'])->name('clients.viewSubscriptions');
     Route::post('clients/saveSubscription/{id}', [ClientsController::class, 'saveSubscription'])->name('clients.saveSubscription');
-    Route::get('clients/showSendSurvey/{id}/{type}/{survey}', [ClientsController::class, 'showSendSurvey'])->name('clients.showSendSurvey');
+    Route::get('clients/showSendSurvey/{id}/{type}/{survey}/{send_type?}/{emp_id?}', [ClientsController::class, 'showSendSurvey'])->name('clients.showSendSurvey');
     // Route::get('clients/showSendSurvey/{id}/{type}/{survey}', [ClientsController::class, 'showSendSurvey'])->name('clients.showSendSurvey');
-    Route::post('clients/sendSurvey/{id}/{type}/{survey}', [ClientsController::class, 'sendSurvey'])->name('clients.sendSurvey');
+    Route::post('clients/sendSurvey/{id}/{type}/{survey}/{send_type?}', [ClientsController::class, 'sendSurvey'])->name('clients.sendSurvey');
     Route::get('clients/SurveyResults/{id}/{type}/{survey}/{vtype}/{vtype_id?}', [ClientsController::class, 'SurveyResults'])->name('clients.SurveyResults');
     Route::get('clients/candidateResult/{id}/{sid}', [Leader360ReviewController::class, 'candidateResult'])->name('clients.candidateResult');
     Route::post('clients/SaveRaters', [ClientsController::class, 'SaveRaters'])->name('clients.SaveRaters');
@@ -438,8 +463,8 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
       Route::get('termsCondition/listall/{country?}/{type?}/', [TermsConditionsController::class, 'index'])->name('termsCondition.index');
       Route::get('/termsCondition/create', [TermsConditionsController::class, 'create'])->name('termsCondition.create');
       Route::post('/termsCondition/store', [TermsConditionsController::class, 'store'])->name('termsCondition.store');
-      Route::get('/termsCondition/edit', [TermsConditionsController::class, 'edit'])->name('termsCondition.edit');
-      Route::post('/termsCondition/update', [TermsConditionsController::class, 'update'])->name('termsCondition.update');
+      Route::get('/termsCondition/edit/{id}', [TermsConditionsController::class, 'edit'])->name('termsCondition.edit');
+      Route::post('/termsCondition/update/{id}', [TermsConditionsController::class, 'update'])->name('termsCondition.update');
     /*==================================================================================================================
       =                                                                                                                =
       =                                                                                                                =

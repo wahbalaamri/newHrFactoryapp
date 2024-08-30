@@ -205,25 +205,32 @@
         <div class="header-output">
             <div class="container header-in">
                 <div class="row">
-                    <div class="col-xl-2 col-lg-2">
-                        <a id="logo" href="/" class="d-inline-block margin-tb-10px">
-                            <img src="{{ asset('assets/img/logo-1.png')}}" alt="">
-                        </a>
+                    <div class="col-xl-4 col-lg-4">
+                        <div class="row">
+                            @php
+                            $partner=\App\Http\Facades\Landing::getPartner();
+                            @endphp
+                            <div class=" @if ($partner) col-6 @else col-12 @endif">
+                                <a id="logo" href="/" class="d-inline-block margin-tb-10px">
+                                    <img src="{{ asset('assets/img/logo-1.png')}}" alt="">
+                                </a>
+                            </div>
+                            @if ($partner)
+                            <div class="col-6 margin-tb-25px">
+                                <sub class="pull-right"><small style="font-size: 0.8rem;">{{ __('Managed by') }}</small>
+                                    <img src="{{ asset('uploads/companies/logos/'.$partner->logo_path) }}" alt=""
+                                        style="max-width: 50% !important"></sub>
+                            </div>
+                            @endif
+
+
+                        </div>
                         <a class="mobile-toggle padding-15px background-main-color" href="#">
                             <i class="fas fa-bars"></i>
                         </a>
-                        @php
-                        $partner=\App\Http\Facades\Landing::getPartner();
-                        @endphp
-                        @if ($partner)
-                        <div class="">
-                            Managed by:
-                            <img src="{{ asset('uploads/companies/logos/'.$partner->logo_path) }}" alt=""
-                                style="width: 100px">
-                        </div>
-                        @endif
+
                     </div>
-                    <div class="col-xl-3 col-lg-3 margin-tb-25px">
+                    <div class="col-xl-1 col-lg-1 margin-tb-25px">
                         <div class="text-center">
 
 
@@ -231,7 +238,7 @@
                                 <li>
                                     <a href="#" id="subscribeForFree" class="btn btn-acc blink_me"
                                         data-bs-toggle="modal" data-bs-target="#FreeSub">
-                                        <h4>{{ __('Try Our Services') }} </h4>
+                                        <h4>{{ __('Demo') }} </h4>
                                     </a>
 
                                 </li>
@@ -248,7 +255,7 @@
                                 <li class="dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                                         aria-expanded="false">
-                                        Our Partners
+                                        {{ __('Our Partners') }}
                                     </a>
                                     <div class="dropdown-menu">
 
@@ -285,14 +292,19 @@
         <div class="container">
             <div class="row">
                 <div class="col-8 col-lg-10 col-md-10 margin-tb-20px wow fadeInUp">
-                    <div class="logo margin-bottom-10px"><img src="{{ asset('assets/img/logo.png')}}" alt="">
-                        @if ($partner)
-                        <div class="text-white">
-                            Managed by:
-                            <img src="{{ asset('uploads/companies/logos/'.$partner->logo_path) }}" alt=""
-                                style="width: 100px">
+                    <div class="logo margin-bottom-10px">
+                        <div class="row">
+                            <div class="col-3">
+                                <img src="{{ asset('assets/img/logo.png')}}" alt="">
+                            </div>
+                            @if ($partner)
+                            <div class="text-white col-2">
+                                {{__(' Managed by')}}
+                                <img src="{{ asset('uploads/companies/logos/'.$partner->logo_path) }}" alt=""
+                                    style="width: 50%">
+                            </div>
+                            @endif
                         </div>
-                        @endif
                     </div>
                     <div class="text-grey-2 font-weight-300"></div>
 
@@ -355,23 +367,32 @@
 
     <!-- Modal -->
     <div class="modal fade" id="FreeSub" tabindex="-1" aria-labelledby="freeSubLabel" aria-hidden="true" dir="ltr">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="freeSubLabel">SubscribeFreeTitle</h5>
+                    <h5 class="modal-title" id="freeSubLabel">{{ __('Try Our Services') }}</h5>
                     <button type="button" class="close" style="" data-bs-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
-                    SubscribeFreeParagraph
-                    <ul>
-                        freeeeeee
-                    </ul>
+                    <div class="row justify-content-center">
+                        <div class="text-center">
+                            <h6 class="text-start">{{ __('You Can Try Our Service (Demo Use)') }}</h6>
+                            <ul class="list-group list-group-flush w-75">
+                                <li class="list-group-item list-group-item-info">
+                                    {{ __('Visit Solution page') }}
+                                </li>
+                                <li class="list-group-item list-group-item-success">
+                                    {{ __('Click Demo Link') }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
 
-                    <button type="button" id="btnSubscripFree" style=""
-                        class="btn btn-primary">SubscribeFreeBtn</button>
+                    <a href="{{ route('Home') }}#subscriptionPlans" style="" class="btn btn-sm btn-primary">{{ __('GO To
+                        Solutions') }}</a>
                 </div>
             </div>
         </div>

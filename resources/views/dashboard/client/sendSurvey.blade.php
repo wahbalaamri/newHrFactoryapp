@@ -42,8 +42,8 @@
                             </div>
                         </div>
                         <div class="card-body" style="display: none">
-                            <form action="{{ route('clients.sendSurvey',[$id,$type,$survey]) }}" method="POST"
-                                enctype="multipart/form-data">
+                            <form action="{{ route('clients.sendSurvey',[$id,$type,$survey,$send_type]) }}"
+                                method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
                                     {{-- show all errors --}}
@@ -57,11 +57,13 @@
                                     </div>
                                     @endif
                                 </div>
+                                {{-- hidden employee_id --}}
+                                <input type="hidden" name="employee_id" value="{{ $emp_id}}">
                                 <div class="row">
                                     {{-- select for client sectors --}}
                                     <div class="form-group col-md-6 col-sm-12">
                                         <label for="sector">{{ __('Select Sector') }}</label>
-                                        <select name="sector" id="sector" class="form-control">
+                                        <select name="sector" id="sector" class="form-control" @disabled($send_type=='i')>
                                             <option value="">{{ __('Select Sector') }}</option>
                                             @foreach ($client->sectors as $sector)
                                             <option value="{{ $sector->id }}">
@@ -76,17 +78,37 @@
                                     {{-- select for client companies --}}
                                     <div class="form-group col-md-6 col-sm-12">
                                         <label for="company">{{ __('Select Company') }}</label>
-                                        <select name="company" id="company" class="form-control">
+                                        <select name="company" id="company" class="form-control" @disabled($send_type=='i')>
                                             <option value="">{{ __('Select Company') }}</option>
                                         </select>
                                         @error('company')
                                         <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
+                                    {{-- select for client Region --}}
+                                    <div class="form-group col-md-6 col-sm-12">
+                                        <label for="region">{{ __('Select Region') }}</label>
+                                        <select name="region" id="region" class="form-control" @disabled($send_type=='i')>
+                                            <option value="">{{ __('Select Region') }}</option>
+                                        </select>
+                                        @error('region')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    {{-- select for client branch --}}
+                                    <div class="form-group col-md-6 col-sm-12">
+                                        <label for="branch">{{ __('Select Branch') }}</label>
+                                        <select name="branch" id="branch" class="form-control" @disabled($send_type=='i')>
+                                            <option value="">{{ __('Select Branch') }}</option>
+                                        </select>
+                                        @error('branch')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                     {{-- select for client department --}}
                                     <div class="form-group col-md-6 col-sm-12">
                                         <label for="department">{{ __('Select Department') }}</label>
-                                        <select name="department" id="department" class="form-control">
+                                        <select name="department" id="department" class="form-control" @disabled($send_type=='i')>
                                             <option value="">{{ __('Select Department') }}</option>
                                         </select>
                                         @error('department')
@@ -461,7 +483,18 @@
             //on company selected
             $('#company').on('change',function(){
                 var company_id=$(this).val();
-                getdepartments(company_id,'department');
+                getRegions(company_id,'region');
+                // getdepartments(company_id,'department');
+            });
+            //on region selected
+            $('#region').on('change',function(){
+                var region_id=$(this).val();
+                getBranches(region_id,'branch');
+            });
+            //on branch selected
+            $('#branch').on('change',function(){
+                var branch_id=$(this).val();
+                getdepartments(branch_id,'department');
             });
             $('#s_company').on('change',function(){
                 var company_id=$(this).val();
@@ -473,7 +506,7 @@
                 getCandidates(dep_id,'dep');
             });
             getdepartments=(id,dep)=>{
-                url="{{ route('client.departments',':d') }}";
+                url="{{ route('client.departments',[':d','d']) }}";
                 url=url.replace(':d',id);
                 if(id){
                     $.ajax({
@@ -531,6 +564,48 @@
                             $('#candidate').append('<option value="">Select Candidate</option>');
                             $.each(data,function(index,candidate){
                                 $('#candidate').append('<option value="'+candidate.id+'">'+candidate.name+'</option>');
+                            });
+                        },
+                        error:function(error){
+                            console.log(error);
+                        }
+                    });
+                }
+            }
+            //get regions
+            getRegions=(id,reg)=>{
+                url="{{ route('client.departments',[':d','r']) }}";
+                url=url.replace(':d',id);
+                if(id){
+                    $.ajax({
+                        url:url,
+                        type:"GET",
+                        success:function(data){
+                            $(`#${reg}`).empty();
+                            $(`#${reg}`).append('<option value="">Select Region</option>');
+                            $.each(data,function(index,region){
+                                $(`#${reg}`).append('<option value="'+region.id+'">'+region.name+'</option>');
+                            });
+                        },
+                        error:function(error){
+                            console.log(error);
+                        }
+                    });
+                }
+            }
+            //get branches
+            getBranches=(id,br)=>{
+                url="{{ route('client.departments',[':d','b']) }}";
+                url=url.replace(':d',id);
+                if(id){
+                    $.ajax({
+                        url:url,
+                        type:"GET",
+                        success:function(data){
+                            $(`#${br}`).empty();
+                            $(`#${br}`).append('<option value="">Select Branch</option>');
+                            $.each(data,function(index,branch){
+                                $(`#${br}`).append('<option value="'+branch.id+'">'+branch.name+'</option>');
                             });
                         },
                         error:function(error){

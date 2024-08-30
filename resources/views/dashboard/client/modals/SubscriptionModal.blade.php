@@ -27,6 +27,7 @@
                                 <option value="7">{{ __('Customized surveys') }}</option>
                                 <option value="8">{{ __('Chat-bot') }}</option>
                                 <option value="9">{{ __('Calculator') }}</option>
+                                <option value="10">{{ __('Customized Employee Engagment') }}</option>
                             </select>
                         </div>
                         <div class="form-group col-md-10">

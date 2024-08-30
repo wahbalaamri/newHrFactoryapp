@@ -123,8 +123,11 @@
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top"
                             style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
+                            @if($data['logo'])
                             <img src="{{ asset('uploads/emails/'.$data['logo']) }}" width="125" height="120"
-                                style="display: block; border: 0px;" />@if($data['client_logo']!=null)<img
+                                style="display: block; border: 0px;" />
+                            @endif
+                            @if($data['client_logo']!=null)<img
                                 src="{{ asset('uploads/companies/logos/'.$data['client_logo']) }}" width="125"
                                 height="120" style="display: block; border: 0px;" />@endif
                         </td>
@@ -152,6 +155,25 @@
                         <td bgcolor="#ffffff" align="left"
                             style="padding: 0px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
                             <p style="margin: 0;">{!! $data['body_footer'] !!}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#ffffff" align="right"
+                            style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                            <p style="margin: 0;">{{ $data['subject_ar'] }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#ffffff" align="right"
+                            style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                            <p style="margin: 0;">{!! $data['body_header_ar'] !!}</p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td bgcolor="#ffffff" align="right"
+                            style="padding: 0px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                            <p style="margin: 0;">{!! $data['body_footer_ar'] !!}</p>
                         </td>
                     </tr>
                     <tr>
@@ -206,8 +228,13 @@
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top"
                             style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 1px; line-height: 48px;">
-                            {{ __('Powered By:') }} <img src="{{ asset('assets/img/Extra-Miles.jpg') }}" width="125"
-                                height="120" style="display: block; border: 0px;" />
+                            {{ __('Powered By:') }}  <img src="{{ asset('assets/img/logo-1.png') }}" width="180"
+                                height="180" style="display: block; border: 0px;" />
+                        </td>
+                        <td bgcolor="#ffffff" align="center" valign="top"
+                            style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 1px; line-height: 48px;">
+                            {{ __('Managed By:') }}<img src="{{ asset('assets/img/Extra-Miles.jpg') }}" width="60"
+                                height="60" style="display: block; border: 0px;" />
                         </td>
                     </tr>
                 </table>

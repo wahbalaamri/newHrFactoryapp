@@ -144,14 +144,16 @@
                                             </a>
                                         </div>
                                         <div class="col-md-4 col-sm-12">
-                                            <a href="javascript:void(0)" class="btn btn-xs btn-info">
+                                            <a href="javascript:void(0)" class="btn btn-xs btn-info" data-toggle="modal"
+                                                data-target="#ShareHRPolicy">
                                                 <i class="fa fa-send">
                                                 </i>
                                                 {{ __('Share HR Policy') }}
                                             </a>
                                         </div>
                                         <div class="col-md-4 col-sm-12">
-                                            <a href="{{ route('manualBuilder.downloadClientPolicy') }}" class="btn btn-xs btn-primary">
+                                            <a href="{{ route('manualBuilder.downloadClientPolicy',$id) }}"
+                                                class="btn btn-xs btn-primary">
                                                 <i class="fa fa-download">
                                                 </i>
                                                 {{ __('Download HR Policy') }}
@@ -162,28 +164,37 @@
 
                                 </div>
                                 @else
-                                    @if (count($contents) > 0)
-                                    <div class="col-md-6 col-sm-12">
-                                        <div class="info-box">
-                                            <span class="info-box-icon bg-warning"><i class="far fa-copy"></i></span>
-                                            <div class="info-box-content">
-                                                <span class="info-box-text" style="white-space: pre-wrap !important;">{{ __('It seem you already have your own builder from our old version website') }}</span>
-                                                <span class="info-box-number" style="white-space: pre-wrap !important;">{{ __('Would you like to collect your own old builder sections?') }}</span>
-                                                <a href="#" class="btn btn-sm btn-info">{{ __('Yes, Collect the old buildr sections') }}</a>
-                                            </div>
+                                @if (count($contents) > 0)
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-warning"><i class="far fa-copy"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text" style="white-space: pre-wrap !important;">{{
+                                                __('It seem you already have your own builder from our old version
+                                                website') }}</span>
+                                            <span class="info-box-number" style="white-space: pre-wrap !important;">{{
+                                                __('Would you like to collect your own old builder sections?') }}</span>
+                                            <a href="#" class="btn btn-sm btn-info">{{ __('Yes, Collect the old buildr
+                                                sections') }}</a>
                                         </div>
                                     </div>
-                                    @endif
-                                    <div class="col-md-6 col-sm-12">
-                                        <div class="info-box">
-                                            <span class="info-box-icon bg-success"><i class="far fa-copy"></i></span>
-                                            <div class="info-box-content">
-                                                <span class="info-box-text" style="white-space: pre-wrap !important;">{{ __('To provide you with updated Tools, We have updated version of the HR policy manual builder') }}</span>
-                                                <span class="info-box-number" style="white-space: pre-wrap !important;">{{ __('Would you like to start build your own builder sections?') }}</span>
-                                                <a href="{{ route('manualBuilder.copysections',$id) }}" class="btn btn-sm btn-info">{{ __('Yes, start build my own builder') }}</a>
-                                            </div>
+                                </div>
+                                @endif
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-success"><i class="far fa-copy"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text" style="white-space: pre-wrap !important;">{{
+                                                __('To provide you with updated Tools, We have updated version of the HR
+                                                policy manual builder') }}</span>
+                                            <span class="info-box-number" style="white-space: pre-wrap !important;">{{
+                                                __('Would you like to start build your own builder sections?') }}</span>
+                                            <a href="{{ route('manualBuilder.copysections',$id) }}"
+                                                class="btn btn-sm btn-info">{{ __('Yes, start build my own builder')
+                                                }}</a>
                                         </div>
                                     </div>
+                                </div>
                                 @endif
                                 <div class="col-md-8 col-sm-12">
                                     <div id="EditSection" class="d-none">
@@ -227,7 +238,37 @@
         </div>
     </section>
 </div>
-
+{{-- modal ShareHRPolicy --}}
+<div class="modal fade" id="ShareHRPolicy" tabindex="-1" aria-labelledby="ShareHRPolicyLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ShareHRPolicyLabel">{{ __('Share HR Policy') }}</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="">
+                        <table class="table table-hover" id="EmployeeDataTable">
+                            <thead>
+                                <tr>
+                                    <td>#</td>
+                                    <td>Name</td>
+                                    <td>Position</td>
+                                    <td>Department</td>
+                                    <td>Comapny</td>
+                                    <td>Send</td>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {{-- modal to add new section --}}
 <div class="modal fade" id="AddSectionModal" tabindex="-1" aria-labelledby="AddSectionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

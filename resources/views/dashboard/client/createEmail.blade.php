@@ -73,7 +73,7 @@
                                         <label for="survey_logo">{{ __('Survey Logo') }}</label>
                                         <input type="file" name="survey_logo" id="survey_logo"
                                             class="form-control form-control-file" placeholder="{{ __('Survey Logo') }}"
-                                            {{ $emailContet==null ? 'required': '' }}>
+                                            >
                                         @error('survey_logo')
                                         <span class="text-danger">{{ $message }}</span>
                                         @enderror

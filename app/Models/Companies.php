@@ -32,4 +32,9 @@ class Companies extends Model
     {
         return app()->getLocale() == 'ar' ? $this->name_ar : $this->name_en;
     }
+    //company hasmany employees
+    public function employees()
+    {
+        return $this->hasMany(Employees::class, 'comp_id', 'id');
+    }
 }

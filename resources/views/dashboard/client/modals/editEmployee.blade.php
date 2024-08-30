@@ -36,12 +36,22 @@
                             </select>
                         </div>
                         {{-- Select Department --}}
+                        @if($client->use_departments)
                         <div class="form-group col-md-5 col-sm-10">
                             <label for="department">{{__('Department')}}</label>
                             <select class="form-control" id="department" name="department" required>
                                 <option value="">{{__('Select Department')}}</option>
                             </select>
                         </div>
+                        @endif
+                        @if($client->use_sections)
+                        <div class="form-group col-md-5 col-sm-10">
+                            <label for="section">{{__('Sections')}}</label>
+                            <select class="form-control" id="section" name="section" required>
+                                <option value="">{{__('Select Section')}}</option>
+                            </select>
+                        </div>
+                        @endif
                         {{-- Employee Name --}}
                         <div class="form-group col-md-5 col-sm-10">
                             <label for="name">{{__('Employee Name')}}</label>

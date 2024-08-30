@@ -198,9 +198,14 @@ class ClientsController extends Controller
         return $surveysPrepration->companies($request, $id, true);
     }
     //departments function
-    public function departments(Request $request, SurveysPrepration $surveysPrepration, $id)
+    public function departments(Request $request, SurveysPrepration $surveysPrepration, $id, $type)
     {
-        return $surveysPrepration->departments($request, $id, true);
+        return $surveysPrepration->departments($request, $id, $type, true);
+    }
+    //sections function
+    public function sections(Request $request, SurveysPrepration $surveysPrepration, $id)
+    {
+        return $surveysPrepration->sections($request, $id, true);
     }
     //storeEmployee function
     public function storeEmployee(Request $request, SurveysPrepration $surveysPrepration)
@@ -223,14 +228,14 @@ class ClientsController extends Controller
         return $surveysPrepration->saveSurveyRespondents($request, true);
     }
     //sendSurvey function
-    public function showSendSurvey(Request $request, SurveysPrepration $surveysPrepration, $id, $type, $survey_id)
+    public function showSendSurvey(Request $request, SurveysPrepration $surveysPrepration, $id, $type, $survey_id, $send_type = null, $emp_id = null)
     {
-        return $surveysPrepration->showSendSurvey($request, $id, $type, $survey_id, true);
+        return $surveysPrepration->showSendSurvey($request, $id, $type, $survey_id, $send_type, $emp_id, true);
     }
     //sendSurvey function
-    public function sendSurvey(Request $request, SurveysPrepration $surveysPrepration, $id, $type, $survey_id)
+    public function sendSurvey(Request $request, SurveysPrepration $surveysPrepration, $id, $type, $survey_id, $send_type = null)
     {
-        return $surveysPrepration->sendSurvey($request, $id, $type, $survey_id, true);
+        return $surveysPrepration->sendSurvey($request, $id, $type, $survey_id, $send_type, true);
     }
     //SurveyResults function
     public function SurveyResults(SurveysPrepration $surveysPrepration, $Client_id, $Service_type, $survey_id, $vtype, $vtype_id = null)
@@ -366,5 +371,10 @@ class ClientsController extends Controller
     public function uploadEmployeeExcel(Request $request, SurveysPrepration $surveysPrepration, $id)
     {
         return $surveysPrepration->uploadEmployeeExcel($request, $id, true);
+    }
+    //AssignAsUser function
+    public function AssignAsUser(Request $request, SurveysPrepration $surveysPrepration, $id, $cid)
+    {
+        return $surveysPrepration->AssignAsUser($request, $id, $cid, true);
     }
 }

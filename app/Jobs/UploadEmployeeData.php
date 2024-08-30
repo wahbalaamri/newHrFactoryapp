@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -49,9 +50,7 @@ class UploadEmployeeData implements ShouldQueue
         $this->jobId = $this->job->getJobId();
         //
 
-            Excel::import(new LargeExcelImport($this->client_id, $this->user_id), $this->file);
-
-
+        Excel::import(new LargeExcelImport($this->client_id, $this->user_id), $this->file);
     }
 }
 class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
@@ -62,6 +61,7 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
     private $client_id;
     private $file;
     private $user_id;
+    public $notAdded_Employees = [];
     public function __construct($client_id, $user_id)
     {
         //
@@ -71,9 +71,11 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
     public function collection(Collection $Employees)
     {
         $client = Clients::find($this->client_id);
+
+        $counter = 0;
+
         foreach ($Employees as $Employee) {
-            Log::info($Employee);
-            Log::info($Employee['name']);
+            $counter++;
             //log {"name":"Al Busaidi,Barakat Amin Said","emp_number":"3040","email":"barakat.busaidi@owwsc.nama.om",
             //"phone":"99424415","gender":"Male","date_of_birth":"29-03-1974","date_of_service":"08-04-2006",
             //"position":"Supply Chain Management Senior Manager","employee_type":" Manager","sector":null,
@@ -100,6 +102,7 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             $company = null;
             $region = null;
             $branch = null;
+            $parent_id = null;
             $super_directory = null;
             $directory = null;
             $date_of_birth = date('Y-m-d', strtotime($Employee['date_of_birth']));
@@ -109,204 +112,76 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             //pluck client company ids into array
             $companies = Companies::where('client_id', $this->client_id)->whereIn('sector_id', $sectors)->get()->pluck('id')->toArray();
             if ($client->use_departments) {
-                if ($Employee['sections'] != null && $client->use_sections) {
-                    $section = Departments::where('name_en', trim($Employee['sections']))->whereIn('company_id', $companies)->first();
-                    if ($section) {
-                        //check if employee exist
-                        $employee = Employees::where('emp_id', $Employee['emp_number'])->where('email', $Employee['email'])->where('client_id', $this->client_id)->first();
-                        if (!$employee)
-                            $employee = new Employees();
-                        $employee->client_id = $this->client_id;
-                        $employee->comp_id = $section->company_id;
-                        $employee->sector_id = $section->company->sector_id;
-                        $employee->dep_id = $section->id;
-                        $employee->name = $Employee['name'];
-                        $employee->emp_id = $Employee['emp_number'];
-                        $employee->email = $Employee['email'];
-                        $employee->mobile = $Employee['phone'];
-                        $employee->gender = $Employee['gender'];
-                        $employee->dob = $date_of_birth;
-                        $employee->dos = $date_of_service;
-                        $employee->position = $Employee['position'];
-                        //check if $Employee['employee_type'] conatins Manager
-                        if (strpos($Employee['employee_type'], 'Manager') !== false) {
-
-                            $employee->employee_type = 1;
-                        } else {
-                            $employee->employee_type = 2;
-                        }
-                        //added_by
-                        $employee->added_by = $this->user_id;
-                        $employee->save();
-                    }
-                }
-                //check if departmnt has value
-                elseif ($Employee['department'] != null) {
-                    $department = Departments::where('name_en', trim($Employee['department']))->whereIn('company_id', $companies)->first();
-                    if ($department) {
-                        // add employee
-                        $employee = Employees::where('emp_id', $Employee['emp_number'])->where('email', $Employee['email'])->where('client_id', $this->client_id)->first();
-                        if (!$employee)
-                            $employee = new Employees();
-                        $employee->client_id = $this->client_id;
-                        $employee->comp_id = $department->company_id;
-                        $employee->sector_id = $department->company->sector_id;
-                        $employee->dep_id = $department->id;
-                        $employee->name = $Employee['name'];
-                        $employee->emp_id = $Employee['emp_number'];
-                        $employee->email = $Employee['email'];
-                        $employee->mobile = $Employee['phone'];
-                        $employee->gender = $Employee['gender'];
-                        $employee->dob = $date_of_birth;
-                        $employee->dos = $date_of_service;
-                        $employee->position = $Employee['position'];
-                        //check if $Employee['employee_type'] conatins Manager
-                        if (strpos($Employee['employee_type'], 'Manager') !== false) {
-
-                            $employee->employee_type = 1;
-                        } else {
-                            $employee->employee_type = 2;
-                        }
-                        //added_by
-                        $employee->added_by = $this->user_id;
-                        $employee->save();
-                    }
-                }
-                //else check if div has value
-                elseif ($Employee['division'] != null) {
-                    $div = Departments::where('name_en', trim($Employee['division']))->whereIn('company_id', $companies)->first();
-                    if ($div) {
-                        $employee = Employees::where('emp_id', $Employee['emp_number'])->where('email', $Employee['email'])->where('client_id', $this->client_id)->first();
-                        if (!$employee)
-                            $employee = new Employees();
-                        $employee->client_id = $this->client_id;
-                        $employee->comp_id = $div->company_id;
-                        $employee->sector_id = $div->company->sector_id;
-                        $employee->dep_id = $div->id;
-                        $employee->name = $Employee['name'];
-                        $employee->emp_id = $Employee['emp_number'];
-                        $employee->email = $Employee['email'];
-                        $employee->mobile = $Employee['phone'];
-                        $employee->gender = $Employee['gender'];
-                        $employee->dob = $date_of_birth;
-                        $employee->dos = $date_of_service;
-                        $employee->position = $Employee['position'];
-                        //check if $Employee['employee_type'] conatins Manager
-                        if (strpos($Employee['employee_type'], 'Manager') !== false) {
-
-                            $employee->employee_type = 1;
-                        } else {
-                            $employee->employee_type = 2;
-                        }
-                        //added_by
-                        $employee->added_by = $this->user_id;
-                        $employee->save();
-                    }
-                }
-                //else check if directorate has value
-                elseif ($Employee['directorate'] != null) {
-                    $directorate = Departments::where('name_en', trim($Employee['directorate']))->whereIn('company_id', $companies)->first();
-                    if ($directorate) {
-                        $employee = Employees::where('emp_id', $Employee['emp_number'])->where('email', $Employee['email'])->where('client_id', $this->client_id)->first();
-                        if (!$employee)
-                            $employee = new Employees();
-                        $employee->client_id = $this->client_id;
-                        $employee->comp_id = $directorate->company_id;
-                        $employee->sector_id = $directorate->company->sector_id;
-                        $employee->dep_id = $directorate->id;
-                        $employee->name = $Employee['name'];
-                        $employee->emp_id = $Employee['emp_number'];
-                        $employee->email = $Employee['email'];
-                        $employee->mobile = $Employee['phone'];
-                        $employee->gender = $Employee['gender'];
-                        $employee->dob = $date_of_birth;
-                        $employee->dos = $date_of_service;
-                        $employee->position = $Employee['position'];
-                        //check if $Employee['employee_type'] conatins Manager
-                        if (strpos($Employee['employee_type'], 'Manager') !== false) {
-
-                            $employee->employee_type = 1;
-                        } else {
-                            $employee->employee_type = 2;
-                        }
-                        //added_by
-                        $employee->added_by = $this->user_id;
-                        $employee->save();
-                    }
-                }
-                //check if super dirctorate has value
-                elseif ($Employee['super_senior_directorate'] != null) {
-                    $super_dirctorate = Departments::where('name_en', trim($Employee['super_senior_directorate']))->whereIn('company_id', $companies)->first();
-                    if ($super_dirctorate) {
-                        $employee = Employees::where('emp_id', $Employee['emp_number'])->where('email', $Employee['email'])->where('client_id', $this->client_id)->first();
-                        if (!$employee)
-                            $employee = new Employees();
-                        $employee->client_id = $this->client_id;
-                        $employee->comp_id = $super_dirctorate->company_id;
-                        $employee->sector_id = $super_dirctorate->company->sector_id;
-                        $employee->dep_id = $super_dirctorate->id;
-                        $employee->name = $Employee['name'];
-                        $employee->emp_id = $Employee['emp_number'];
-                        $employee->email = $Employee['email'];
-                        $employee->mobile = $Employee['phone'];
-                        $employee->gender = $Employee['gender'];
-                        $employee->dob = $date_of_birth;
-                        $employee->dos = $date_of_service;
-                        $employee->position = $Employee['position'];
-                        //check if $Employee['employee_type'] conatins Manager
-                        if (strpos($Employee['employee_type'], 'Manager') !== false) {
-
-                            $employee->employee_type = 1;
-                        } else {
-                            $employee->employee_type = 2;
-                        }
-                        //added_by
-                        $employee->added_by = $this->user_id;
-                        $employee->save();
-                    }
-                }
-                //check if branch has value
-                elseif ($Employee['branch'] != null) {
-                    $branch = Departments::where('name_en', trim($Employee['branch']))->whereIn('company_id', $companies)->first();
-                    if ($branch) {
-                        $employee = Employees::where('emp_id', $Employee['emp_number'])->where('email', $Employee['email'])->where('client_id', $this->client_id)->first();
-                        if (!$employee)
-                            $employee = new Employees();
-                        $employee->client_id = $this->client_id;
-                        $employee->comp_id = $branch->company_id;
-                        $employee->sector_id = $branch->company->sector_id;
-                        $employee->dep_id = $branch->id;
-                        $employee->name = $Employee['name'];
-                        $employee->emp_id = $Employee['emp_number'];
-                        $employee->email = $Employee['email'];
-                        $employee->mobile = $Employee['phone'];
-                        $employee->gender = $Employee['gender'];
-                        $employee->dob = $date_of_birth;
-                        $employee->dos = $date_of_service;
-                        $employee->position = $Employee['position'];
-                        //check if $Employee['employee_type'] conatins Manager
-                        if (strpos($Employee['employee_type'], 'Manager') !== false) {
-
-                            $employee->employee_type = 1;
-                        } else {
-                            $employee->employee_type = 2;
-                        }
-                        //added_by
-                        $employee->added_by = $this->user_id;
-                        $employee->save();
-                    }
-                }
-                //check if region has value
-                elseif ($Employee['region'] != null) {
+                //find region
+                if ($Employee['region'] != null) {
                     $region = Departments::where('name_en', trim($Employee['region']))->whereIn('company_id', $companies)->first();
+                    //check if region exist
                     if ($region) {
+                        $parent_id = $region->id;
+                        $entity = $region;
+                    }
+                }
+                //find branch
+                if ($Employee['branch'] != null) {
+                    $branch = Departments::where('name_en', trim($Employee['branch']))->where('parent_id',$parent_id)->whereIn('company_id', $companies)->first();
+                    //check if branch exist
+                    if ($branch) {
+                        $parent_id = $branch->id;
+                        $entity = $branch;
+                        //if seinor directorate has value
+                        if ($Employee['super_senior_directorate'] != null) {
+                            $super_directory = Departments::where('name_en', trim($Employee['super_senior_directorate']))->where('parent_id', $parent_id)->first();
+                            $super_directorysss = Departments::where('name_en', trim($Employee['super_senior_directorate']))->get();
+                            $super_directorys = Departments::where('parent_id', $parent_id)->get();
+                            //check if super directorate exist
+                            if ($super_directory) {
+                                $parent_id = $super_directory->id;
+                                $entity = $super_directory;
+                            }
+                        }
+                        //if directorate has value
+                        if ($Employee['directorate'] != null) {
+                            $directory = Departments::where('name_en', trim($Employee['directorate']))->where('parent_id', $parent_id)->first();
+                            //check if directorate exist
+                            if ($directory) {
+                                $parent_id = $directory->id;
+                                $entity = $directory;
+                            }
+                        }
+                        //if division has value
+                        if ($Employee['division'] != null) {
+                            $department = Departments::where('name_en', trim($Employee['division']))->where('parent_id', $parent_id)->first();
+                            //check if division exist
+                            if ($department) {
+                                $parent_id = $department->id;
+                                $entity = $department;
+                            }
+                        }
+                        //if department has value
+                        if ($Employee['department'] != null) {
+                            $department = Departments::where('name_en', trim($Employee['department']))->where('parent_id', $parent_id)->first();
+                            //check if department exist
+                            if ($department) {
+                                $parent_id = $department->id;
+                                $entity = $department;
+                            }
+                        }
+                        //if client use sections and sections has value
+                        if ($Employee['sections'] != null && $client->use_sections) {
+                            $section = Departments::where('name_en', trim($Employee['sections']))->where('parent_id', $parent_id)->first();
+                            //check if section exist
+                            if ($section) {
+                                $parent_id = $section->id;
+                                $entity = $section;
+                            }
+                        }
                         $employee = Employees::where('emp_id', $Employee['emp_number'])->where('email', $Employee['email'])->where('client_id', $this->client_id)->first();
                         if (!$employee)
                             $employee = new Employees();
                         $employee->client_id = $this->client_id;
-                        $employee->comp_id = $region->company_id;
-                        $employee->sector_id = $region->company->sector_id;
-                        $employee->dep_id = $region->id;
+                        $employee->comp_id = $entity->company_id;
+                        $employee->sector_id = $entity->company->sector_id;
+                        $employee->dep_id = $parent_id;
                         $employee->name = $Employee['name'];
                         $employee->emp_id = $Employee['emp_number'];
                         $employee->email = $Employee['email'];
@@ -325,9 +200,14 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                         //added_by
                         $employee->added_by = $this->user_id;
                         $employee->save();
+                    } else {
+                        $this->notAdded_Employees[] = $Employee;
                     }
+                } else {
+                    $this->notAdded_Employees[] = $Employee;
                 }
             } else {
+
                 //check if $Employee['super_senior_directorate'] != null
                 if ($Employee['super_senior_directorate'] != null) {
                     //find the company
@@ -362,7 +242,19 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                 }
             }
         }
+        //export not added employees
+        if (count($this->notAdded_Employees) > 0) {
+            $fileName = 'NotAddedEmployees' . time() . '.csv';
+            $filePath = storage_path('app/public/' . $fileName);
+            $file = fopen($filePath, 'w');
+            fputcsv($file, array('name', 'emp_number', 'email', 'phone', 'gender', 'date_of_birth', 'date_of_service', 'position', 'employee_type', 'sector', 'super_senior_directorate', 'directorate', 'division', 'department', 'region', 'branch'));
+            foreach ($this->notAdded_Employees as $Employee) {
+                Log::debug($Employee);
+                fputcsv($file, $Employee->toArray());
+            }
+        }
     }
+
     public function chunkSize(): int
     {
         return 500;

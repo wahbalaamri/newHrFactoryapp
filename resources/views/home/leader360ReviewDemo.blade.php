@@ -751,16 +751,16 @@
                 if (e.target.matches('[data-bs-submit]')) {
                     toastr.success('Survey submitted successfully');
                     Swal.fire(
-                        'Survey submitted successfully',
+                        'Survey submitted successfully, Just wait a few seconds to view your result report',
                         'Thank you for your time',
                         'success'
                     );
-                    if (data.url == '') {
-                        setTimeout(function() {
-                            window.location.href =
-                                "https://www.hrfactoryapp.com/";
-                        }, 2000);
-                    }
+                    // if(data.url=='')
+                            // {
+                                setTimeout(function() {
+                                window.location.href = "{{ asset('uploads/360-Degree-Review-Report-Demo.pdf') }}";
+                                }, 2000);
+                            // }
                 }
                 if (e.target.matches('[data-bs-next]')) {
                     increment = 1;

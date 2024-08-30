@@ -321,10 +321,28 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('CEmployeeEngagment.index') }}" class="nav-link">
+                                <i class="nav-icon fas fa-laugh-beam"></i>
+                                <p>
+                                    {{ __('Customized Employee Engagment') }}
+                                    {{-- <span class="right badge badge-danger">New</span> --}}
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('manualBuilder.index') }}" class="nav-link">
                                 <i class="nav-icon fa fa-file-alt"></i>
                                 <p>
                                     {{ __('Manual Builder') }}
+                                    {{-- <span class="right badge badge-danger">New</span> --}}
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('termsCondition.index') }}" class="nav-link">
+                                <i class="nav-icon fa fa-file-alt"></i>
+                                <p>
+                                    {{ __('Terms & Conditions') }}
                                     {{-- <span class="right badge badge-danger">New</span> --}}
                                 </p>
                             </a>

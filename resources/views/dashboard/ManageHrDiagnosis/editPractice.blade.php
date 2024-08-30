@@ -14,6 +14,8 @@
                         {{ __('360 Review Tool') }}
                         @elseif($service_type==3)
                         {{ __('Employee Engagment Tool') }}
+                        @elseif($service_type==10)
+                        {{ __('Customized Employee Engagment Tool') }}
                         @endif
                     </h1>
                 </div><!-- /.col -->
@@ -27,6 +29,8 @@
                             360 Review
                             @elseif($service_type == 3)
                             Employee Engagment
+                            @elseif($service_type == 10)
+                            Customized Employee Engagment
                             @endif
                         </li>
                     </ol>
@@ -53,6 +57,8 @@
                                 {{ route('Leader360Review.index') }}
                                 @elseif($service_type==3)
                                 {{ route('EmployeeEngagment.index') }}
+                                @elseif($service_type==10)
+                                {{ route('CEmployeeEngagment.index') }}
                                 @endif
                                 " class="btn btn-warning btn-sm">
                                     <i class="fas fa-arrow-left"></i>
@@ -69,6 +75,8 @@
                             {{$practice==null? route('Leader360Review.storePractice',$function->id):route('Leader360Review.updatePractice',$practice->id) }}
                             @elseif($service_type==3)
                             {{$practice==null? route('EmployeeEngagment.storePractice',$function->id):route('EmployeeEngagment.updatePractice',$practice->id) }}
+                            @elseif($service_type==10)
+                            {{$practice==null? route('CEmployeeEngagment.storePractice',$function->id):route('CEmployeeEngagment.updatePractice',$practice->id) }}
                             @endif
                             " method="POST">
                                 @csrf

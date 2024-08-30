@@ -15,6 +15,8 @@
                         {{ __('360 Review Tool') }}
                         @elseif($service_type==3)
                         {{ __('Employee Engagment Tool') }}
+                        @elseif($service_type==10)
+                        {{ __('Customized Employee Engagment Tool') }}
                         @endif
                     </h1>
                 </div><!-- /.col -->
@@ -28,6 +30,8 @@
                             360 Review
                             @elseif($service_type == 3)
                             Employee Engagment
+                            @elseif($service_type == 10)
+                            Customized Employee Engagment
                             @endif
                         </li>
                     </ol>
@@ -54,6 +58,8 @@
                                 {{ route('Leader360Review.index') }}
                                 @elseif($service_type==3)
                                 {{ route('EmployeeEngagment.index') }}
+                                @elseif($service_type==10)
+                                {{ route('CEmployeeEngagment.index') }}
                                 @endif
                                 " class="btn btn-warning btn-sm">
                                     <i class="fas fa-arrow-left"></i>
@@ -71,6 +77,8 @@
                                 {{ $question==null? route('Leader360Review.storeQuestion',$practice->id): route('Leader360Review.updateQuestion',$question->id) }}
                                 @elseif($service_type==3)
                                 {{ $question==null? route('EmployeeEngagment.storeQuestion',$practice->id): route('EmployeeEngagment.updateQuestion',$question->id) }}
+                                @elseif($service_type==10)
+                                {{ $question==null? route('CEmployeeEngagment.storeQuestion',$practice->id): route('CEmployeeEngagment.updateQuestion',$question->id) }}
                                 @endif"
                                 method="POST">
                                 @csrf
@@ -213,7 +221,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    @if($service_type==3)
+                                    @if($service_type==3 || $service_type==10)
                                     {{-- IsENPS --}}
                                     <div class="form-group col-md-6 col-sm-12">
                                         <label for="IsENPS">{{ __('Is ENPS') }}</label>

@@ -14,6 +14,8 @@
                         {{ __('360 Review Tool') }}
                         @elseif($service_type==3)
                         {{ __('Employee Engagment Tool') }}
+                        @elseif($service_type==10)
+                        {{ __('Customized Employee Engagment Tool') }}
                         @endif
                     </h1>
                 </div><!-- /.col -->
@@ -27,6 +29,8 @@
                             360 Review
                             @elseif($service_type == 3)
                             Employee Engagment
+                            @elseif($service_type == 10)
+                            Customized Employee Engagment
                             @endif
                         </li>
                     </ol>
@@ -55,6 +59,8 @@
                                 {{ route('Leader360Review.index') }}
                                 @elseif($service_type==3)
                                 {{ route('EmployeeEngagment.index') }}
+                                @elseif($service_type==10)
+                                {{ route('CEmployeeEngagment.index') }}
                                 @endif
                                 " class="btn btn-warning btn-sm">
                                     <i class="fas fa-arrow-left"></i>
@@ -69,6 +75,8 @@
                                 {{ route('Leader360Review.createPractice',$function->id) }}
                                 @elseif($service_type==3)
                                 {{ route('EmployeeEngagment.createPractice',$function->id) }}
+                                @elseif($service_type==10)
+                                {{ route('CEmployeeEngagment.createPractice',$function->id) }}
                                 @endif
                                 "
                                     class="btn btn-secondary btn-sm">
@@ -105,6 +113,8 @@
                                                 {{ route('Leader360Review.showQuestions',$practice->id) }}
                                                 @elseif($service_type==3)
                                                 {{ route('EmployeeEngagment.showQuestions',$practice->id) }}
+                                                @elseif($service_type==10)
+                                                {{ route('CEmployeeEngagment.showQuestions',$practice->id) }}
                                                 @endif
                                                 "class="btn btn-info btn-sm">
                                                     <i class="fas fa-eye"></i> {{ __('View Questions') }}</a>
@@ -121,6 +131,8 @@
                                                     {{ route('Leader360Review.editPractice',$practice->id) }}
                                                     @elseif($service_type==3)
                                                     {{ route('EmployeeEngagment.editPractice',$practice->id) }}
+                                                    @elseif($service_type==10)
+                                                    {{ route('CEmployeeEngagment.editPractice',$practice->id) }}
                                                     @endif
                                                     "
                                                         class="btn btn-warning btn-sm m-1">
@@ -142,6 +154,8 @@
                                                         {{ route('Leader360Review.destroyPractice',$practice->id)}}
                                                         @elseif($service_type==3)
                                                         {{ route('EmployeeEngagment.destroyPractice',$practice->id)}}
+                                                        @elseif($service_type==10)
+                                                        {{ route('CEmployeeEngagment.destroyPractice',$practice->id)}}
                                                         @endif
                                                         "
                                                         method="POST" id="destroyPractice{{ $practice->id }}">

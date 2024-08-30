@@ -110,4 +110,9 @@ class ManageHrDiagnosisController extends Controller
     {
         return $this->survey->destroyFunction($request, $id,$this->service_type);
     }
+    //SurveyStat function
+    function SurveyStat($id,$cid,$type='all',$entity_id=null)
+    {
+        return $this->survey->SurveyStat($id,$cid,$type,$entity_id);
+    }
 }

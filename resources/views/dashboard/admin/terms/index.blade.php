@@ -34,7 +34,7 @@
                 <div class="col-12 mt-3">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">{{ __('Manage Autmated Emails') }}</h3>
+                            <h3 class="card-title">{{ __('Manage System Terms & Conditions') }}</h3>
                             {{-- tool --}}
                             <div class="card-tools">
                                 <a href="{{ route('termsCondition.create') }}"
@@ -53,6 +53,7 @@
                                             <select class="form-control" id="country">
                                                 <option value="">{{ __('Select Country') }}</option>
                                                 <option value="all">{{ __('All') }}</option>
+                                                @if(auth()->user()->isAdmin)
                                                 <optgroup label="{{ __('Arab countries') }}">
                                                     @foreach ($countries[1] as $country)
                                                     <option value="{{ $country->id }}">{{ $country->country_name }}
@@ -66,6 +67,13 @@
                                                     </option>
                                                     @endforeach
                                                 </optgroup>
+                                                @else
+                                                @foreach ($countries as $country)
+                                                <option value="{{ $country->id }}">
+                                                    {{ $country->country_name }}
+                                                </option>
+                                                @endforeach
+                                                @endif
                                             </select>
 
                                         </div>

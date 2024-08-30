@@ -9,7 +9,7 @@ use App\Models\PlansPrices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use App\Models\{Clients, ClientSubscriptions, Functions, Services, FunctionPractices, Industry, Plans, PracticeQuestions, Sectors, Surveys, Companies, CustomizedSurvey, CustomizedSurveyAnswers, CustomizedSurveyQuestions, CustomizedSurveyRaters, CustomizedSurveyRespondents, Departments, EmailContents, Employees, PrioritiesAnswers, Respondents, SurveyAnswers, Raters};
+use App\Models\{Clients, ClientSubscriptions, Functions, Services, FunctionPractices, Industry, Plans, PracticeQuestions, Sectors, Surveys, Companies, CustomizedSurvey, CustomizedSurveyAnswers, CustomizedSurveyQuestions, CustomizedSurveyRaters, CustomizedSurveyRespondents, Departments, EmailContents, Employees, PrioritiesAnswers, Respondents, SurveyAnswers, Raters, User};
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 use Maatwebsite\Excel\Facades\Excel;
@@ -20,6 +20,7 @@ class SurveysPrepration
 {
     //
     private $id;
+    private $ids = [];
     function index($service_type)
     {
         try {
@@ -65,7 +66,7 @@ class SurveysPrepration
                 $function->description = $request->description;
                 $function->description_ar = $request->description_ar;
                 $function->respondent = $request->respondent;
-                if ($service_type == 3) {
+                if ($service_type == 3 || $service_type == 10) {
                     $function->IsDriver = $request->IsDriver != null;
                 }
                 $function->status = $request->status != null;
@@ -75,6 +76,8 @@ class SurveysPrepration
                     return redirect()->route('ManageHrDiagnosis.index')->with('success', 'Function created successfully');
                 } elseif ($service_type == 3) {
                     return redirect()->route('EmployeeEngagment.index')->with('success', 'Function created successfully');
+                } elseif ($service_type == 10) {
+                    return redirect()->route('CEmployeeEngagment.index')->with('success', 'Function created successfully');
                 } elseif ($service_type == 5) {
                     return redirect()->route('Leader360Review.index')->with('success', 'Function created successfully');
                 }
@@ -144,6 +147,8 @@ class SurveysPrepration
                     return redirect()->route('ManageHrDiagnosis.showPractices', $id)->with('success', 'Practice created successfully');
                 } elseif ($service_type == 3) {
                     return redirect()->route('EmployeeEngagment.showPractices', $id)->with('success', 'Practice created successfully');
+                } elseif ($service_type == 10) {
+                    return redirect()->route('CEmployeeEngagment.showPractices', $id)->with('success', 'Practice created successfully');
                 } elseif ($service_type == 5) {
                     return redirect()->route('Leader360Review.showPractices', $id)->with('success', 'Practice created successfully');
                 }
@@ -207,7 +212,7 @@ class SurveysPrepration
                 $question->respondent = $request->respondent;
                 $question->status = $request->status != null;
                 $question->practice_id = $id;
-                if ($service_type == 3) {
+                if ($service_type == 3 || $service_type == 10) {
                     $question->IsENPS = $request->IsENPS == null ? false : true;
                 }
                 $question->save();
@@ -215,6 +220,8 @@ class SurveysPrepration
                     return redirect()->route('ManageHrDiagnosis.showQuestions', $id)->with('success', 'Question created successfully');
                 } elseif ($service_type == 3) {
                     return redirect()->route('EmployeeEngagment.showQuestions', $id)->with('success', 'Question created successfully');
+                } elseif ($service_type == 10) {
+                    return redirect()->route('CEmployeeEngagment.showQuestions', $id)->with('success', 'Question created successfully');
                 } elseif ($service_type == 5) {
                     return redirect()->route('Leader360Review.showQuestions', $id)->with('success', 'Question created successfully');
                 }
@@ -229,7 +236,7 @@ class SurveysPrepration
     function editQuestion($id, $service_type)
     {
         $question = PracticeQuestions::find($id);
-        if (Auth::user()->can('updete', $question)) {
+        if (Auth::user()->can('update', $question)) {
             try {
                 //return view to edit question
                 //practice
@@ -251,14 +258,14 @@ class SurveysPrepration
     function updateQuestion(Request $request, $id, $service_type)
     {
         $question = PracticeQuestions::find($id);
-        if (Auth::user()->can('updete', $question)) {
+        if (Auth::user()->can('update', $question)) {
             try {
                 //update question
                 $question->question = $request->question;
                 $question->question_ar = $request->question_ar;
                 $question->description = $request->description;
                 $question->description_ar = $request->description_ar;
-                if ($service_type == 3) {
+                if ($service_type == 3 || $service_type == 10) {
                     $question->IsENPS = $request->IsENPS == null ? false : true;
                 }
                 $question->respondent = $request->respondent;
@@ -271,6 +278,10 @@ class SurveysPrepration
                 } elseif ($service_type == 3) {
                     return redirect()
                         ->route('EmployeeEngagment.showQuestions', $question->practice_id)
+                        ->with('success', 'Question updated successfully');
+                } elseif ($service_type == 10) {
+                    return redirect()
+                        ->route('CEmployeeEngagment.showQuestions', $question->practice_id)
                         ->with('success', 'Question updated successfully');
                 } elseif ($service_type == 5) {
                     return redirect()
@@ -297,6 +308,8 @@ class SurveysPrepration
                     return redirect()->route('ManageHrDiagnosis.showQuestions', $practice_id)->with('success', 'Question deleted successfully');
                 } elseif ($service_type == 3) {
                     return redirect()->route('EmployeeEngagment.showQuestions', $practice_id)->with('success', 'Question deleted successfully');
+                } elseif ($service_type == 10) {
+                    return redirect()->route('CEmployeeEngagment.showQuestions', $practice_id)->with('success', 'Question deleted successfully');
                 } elseif ($service_type == 5) {
                     return redirect()->route('Leader360Review.showQuestions', $practice_id)->with('success', 'Question deleted successfully');
                 }
@@ -350,6 +363,10 @@ class SurveysPrepration
                     return redirect()
                         ->route('EmployeeEngagment.showPractices', $practice->function_id)
                         ->with('success', 'Practice updated successfully');
+                } elseif ($service_type == 10) {
+                    return redirect()
+                        ->route('CEmployeeEngagment.showPractices', $practice->function_id)
+                        ->with('success', 'Practice updated successfully');
                 } elseif ($service_type == 5) {
                     return redirect()
                         ->route('Leader360Review.showPractices', $practice->function_id)
@@ -377,6 +394,8 @@ class SurveysPrepration
                     return redirect()->route('ManageHrDiagnosis.showPractices', $function_id)->with('success', 'Practice deleted successfully');
                 } elseif ($service_type == 3) {
                     return redirect()->route('EmployeeEngagment.showPractices', $function_id)->with('success', 'Practice deleted successfully');
+                } elseif ($service_type == 10) {
+                    return redirect()->route('CEmployeeEngagment.showPractices', $function_id)->with('success', 'Practice deleted successfully');
                 } elseif ($service_type == 5) {
                     return redirect()->route('Leader360Review.showPractices', $function_id)->with('success', 'Practice deleted successfully');
                 }
@@ -419,7 +438,7 @@ class SurveysPrepration
                 $function->description_ar = $request->description_ar;
                 $function->respondent = $request->respondent;
                 $function->status = $request->status != null;
-                if ($service_type == 3) {
+                if ($service_type == 3 || $service_type == 10) {
                     $function->IsDriver = $request->IsDriver != null;
                 }
                 $function->save();
@@ -427,6 +446,8 @@ class SurveysPrepration
                     return redirect()->route('ManageHrDiagnosis.index')->with('success', 'Function updated successfully');
                 } elseif ($service_type == 3) {
                     return redirect()->route('EmployeeEngagment.index')->with('success', 'Function updated successfully');
+                } elseif ($service_type == 10) {
+                    return redirect()->route('CEmployeeEngagment.index')->with('success', 'Function updated successfully');
                 } elseif ($service_type == 5) {
                     return redirect()->route('Leader360Review.index')->with('success', 'Function updated successfully');
                 }
@@ -455,6 +476,8 @@ class SurveysPrepration
                     return redirect()->route('ManageHrDiagnosis.index')->with('success', 'Function deleted successfully');
                 } elseif ($service_type == 3) {
                     return redirect()->route('EmployeeEngagment.index')->with('success', 'Function deleted successfully');
+                } elseif ($service_type == 10) {
+                    return redirect()->route('CEmployeeEngagment.index')->with('success', 'Function deleted successfully');
                 } elseif ($service_type == 5) {
                     return redirect()->route('Leader360Review.index')->with('success', 'Function deleted successfully');
                 }
@@ -604,8 +627,8 @@ class SurveysPrepration
                 ->addColumn('isAddAsRespondent', function ($employee) use ($respondents_ids) {
                     return in_array($employee->id, $respondents_ids) ? true : false;
                 })
-                ->addColumn('SendSurvey', function ($employee) use ($respondents_ids, $survey_id) {
-                    return in_array($employee->id, $respondents_ids) ? '<a href="javascript:void(0);" onclick="SendSurvey(\'' . $employee->id . '\',\'' . $survey_id . '\')" class="btn btn-info btn-xs"><i class="fa fa-paper-plane"></i></a>' : '<span class="badge bg-danger">' . __('Not Added') . '</span>';
+                ->addColumn('SendSurvey', function ($employee) use ($respondents_ids, $survey_id, $id, $survey_type) {
+                    return in_array($employee->id, $respondents_ids) ? '<a href="' . route('clients.showSendSurvey', [$id, $survey_type, $survey_id, 'i', $employee->id]) . '" onclick="SendSurvey(\'' . $employee->id . '\',\'' . $survey_id . '\')" class="btn btn-info btn-xs"><i class="fa fa-paper-plane"></i></a>' : '<span class="badge bg-danger">' . __('Not Added') . '</span>';
                 })
                 ->addColumn('SendReminder', function ($employee) use ($respondents_ids, $survey_id) {
                     return in_array($employee->id, $respondents_ids) ? '<a href="javascript:void(0);" onclick="SendReminder(\'' . $employee->id . '\',\'' . $survey_id . '\')" class="btn btn-warning btn-xs"><i class="fa fa-paper-plane"></i></a>' : '<span class="badge bg-danger">' . __('Not Added') . '</span>';
@@ -871,7 +894,7 @@ class SurveysPrepration
                         return $action;
                     })
                     ->addColumn('type', function ($employee) {
-                        return $employee->employee_type == 1 ? __('HR Manager') : __('Normal Employee');
+                        return $employee->employee_type == 1 ? __('Manager') : __('Normal Employee');
                     })
                     ->addColumn('sector', function ($employee) {
                         return $employee->sector != null ? $employee->sector->Name : '-';
@@ -889,7 +912,11 @@ class SurveysPrepration
                     ->addColumn('active', function ($employee) {
                         return $employee->active ? '<span class="badge bg-success">' . __('Active') . '</span>' : '<span class="badge bg-danger">' . __('Not Active') . '</span>';
                     })
-                    ->rawColumns(['action', 'hr', 'active', 'name'])
+                    //add button assign as user
+                    ->addColumn('assign', function ($employee) {
+                        return '<a href="javascript:void(0);" onclick="assignUser(\'' . $employee->id . '\')" class="btn btn-info btn-xs">' . __('Assign as User') . '</a>';
+                    })
+                    ->rawColumns(['action', 'hr', 'active', 'name', 'assign'])
                     ->make(true);
             }
         } catch (\Exception $e) {
@@ -903,9 +930,17 @@ class SurveysPrepration
         return Companies::where('sector_id', $id)->get()->append('name');
     }
     //departments function
-    function departments(Request $request, $id, $by_admin = false)
+    function departments(Request $request, $id, $type, $by_admin = false)
     {
-        return Departments::where('company_id', $id)->get()->append('name');
+        if ($type == 'r')
+            return Departments::where('company_id', $id)->where('dep_level', 3)->get()->append('name');
+        else
+            return Departments::where('parent_id', $id)->get()->append('name');
+    }
+    //sections function
+    function sections(Request $request, $id, $by_admin = false)
+    {
+        return Departments::where('parent_id', $id)->get()->append('name');
     }
     //storeEmployee function
     function storeEmployee(Request $request, $by_admin = false)
@@ -917,20 +952,41 @@ class SurveysPrepration
             } else {
                 $employee = Employees::find($request->id);
             }
-            //find department
-            $department = Departments::find($request->department);
+            //get client
+            $client = Clients::find($request->client_id);
+            //check if client use department
+            if ($client->use_departments) {
+                //find department
+                $department = Departments::find($request->department);
+            } else {
+                $department = null;
+            }
 
             $employee->client_id = $request->client_id;
             $employee->sector_id = $request->sector;
             $employee->comp_id = $request->company;
-            $employee->dep_id = $request->department;
+            //check if client use department
+            if ($client->use_departments) {
+                //check if client use section
+                if ($client->use_sections) {
+                    $employee->dep_id = $request->section;
+                } else {
+                    $employee->dep_id = $request->department;
+                }
+            } else {
+                $employee->dep_id = null;
+            }
             $employee->name = $request->name;
             $employee->email = $request->email;
             $employee->mobile = $request->mobile;
             $employee->employee_type = $request->type;
             $employee->position = $request->position;
-            if ($department->is_hr && $request->type == 1) {
-                $employee->is_hr_manager = true;
+            if ($client->use_department) {
+                if ($department->is_hr && $request->type == 1) {
+                    $employee->is_hr_manager = true;
+                } else {
+                    $employee->is_hr_manager = false;
+                }
             } else {
                 $employee->is_hr_manager = false;
             }
@@ -1000,17 +1056,36 @@ class SurveysPrepration
         try {
 
             if ($request->tool_type != 'customized') { //check if ID from IDs is not added
-                foreach ($request->ids as $idr) {
-                    $respondent = Respondents::where('employee_id', $idr)
-                        ->where([['survey_id', $request->survey], ['client_id', $request->client], ['survey_type', $request->type]])
-                        ->first();
-                    if ($respondent == null) {
-                        $respondent1 = new Respondents();
-                        $respondent1->employee_id = str($idr);
-                        $respondent1->survey_id = $request->survey;
-                        $respondent1->client_id = $request->client;
-                        $respondent1->survey_type = $request->type;
-                        $respondent1->save();
+                if ($request->isAll == 'all') {
+                    //get all employee of the client
+                    $employees = Employees::where('client_id', $request->client)->get();
+                    //loop to add them into respondents
+                    foreach ($employees as $employee) {
+                        $respondent = Respondents::where('employee_id', $employee->id)
+                            ->where([['survey_id', $request->survey], ['client_id', $request->client], ['survey_type', $request->type]])
+                            ->first();
+                        if ($respondent == null) {
+                            $respondent1 = new Respondents();
+                            $respondent1->employee_id = $employee->id;
+                            $respondent1->survey_id = $request->survey;
+                            $respondent1->client_id = $request->client;
+                            $respondent1->survey_type = $request->type;
+                            $respondent1->save();
+                        }
+                    }
+                } else {
+                    foreach ($request->ids as $idr) {
+                        $respondent = Respondents::where('employee_id', $idr)
+                            ->where([['survey_id', $request->survey], ['client_id', $request->client], ['survey_type', $request->type]])
+                            ->first();
+                        if ($respondent == null) {
+                            $respondent1 = new Respondents();
+                            $respondent1->employee_id = str($idr);
+                            $respondent1->survey_id = $request->survey;
+                            $respondent1->client_id = $request->client;
+                            $respondent1->survey_type = $request->type;
+                            $respondent1->save();
+                        }
                     }
                 }
                 //get all respondents of the survey and client and type not in IDs
@@ -1024,7 +1099,7 @@ class SurveysPrepration
                 if ($respondents->count() > 0 && $ready_to_delete) {
                     foreach ($respondents as $respondent) {
                         //delete all answers of the respondent
-                        if ($request->type == 3 || $request->type == 4) {
+                        if ($request->type == 3 || $request->type == 4 || $request->type == 10) {
                             $answers = SurveyAnswers::where('answered_by', $respondent->id)->get();
                             foreach ($answers as $answer) {
                                 $answer->delete();
@@ -1075,7 +1150,7 @@ class SurveysPrepration
                 if ($respondents->count() > 0 && $ready_to_delete) {
                     foreach ($respondents as $respondent) {
                         //delete all answers of the respondent
-                        if ($request->type == 3 || $request->type == 4) {
+                        if ($request->type == 3 || $request->type == 4 || $request->type == 10) {
                             $answers = CustomizedSurveyAnswers::where('answered_by', $respondent->id)->get();
                             foreach ($answers as $answer) {
                                 $answer->delete();
@@ -1194,7 +1269,7 @@ class SurveysPrepration
         }
     }
     //sendSurvey function
-    function showSendSurvey(Request $request, $id, $type, $survey_id, $by_admin = false)
+    function showSendSurvey(Request $request, $id, $type, $survey_id, $send_type = null, $emp_id, $by_admin = false)
     {
         try {
             //show send survey view
@@ -1211,6 +1286,8 @@ class SurveysPrepration
                 'client' => $client,
                 'emailContet' => $emailContet,
                 'candidates' => $candidates,
+                'send_type' => $send_type,
+                'emp_id' => $emp_id,
             ];
             return view('dashboard.client.sendSurvey')->with($data);
         } catch (\Exception $e) {
@@ -1220,7 +1297,7 @@ class SurveysPrepration
         }
     }
     //sendSurvey function
-    function sendSurvey(Request $request, $id, $type, $survey_id, $by_admin = false)
+    function sendSurvey(Request $request, $id, $type, $survey_id, $send_type = null, $by_admin = false)
     {
         try {
             //find survey
@@ -1229,7 +1306,7 @@ class SurveysPrepration
             $client = Clients::find($id);
             //find email content
             $emailContent = EmailContents::where([['survey_id', $survey_id], ['client_id', $id]])->first();
-
+            $wherein = [];
             //build the where querey based on client selection of sector
             $where = [];
             if ($request->sector != null) {
@@ -1239,17 +1316,42 @@ class SurveysPrepration
                 $where[] = ['comp_id', $request->company];
             }
             if ($request->department != null) {
-                $where[] = ['dep_id', $request->department];
+
+                $wherein[] = $this->getChilderenDepartmentIDs($request->department);
             }
             if ($type != 5 || $type != 6) { //get all respondents of the survey and client
-                $respondents = Respondents::where('survey_id', $survey_id)->where('client_id', $id)->where('survey_type', $type)->get();
-                //get all employees based on the where querey and id of respondents
-                $employees = Employees::select('email', 'id')->where($where)->whereIn('id', $respondents->pluck('employee_id')->toArray())->get();
-                //create a collection of emails from $employees and ids from $respondents
                 $emails = collect();
-                foreach ($employees as $employee) {
-                    $rid = $respondents->where('employee_id', $employee->id)->first()->id;
-                    $emails->push(['email' => $employee->email, 'id' => $rid]);
+                if ($send_type == null) {
+                    $respondents = Respondents::where('survey_id', $survey_id)->where('client_id', $id)->where('survey_type', $type)->where('send_status', false)->get();
+                    //get all employees based on the where querey and id of respondents
+                    $employees = Employees::select('email', 'id')->where($where)->whereIn('id', $respondents->pluck('employee_id')->toArray())->whereIn('dep_id', $this->ids)->get();
+                    //create a collection of emails from $employees and ids from $respondents
+                    foreach ($employees as $employee) {
+                        $rid = $respondents->where('employee_id', $employee->id)->first()->id;
+                        $emails->push(['email' => $employee->email, 'id' => $rid]);
+                    }
+                }
+                if ($send_type == 'r') {
+                    //get distinct answered_by as an array from survey_answers
+                    $answered_by = SurveyAnswers::where('survey_id', $survey_id)->where('client_id', $id)->distinct('answered_by')->pluck('answered_by')->toArray();
+                    //get employee_id from Respondent where id not in $answered_by
+                    $respondents = Respondents::where('survey_id', $survey_id)->where('client_id', $id)->where('send_status', false)->whereNotIn('id', $answered_by)->pluck('employee_id')->toArray();
+                    //get all employees based on the where querey and id of respondents
+                    $employees = Employees::select('email', 'id')->where($where)->whereIn('id', $respondents)->whereIn('dep_id', $this->ids)->get();
+                    //create a collection of emails from $employees and ids from $respondents
+                    foreach ($employees as $employee) {
+                        $rid = Respondents::where('employee_id', $employee->id)->where('survey_id', $survey_id)->where('client_id', $id)->where('send_status', false)->first()->id;
+                        $emails->push(['email' => $employee->email, 'id' => $rid]);
+                    }
+                }
+                if ($send_type == 'i') {
+                    //get employee id from request
+                    $employees = Employees::select('email', 'id')->where('id', $request->employee_id)->get();
+                    //create a collection of emails from $employees and ids from $respondents
+                    foreach ($employees as $employee) {
+                        $rid = Respondents::where('employee_id', $employee->id)->where('survey_id', $survey_id)->where('client_id', $id)->first()->id;
+                        $emails->push(['email' => $employee->email, 'id' => $rid]);
+                    }
                 }
                 //capsolate all information in $data
                 $data = [
@@ -1308,11 +1410,29 @@ class SurveysPrepration
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+    function getChilderenDepartmentIDs($id)
+    {
+
+        //find department
+        $department = Departments::find($id);
+        //check if deaortment has childeren
+        if ($department->subDepartments->count() > 0) {
+
+            //loop to get all children
+            foreach ($department->subDepartments as $department) {
+                $ids[] = $department->id;
+                $this->getChilderenDepartmentIDs($department->id);
+            }
+        }
+        //push id into $this->ids
+        $this->ids[] = $id;
+        return $id;
+    }
     //SurveyResults function
     function SurveyResults($Client_id, $Service_type, $survey_id, $vtype, $vtype_id = null, $by_admin = false)
     {
         try {
-            if ($Service_type == 3) {
+            if ($Service_type == 3 || $Service_type == 10) {
                 if ($vtype == 'comp') {
                     $data = $this->get_resultd($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
                 } elseif ($vtype == 'sec') {
@@ -3695,9 +3815,7 @@ class SurveysPrepration
         return $candidates;
     }
     //schedule360 public function
-    public function schedule360(Request $request,  $type = null)
-    {
-    }
+    public function schedule360(Request $request,  $type = null) {}
     //ShowCustomizedSurveys function
     function ShowCustomizedSurveys($id, $type, $by_admin = false)
     {
@@ -4247,6 +4365,398 @@ class SurveysPrepration
         } catch (\Exception $e) {
             Log::error($e);
             return response()->json(['message' => 'Error uploading Organization chart', 'stat' => false], 500);
+        }
+    }
+    //copyFunction function
+    function CopyFunctions(Request $request, $id, $is_admin = false)
+    {
+        try {
+            //get copy_from_servic
+            $copy_from_service = Services::where('service_type', $request->type)->first();
+            //get copy_to_service
+            $copy_to_service = Services::where('service_type', $id)->first();
+            //get functions from copy_from_service
+            $functions = Functions::where('service_id', $copy_from_service->id)->get();
+            //loop through functions
+            foreach ($functions as $function) {
+                //create new function
+                $new_function = new Functions();
+                $new_function->service_id = $copy_to_service->id;
+                $new_function->title = $function->title;
+                $new_function->title_ar = $function->title_ar;
+                $new_function->respondent = $function->respondent;
+                $new_function->status = $function->status;
+                $new_function->IsDefault = $function->IsDefault;
+                $new_function->IsDriver = $function->IsDriver;
+                $new_function->save();
+                //get practices from function
+                $practices = $function->practices;
+                //loop through practices
+                foreach ($practices as $practice) {
+                    //create new practice
+                    $new_practice = new FunctionPractices();
+                    $new_practice->function_id = $new_function->id;
+                    $new_practice->title = $practice->title;
+                    $new_practice->title_ar = $practice->title_ar;
+                    $new_practice->description = $practice->description;
+                    $new_practice->description_ar = $practice->description_ar;
+                    $new_practice->status = $practice->status;
+                    $new_practice->save();
+                    //get questions from practice
+                    $questions = $practice->questions;
+                    //loop through questions
+                    foreach ($questions as $question) {
+                        //create new question
+                        $new_question = new PracticeQuestions();
+                        $new_question->practice_id = $new_practice->id;
+                        $new_question->question = $question->question;
+                        $new_question->question_ar = $question->question_ar;
+                        $new_question->description = $question->description;
+                        $new_question->description_ar = $question->description_ar;
+                        $new_question->status = $question->status;
+                        $new_question->IsENPS = $question->IsENPS;
+                        $new_question->respondent = $question->respondent;
+                        $new_question->save();
+                    }
+                }
+            }
+            if ($id == 4) {
+                return redirect()->route('ManageHrDiagnosis.index')->with('success', 'Function deleted successfully');
+            } elseif ($id == 3) {
+                return redirect()->route('EmployeeEngagment.index')->with('success', 'Function deleted successfully');
+            } elseif ($id == 10) {
+                return redirect()->route('CEmployeeEngagment.index')->with('success', 'Function deleted successfully');
+            } elseif ($id == 5) {
+                return redirect()->route('Leader360Review.index')->with('success', 'Function deleted successfully');
+            }
+        } catch (\Exception $e) {
+            Log::error($e);
+            return response()->json(['message' => 'Error copying Function', 'stat' => false], 500);
+        }
+    }
+    //SurveyStat function
+    function SurveyStat($id, $cid, $type, $entity_id = null, $is_admin = false)
+    {
+        ini_set('max_execution_time', 300);
+        try {
+            //get client
+            $client = Clients::find($cid);
+            //find survey
+            $survey = Surveys::find($id);
+            $sector_stat = [];
+            $company_stat = [];
+            $region_stat = [];
+            $branch_stat = [];
+            $super_dir_stat = [];
+            $dir_stat = [];
+            $div_stat = [];
+            $deps_stat = [];
+            $all_employees = [];
+            $collected = false;
+            $sum_of_employees = 0;
+            $sum_of_respondents = 0;
+            $sum_of_answered = 0;
+            //check if use multiple sectors
+            if ($client->multiple_sectors) {
+                foreach ($client->sectors as $sector) {
+                    $employees = [];
+                    $employees = $this->getEmployeeOfEntity($sector->id, $cid, 'sector');
+                    $respondents = $this->getRespondentsIds($employees, $id);
+                    $answered = $this->getNumberAnswered($respondents, $id);
+                    $entity_stat = [
+                        'entity_name' => $sector->name,
+                        'entity_id' => $sector->id,
+                        'employee' => count($employees),
+                        'respondents' => count($respondents),
+                        'answered' => $answered,
+                        'percentage' => ($answered / count($respondents)) * 100,
+                        'type' => 'sector'
+                    ];
+                    array_push($sector_stat, $entity_stat);
+                    array_merge($all_employees, $employees);
+                }
+                $collected = true;
+            }
+            if ($client->multiple_company && !$collected && !$client->multiple_sectors) {
+                foreach ($client->sectors->first()->companies as $company) {
+                    $employees = [];
+                    $employees = $this->getEmployeeOfEntity($company->id, $cid, 'company');
+                    $respondents = $this->getRespondentsIds($employees, $id);
+                    $answered = $this->getNumberAnswered($respondents, $id);
+                    $entity_stat = [
+                        'entity_name' => $company->name,
+                        'entity_id' => $company->id,
+                        'employee' => count($employees),
+                        'respondents' => count($respondents),
+                        'answered' => $answered,
+                        'percentage' => ($answered / count($respondents)) * 100,
+                        'type' => 'company'
+                    ];
+                    //push entity_stat into stat array
+                    array_push($company_stat, $entity_stat);
+                    array_merge($all_employees, $employees);
+                }
+            }
+            if ($client->use_departments && !$client->multiple_company && !$collected && !$client->multiple_sectors) {
+                $company = $client->sectors->first()->companies()->first();
+                //region
+                foreach ($company->departments->where('dep_level', 3) as $department) {
+                    $employees = [];
+                    $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
+                    $respondents = $this->getRespondentsIds($employees, $id);
+                    $answered = $this->getNumberAnswered($respondents, $id);
+                    $entity_stat = [
+                        'entity_name' => $department->name,
+                        'entity_id' => $department->id,
+                        'employee' => count($employees),
+                        'respondents' => count($respondents),
+                        'answered' => $answered,
+                        'percentage' => ($answered / count($respondents)) * 100,
+                        'type' => 'department'
+                    ];
+                    array_push($region_stat, $entity_stat);
+                    array_merge($all_employees, $employees);
+                }
+                //branch
+                foreach ($company->departments->where('dep_level', 4) as $department) {
+                    $employees = [];
+                    $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
+                    $respondents = $this->getRespondentsIds($employees, $id);
+                    $answered = $this->getNumberAnswered($respondents, $id);
+                    $sum_of_employees += count($employees);
+                    $sum_of_respondents += count($respondents);
+                    $sum_of_answered += $answered;
+                    $entity_stat = [
+                        'entity_name' => $department->name,
+                        'entity_id' => $department->id,
+                        'employee' => count($employees),
+                        'respondents' => count($respondents),
+                        'answered' => $answered,
+                        'percentage' => ($answered / count($respondents)) * 100,
+                        'type' => 'department',
+                        'region' => $department->region_name
+
+                    ];
+                    array_push($branch_stat, $entity_stat);
+                }
+                //Super directorate
+                foreach ($company->departments->where('dep_level', 5) as $department) {
+                    $employees = [];
+                    $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
+                    $respondents = $this->getRespondentsIds($employees, $id);
+                    $answered = $this->getNumberAnswered($respondents, $id);
+                    $branch_title_collected = false;
+                    $entity_stat = [
+                        'entity_name' => $department->name,
+                        'entity_id' => $department->id,
+                        'employee' => count($employees),
+                        'respondents' => count($respondents),
+                        'answered' => $answered,
+                        'percentage' => ($answered / count($respondents)) * 100,
+                        'type' => 'department',
+                        'region' => $department->region_name,
+                        'branch' => $department->branch_name
+                    ];
+                    array_push($super_dir_stat, $entity_stat);
+                }
+                //directorate
+                foreach ($company->departments->where('dep_level', 6) as $department) {
+                    $employees = [];
+                    $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
+                    $respondents = $this->getRespondentsIds($employees, $id);
+                    $answered = $this->getNumberAnswered($respondents, $id);
+                    $entity_stat = [
+                        'entity_name' => $department->name,
+                        'entity_id' => $department->id,
+                        'employee' => count($employees),
+                        'respondents' => count($respondents),
+                        'answered' => $answered,
+                        'percentage' => ($answered / count($respondents)) * 100,
+                        'type' => 'department',
+                        'region' => $department->region_name,
+                        'branch' => $department->branch_name,
+                    ];
+                    array_push($dir_stat, $entity_stat);
+                }
+                //division
+                foreach ($company->departments->where('dep_level', 7) as $department) {
+                    $employees = [];
+                    $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
+                    $respondents = $this->getRespondentsIds($employees, $id);
+                    $answered = $this->getNumberAnswered($respondents, $id);
+                    $entity_stat = [
+                        'entity_name' => $department->name,
+                        'entity_id' => $department->id,
+                        'employee' => count($employees),
+                        'respondents' => count($respondents),
+                        'answered' => $answered,
+                        'percentage' => ($answered / count($respondents)) * 100,
+                        'type' => 'department',
+                        'region' => $department->region_name,
+                        'branch' => $department->branch_name,
+                    ];
+                    array_push($div_stat, $entity_stat);
+                }
+                //department
+                foreach ($company->departments->where('dep_level', 8) as $department) {
+                    $employees = [];
+                    $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
+                    $respondents = $this->getRespondentsIds($employees, $id);
+                    $answered = $this->getNumberAnswered($respondents, $id);
+                    $entity_stat = [
+                        'entity_name' => $department->name,
+                        'entity_id' => $department->id,
+                        'employee' => count($employees),
+                        'respondents' => count($respondents),
+                        'answered' => $answered,
+                        'percentage' => ($answered / count($respondents)) * 100,
+                        'type' => 'department',
+                        'region' => $department->region_name,
+                        'branch' => $department->branch_name,
+                    ];
+                    array_push($deps_stat, $entity_stat);
+                }
+            }
+            //modified super_dir_stat
+            $modified_super = [];
+            $collection = collect($super_dir_stat);
+
+            // Group by 'name' and merge scores
+            $result = $collection->groupBy('entity_name')->map(function ($items) {
+                $merged = $items->first(); // Take the first item as a base
+                $merged['employee'] = $items->sum('employee'); // Sum up the 'score'
+                $merged['respondents'] = $items->sum('respondents'); // Sum up the 'score'
+                $merged['answered'] = $items->sum('answered'); // Sum up the 'score'
+                //calculate percentage
+                $merged['percentage'] = ($merged['answered'] / $merged['respondents']) * 100;
+                return $merged;
+            })->values();
+            $super_dir_stat = $result->all();
+            $collection = collect($dir_stat);
+
+            // Group by 'name' and merge scores
+            $result = $collection->groupBy('entity_name')->map(function ($items) {
+                $merged = $items->first(); // Take the first item as a base
+                $merged['employee'] = $items->sum('employee'); // Sum up the 'score'
+                $merged['respondents'] = $items->sum('respondents'); // Sum up the 'score'
+                $merged['answered'] = $items->sum('answered'); // Sum up the 'score'
+                //calculate percentage
+                $merged['percentage'] = ($merged['answered'] / $merged['respondents']) * 100;
+                return $merged;
+            })->values();
+            $dir_stat = $result->all();
+            $collection = collect($div_stat);
+
+            // Group by 'name' and merge scores
+            $result = $collection->groupBy('entity_name')->map(function ($items) {
+                $merged = $items->first(); // Take the first item as a base
+                $merged['employee'] = $items->sum('employee'); // Sum up the 'score'
+                $merged['respondents'] = $items->sum('respondents'); // Sum up the 'score'
+                $merged['answered'] = $items->sum('answered'); // Sum up the 'score'
+                //calculate percentage
+                $merged['percentage'] = ($merged['answered'] / $merged['respondents']) * 100;
+                return $merged;
+            })->values();
+            $div_stat = $result->all();
+            $collection = collect($deps_stat);
+
+            // Group by 'name' and merge scores
+            $result = $collection->groupBy('entity_name')->map(function ($items) {
+                $merged = $items->first(); // Take the first item as a base
+                $merged['employee'] = $items->sum('employee'); // Sum up the 'score'
+                $merged['respondents'] = $items->sum('respondents'); // Sum up the 'score'
+                $merged['answered'] = $items->sum('answered'); // Sum up the 'score'
+                //calculate percentage
+                $merged['percentage'] = ($merged['answered'] / $merged['respondents']) * 100;
+                return $merged;
+            })->values();
+            $deps_stat = $result->all();
+
+            $data = [
+                'sector_stat' => $sector_stat,
+                'company_stat' => $company_stat,
+                'region_stat' => $region_stat,
+                'branch_stat' => $branch_stat,
+                'super_dir_stat' => $super_dir_stat,
+                'dir_stat' => $dir_stat,
+                'div_stat' => $div_stat,
+                'deps_stat' => $deps_stat,
+                'survey' => $survey,
+                'sum_of_employees' => $sum_of_employees,
+                'sum_of_respondents' => $sum_of_respondents,
+                'sum_of_answered' => $sum_of_answered,
+                'total_percentage' => ($sum_of_answered / $sum_of_respondents) * 100,
+            ];
+            return view('dashboard.client.SurveyStatistics')->with($data);
+        } catch (\Exception $e) {
+            dd($e);
+        }
+    }
+    // recusive function to get all employee of an entity
+    public function getEmployeeOfEntity($entity_id, $client, $entity_type): array
+    {
+        $employees = [];
+        if ($entity_type == 'org') {
+            $sectors = Sectors::where('client_id', $client)->get();
+            foreach ($sectors as $sector) {
+                //foreach sector companies
+                foreach ($sector->companies as $company) {
+                    $employees = array_merge($employees, $this->getEmployeeOfEntity($company->id, $client, 'company'));
+                }
+            }
+        } elseif ($entity_type == 'sector') {
+            $sectors = Sectors::find($entity_id);
+            foreach ($sectors->companies  as $company) {
+                $employees = array_merge($employees, $this->getEmployeeOfEntity($company->id, $client, 'company'));
+            }
+        } elseif ($entity_type == 'company') {
+            //find client
+            $client = Clients::find($client);
+            $company = Companies::find($entity_id);
+            //check if client use department
+            if ($client->use_departments) {
+                //foreach company departments
+                foreach ($company->departments->where('dep_level', 3) as $department) {
+                    $employees = array_merge($employees, $this->getEmployeeOfEntity($department->id, $client, 'department'));
+                }
+            } else {
+                //foreach company employees
+                $employees =  $company->employees->pluck('id')->toArray();
+            }
+        } elseif ($entity_type == 'department') {
+            //find department
+            $department = Departments::find($entity_id);
+            $employees = $department->employees->pluck('id')->toArray();
+            //foreach department subDepartments
+            foreach ($department->subDepartments as $subDepartment) {
+                $employees = array_merge($employees, $this->getEmployeeOfEntity($subDepartment->id, $client, 'department'));
+            }
+        }
+        return $employees;
+    }
+    //get respondents ids
+    private function getRespondentsIds($employees, $survey)
+    {
+        return Respondents::whereIn('employee_id', $employees)->where('survey_id', $survey)->pluck('id')->toArray();
+    }
+    private function getNumberAnswered($respondents, $survey)
+    {
+        return SurveyAnswers::whereIn('answered_by', $respondents)->where('survey_id', $survey)->distinct('answered_by')->count();
+    }
+    //AssignAsUser function
+    function AssignAsUser(Request $request, $id, $cid, $is_admin = false)
+    {
+        try {
+            //get client
+            $client = Clients::find($cid);
+            //get employee
+            $employee = Employees::find($id);
+            //check if employee is already assigned
+            $assigned = User::where('email', $employee->email)->first();
+            return response()->json(['message' => 'User assigned successfully', 'stat' => true], 200);
+        } catch (\Exception $e) {
+            Log::error($e);
+            return response()->json(['message' => 'Error assigning user', 'stat' => false], 500);
         }
     }
 }

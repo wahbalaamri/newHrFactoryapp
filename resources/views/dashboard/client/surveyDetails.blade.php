@@ -53,7 +53,8 @@
                                         <div class="icon">
                                             <i class="fas fa-user-plus"></i>
                                         </div>
-                                        <a href="{{ route('clients.Respondents',[$id,$type,$survey->id]) }}" class="small-box-footer">
+                                        <a href="{{ route('clients.Respondents',[$id,$type,$survey->id]) }}"
+                                            class="small-box-footer">
                                             {{ __('Start') }}<i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>
@@ -67,7 +68,8 @@
                                         <div class="icon">
                                             <i class="fas fa-mail-bulk"></i>
                                         </div>
-                                        <a href="{{ route('clients.ShowCreateEmail',[$id,$type,$survey->id]) }}" class="small-box-footer">
+                                        <a href="{{ route('clients.ShowCreateEmail',[$id,$type,$survey->id]) }}"
+                                            class="small-box-footer">
                                             {{ __('Start') }}<i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>
@@ -75,14 +77,15 @@
                                 <div class="col-lg-3 col-6">
 
                                     <div class="small-box bg-success">
-                                        <div class="inner"  style="min-height: 123px">
-                                            <h3  style="font-size: 1.6rem">{{ __('Send Survey') }}</h3>
+                                        <div class="inner" style="min-height: 123px">
+                                            <h3 style="font-size: 1.6rem">{{ __('Send Survey') }}</h3>
                                             <p class="w-75">{{ __('You Can Setup Sending Survey') }}</p>
                                         </div>
                                         <div class="icon">
                                             <i class="ion ion-email"></i>
                                         </div>
-                                        <a href="{{ route('clients.showSendSurvey',[$id,$type,$survey->id]) }}" class="small-box-footer">
+                                        <a href="{{ route('clients.showSendSurvey',[$id,$type,$survey->id]) }}"
+                                            class="small-box-footer">
                                             {{ __('Start') }}<i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>
@@ -90,8 +93,8 @@
                                 <div class="col-lg-3 col-6">
 
                                     <div class="small-box bg-danger">
-                                        <div class="inner"  style="min-height: 123px">
-                                            <h3  style="font-size: 1.6rem">{{ __('Send Reminders') }}</h3>
+                                        <div class="inner" style="min-height: 123px">
+                                            <h3 style="font-size: 1.6rem">{{ __('Send Reminders') }}</h3>
                                             <p class="w-75">{{ __('You Can Setup Sending Reminders') }}</p>
                                         </div>
                                         <div class="icon">
@@ -111,7 +114,8 @@
                                         <div class="icon">
                                             <i class="fas fa-chart-pie"></i>
                                         </div>
-                                        <a href="#" class="small-box-footer">
+                                        <a href="{{ route('ManageHrDiagnosis.SurveyStat',['id'=>$survey->id,'cid'=>$id,'type'=>'all']) }}"
+                                            class="small-box-footer">
                                             {{ __('Start') }}<i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>
@@ -125,7 +129,8 @@
                                         <div class="icon">
                                             <i class="ion ion-stats-bars"></i>
                                         </div>
-                                        <a href="{{ route('clients.SurveyResults',[$id,$type,$survey->id,'all']) }}" class="small-box-footer">
+                                        <a href="{{ route('clients.SurveyResults',[$id,$type,$survey->id,'all']) }}"
+                                            class="small-box-footer">
                                             {{ __('Start') }}<i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>

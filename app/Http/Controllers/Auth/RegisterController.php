@@ -189,6 +189,7 @@ class RegisterController extends Controller
             $newFocal->client_id = $newClient->id;
             $newFocal->is_active = true;
             $newFocal->save();
+            //
             //redirect to login page with success message
             return redirect('/login')->with('success', 'You are registered successfully');
         }

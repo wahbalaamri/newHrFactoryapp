@@ -30,4 +30,14 @@ class TermsConditions extends Model
     {
         return $this->belongsTo(Countries::class);
     }
+    //attribute to get translated title
+    public function getTitleAttribute()
+    {
+        return app()->isLocale('en') ? $this->english_title : $this->arabic_title;
+    }
+    //attribute to get translated text
+    public function getTextAttribute()
+    {
+        return app()->isLocale('en') ? $this->english_text : $this->arabic_text;
+    }
 }

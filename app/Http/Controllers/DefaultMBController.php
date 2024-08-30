@@ -11,6 +11,7 @@ use App\Models\FocalPoints;
 use App\Models\Partnerships;
 use App\Models\Plans;
 use App\Models\UserSections;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -62,7 +63,7 @@ class DefaultMBController extends Controller
             if (count($sections) == 0 && $plan == null)
                 return redirect()->route('manualBuilder.index', [$default_country->id, $plans[0]->id]);
         }
-        if (count($plans) > 0 && count($sections)==0) {
+        if (count($plans) > 0 && count($sections) == 0) {
             //get unique plans id of current country sections
             $exist_plans_id = DefaultMB::where('country_id', $country)->where('language', app()->isLocale('en') ? 'en' : 'ar')->whereNotNull('plan_id')->groupBy('plan_id')->pluck('plan_id')->toArray();
         }
@@ -300,18 +301,21 @@ class DefaultMBController extends Controller
             //get client country
             $country = $client->country;
             //get service plans
-            $plans = Plans::where('service', function($quere){
+            $plans = Plans::where('service', function ($quere) {
                 $quere->select('id')->from('services')->where('service_type', 1);
             })->get();
             //get plans id
             $plans_id = $plans->pluck('id')->toArray();
             //get client active subscriptions
-            $subscribed_plan = $client->subscriptions->where('is_active', true)->whereIn('plan_id',$plans_id)->first()->plan_id;
-            $sections = DefaultMB::where('country_id', $country)->where('plan_id',$subscribed_plan)->whereNull('paren_id')->get();
+            $subscribed_plan = $client->subscriptions->where('is_active', true)->whereIn('plan_id', $plans_id)->first()->plan_id;
+            $sections = DefaultMB::where('country_id', $country)->where('plan_id', $subscribed_plan)->whereNull('paren_id')->get();
             //check if $sections has value
-            $sections = count($sections) > 0 ? $sections : DefaultMB::where('country_id', 155)->where('plan_id',$subscribed_plan)->whereNull('paren_id')->get();
+            $sections = count($sections) > 0 ? $sections : DefaultMB::where('country_id', 155)->where('plan_id', $subscribed_plan)->whereNull('paren_id')->get();
             foreach ($sections as $section) {
-                $new_section = new UserSections();
+                //check if the section already there
+                $new_section = UserSections::where('default_MB_id', $section->id)->where('user_id', $id)->first();
+                if (!$new_section)
+                    $new_section = new UserSections();
                 $new_section->paren_id = $section->paren_id;
                 $new_section->title = $section->title;
                 $new_section->content = $section->content;
@@ -445,24 +449,47 @@ class DefaultMBController extends Controller
     public function downloadClientPolicy(Request $request, $id)
     {
         try {
+            //find client
+            $client = Clients::find($id);
             //get client sections
-            $sections = UserSections::where('user_id', $id)->whereNull('paren_id')->where('language', app()->getLocale())->get();
+            $sections = UserSections::where('user_id', $id)->whereNull('paren_id')->where('language', app()->getLocale())->where('IsActive', true)->get()->sortBy('ordering');
             $contents = [];
-            //export sections to download pdf
+            $date = date('Y-m-d');
+            $url = public_path('uploads/companies/logos/' . $client->logo_path);
+            $imageContents = file_get_contents($url);
 
+            // Get the mime type of the image
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_buffer($finfo, $imageContents);
+            finfo_close($finfo);
+
+            // Encode the image contents to base64
+            $base64 = base64_encode($imageContents);
+            $image = "data:$mimeType;base64,$base64";
+            //export sections to download pdf
+            $data = [
+                'sections' => $sections,
+                'client' => $client,
+                //date now
+                'date' => $date,
+                'image' => $image
+            ];
+            //load view
+            // return view('dashboard.admin.ManualBuilder.manualBuilderTemplate')->with($data);
+            $pdf = PDF::loadView('dashboard.admin.ManualBuilder.manualBuilderTemplate', compact('sections', 'client', 'date', 'image'));
+            return $pdf->download($client->client_name . '-HR Policy-' . $date . '.pdf');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return response()->json(['message' => 'Something went wrong, please try again later', 'stat' => false], 500);
         }
     }
     //CopyPlanSections function
-    public function CopyPlanSections(Request $request,$country,$plan_id,$des_plan)
+    public function CopyPlanSections(Request $request, $country, $plan_id, $des_plan)
     {
         try {
             //get all sections of plan
             $sections = DefaultMB::where('country_id', $country)->where('plan_id', $plan_id)->whereNull('paren_id')->get();
-            foreach($sections as $section)
-            {
+            foreach ($sections as $section) {
                 $new_section = new DefaultMB();
                 $new_section->paren_id = $section->paren_id;
                 $new_section->title = $section->title;
@@ -496,11 +523,9 @@ class DefaultMBController extends Controller
                         $new_child->save();
                     }
                 }
-
             }
             return redirect()->route('manualBuilder.index', [$country, $des_plan]);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::error($e->getMessage());
             return response()->json(['message' => 'Something went wrong, please try again later', 'stat' => false], 500);
         }

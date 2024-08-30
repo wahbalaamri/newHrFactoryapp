@@ -79,30 +79,30 @@ class SurveysController extends Controller
         $respondent = Respondents::find($id);
         //if not found return 404
         if (!$respondent) {
-            return abort(404);
+            return abort(404, 'Respondent not found');
         }
         //get the survey
         $survey = Surveys::find($respondent->survey_id);
         //if not found return 404
         if (!$survey) {
-            return abort(404);
+            return abort(404, 'survey is not found');
         }
         //get the plan of this survey
         $plan = $survey->plans;
         //get client subscription
         $subscription = ClientSubscriptions::select('is_active')->where('client_id', $survey->client_id)->where('plan_id', $plan->id)->first()->is_active;
         if (!$subscription) {
-            return abort(404);
+            return abort(404, 'there is no active subscription');
         }
         //check if the respondent has already taken the survey
         $surveyAnswers = SurveyAnswers::where('answered_by', $id)->get();
         if ($surveyAnswers->count() > 0) {
-            return abort(404);
+            return abort(403, 'You already answered this survey | لقد أجبت بالفعل على هذا الاستبيان');
         }
         if (!$survey->survey_stat) {
-            return abort(404);
+            return abort(403, 'This survey is not active');
         }
-        if ($plan->service_->service_type == 3) {
+        if ($plan->service_->service_type == 3 || $plan->service_->service_type == 10) {
             //get servcie id
             $service_id = $plan->service_->id;
             //create empty array
@@ -166,8 +166,6 @@ class SurveysController extends Controller
         $EmailId = $reply[0]['EmailId'];
         $priorities = $reply[0]['priorities'];
         $oe_ans = $reply[0]['oe_ans'];
-        $gender = $reply[0]['gender'];
-        $agegroup = $reply[0]['agegroup'];
         // $type = $reply[0]['type'];
         $ansAva = SurveyAnswers::where([['answered_by', $EmailId], ['survey_id', $SurveyId]])->get();
         if ($SurveyId == null) {
@@ -223,11 +221,6 @@ class SurveysController extends Controller
             }
             //update emails with agegroup and gender
             //find respondent
-            $respondent = Respondents::select('employee_id')->where('id', $EmailId)->first();
-            $email = Employees::find($respondent->employee_id);
-            $email->age_generation = $agegroup;
-            $email->gender = $gender;
-            $email->save();
         }
         $data = [
             'msg' => 'success',

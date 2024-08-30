@@ -64,6 +64,7 @@ class PartnersController extends Controller
                     'url' => TempURL::getTempURL('partners.index', 5),
                     'countries' => Countries::all()->groupBy('IsArabCountry')->append('country_name'),
                 ];
+                Log::info("dddddss");
                 return view('dashboard.partners.index')->with($data);
             } else {
                 $temp = TempURL::getTempURL('partners.index', 5);

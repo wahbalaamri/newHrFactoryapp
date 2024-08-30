@@ -14,6 +14,8 @@
                         {{ __('360 Review Tool') }}
                         @elseif($service_type==3)
                         {{ __('Employee Engagment Tool') }}
+                        @elseif($service_type==10)
+                        {{ __('Customized Employee Engagment Tool') }}
                         @endif
                     </h1>
                 </div><!-- /.col -->
@@ -27,6 +29,8 @@
                             360 Review
                             @elseif($service_type == 3)
                             Employee Engagment
+                            @elseif($service_type == 10)
+                            Customized Employee Engagment
                             @endif
                         </li>
                     </ol>
@@ -54,6 +58,8 @@
                                 {{ route('Leader360Review.showPractices',$practice->function_id) }}
                                 @elseif($service_type == 3)
                                 {{ route('EmployeeEngagment.showPractices',$practice->function_id) }}
+                                @elseif($service_type == 10)
+                                {{ route('CEmployeeEngagment.showPractices',$practice->function_id) }}
                                 @endif
                                 "
                                     class="btn btn-warning btn-sm">
@@ -69,6 +75,8 @@
                                 {{ route('Leader360Review.createQuestion',$practice->id) }}
                                 @elseif($service_type == 3)
                                 {{ route('EmployeeEngagment.createQuestion',$practice->id) }}
+                                @elseif($service_type == 10)
+                                {{ route('CEmployeeEngagment.createQuestion',$practice->id) }}
                                 @endif
                                 "
                                     class="btn btn-secondary btn-sm">
@@ -104,6 +112,8 @@
                                                 {{ route('Leader360Review.editQuestion',$question->id) }}
                                                 @elseif($service_type == 3)
                                                 {{ route('EmployeeEngagment.editQuestion',$question->id) }}
+                                                @elseif($service_type == 10)
+                                                {{ route('CEmployeeEngagment.editQuestion',$question->id) }}
                                                 @endif
 
                                                 "
@@ -125,6 +135,8 @@
                                                     {{ route('Leader360Review.deleteQuestion',$question->id)}}
                                                     @elseif($service_type == 3)
                                                     {{ route('EmployeeEngagment.deleteQuestion',$question->id)}}
+                                                    @elseif($service_type == 10)
+                                                    {{ route('CEmployeeEngagment.deleteQuestion',$question->id)}}
                                                     @endif
                                                     "
                                                     method="POST">

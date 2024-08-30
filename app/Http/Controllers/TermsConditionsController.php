@@ -9,6 +9,7 @@ use App\Models\Countries;
 use App\Models\Partnerships;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use PHPUnit\Framework\MockObject\Builder\Identity;
 
 class TermsConditionsController extends Controller
 {
@@ -57,8 +58,8 @@ class TermsConditionsController extends Controller
                     return app()->isLocale('en') ? $row->english_title : $row->arabic_title;
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="" class="edit btn btn-primary btn-sm">Edit</a>';
-                    $btn .= '<a href="" class="delete btn btn-danger btn-sm">delete</a>';
+                    $btn = '<a href="' . route('termsCondition.edit',[$row->id]) . '" class="edit btn btn-primary btn-xs m-2"><i class="fa fa-edit"></i></a>';
+                    $btn .= '<a href="javascript:void(0)" class="delete btn btn-danger btn-xs m-2"><i class="fa fa-trash"></i></a>';
                     return $btn;
                 })
                 ->editColumn('country_id', function ($row) {
@@ -98,8 +99,9 @@ class TermsConditionsController extends Controller
             //abort not autherized
             abort(403);
         }
+        $terms_is_active=true;
         //return view with $terms and $countries
-        return view('dashboard.admin.terms.edit', compact('countries'));
+        return view('dashboard.admin.terms.edit', compact('countries', 'terms','terms_is_active'));
     }
 
     /**
@@ -127,22 +129,107 @@ class TermsConditionsController extends Controller
     public function show(TermsConditions $termsConditions)
     {
         //
+
+    }
+    public function CustomCreate($id)
+    {
+        //
+        $countries = null;
+        $terms = null;
+        //get current user id
+        $user_id = auth()->user()->id;
+        //get current user type
+        $user_type = auth()->user()->user_type;
+        //check if current user is admin
+        if (auth()->user()->isAdmin) {
+            //get all countries
+            $countries = Countries::all()->groupBy('IsArabCountry');
+        } elseif ($user_type == "partner") {
+            //get all partnerships
+            $partnerships_countries = Partnerships::where('partner_id', auth()->user()->partner_id)->get()->pluck('country_id')->toArray();
+            //get countries
+            $countries = Countries::whereIn('id', $partnerships_countries)->get();
+        } else {
+            //abort not autherized
+            abort(403);
+        }
+        //return view with $terms and $countries
+        return view('dashboard.admin.terms.edit', compact('countries'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function Customstore(StoreTermsConditionsRequest $request, $id)
+    {
+        //
+        $terms = new TermsConditions();
+        $terms->country_id = $request->country;
+        $terms->for = $request->type;
+        $terms->english_text = $request->content_en;
+        $terms->arabic_text = $request->content_ar;
+        $terms->english_title = $request->title_en;
+        $terms->arabic_title = $request->title_ar;
+        $terms->is_active = $request->is_active ? true : false;
+        $terms->created_by = auth()->user()->id;
+        $terms->save();
+        return redirect()->route('termsCondition.index');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function Customshow(TermsConditions $termsConditions, $id)
+    {
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(TermsConditions $termsConditions)
+    public function edit( $id)
     {
-        //
+        //find terms
+        $terms = TermsConditions::find($id);
+        $countries = null;
+        //get current user id
+        $user_id = auth()->user()->id;
+        //get current user type
+        $user_type = auth()->user()->user_type;
+        //check if current user is admin
+        if (auth()->user()->isAdmin) {
+            //get all countries
+            $countries = Countries::all()->groupBy('IsArabCountry');
+        } elseif ($user_type == "partner") {
+            //get all partnerships
+            $partnerships_countries = Partnerships::where('partner_id', auth()->user()->partner_id)->get()->pluck('country_id')->toArray();
+            //get countries
+            $countries = Countries::whereIn('id', $partnerships_countries)->get();
+        } else {
+            //abort not autherized
+            abort(403);
+        }
+        $terms_is_active=$terms->is_active;
+        //return view with $terms and $countries
+        return view('dashboard.admin.terms.edit', compact('countries', 'terms','terms_is_active'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTermsConditionsRequest $request, TermsConditions $termsConditions)
+    public function update(Request $request, $id)
     {
         //
+        $terms = TermsConditions::find($id);
+        $terms->country_id = $request->country;
+        $terms->for = $request->type;
+        $terms->english_text = $request->content_en;
+        $terms->arabic_text = $request->content_ar;
+        $terms->english_title = $request->title_en;
+        $terms->arabic_title = $request->title_ar;
+        $terms->is_active = $request->is_active ? true : false;
+        $terms->save();
+        return redirect()->route('termsCondition.index');
     }
 
     /**

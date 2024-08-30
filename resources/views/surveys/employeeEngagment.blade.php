@@ -302,10 +302,8 @@
                                         @csrf
                                         <div class="progressbar">
                                             <div class="progress-a" id="progress"></div>
-
-                                            <div class="progress-step stpactive" data-title="Intro"></div>
                                             @foreach ($functions as $function)
-                                            <div class="progress-step" data-title="@if (str_contains($function->FunctionTitle,'Head') || str_contains($function->FunctionTitle,'Hand') || str_contains($function->FunctionTitle,'Heart'))
+                                            <div @class(['progress-step', 'stpactive' => $loop->first]) data-title="@if (str_contains($function->FunctionTitle,'Head') || str_contains($function->FunctionTitle,'Hand') || str_contains($function->FunctionTitle,'Heart'))
                                             H{{ $loop->iteration }}
                                             @else
                                             3h
@@ -321,93 +319,9 @@
                                             <div class="progress-step" data-title="Password"></div>
                                             <div class="progress-step" data-title="dddd"></div> --}}
                                         </div>
-                                        <div class="my-wizard-continar active">
-                                            <fieldset>
-                                                <legend class="mb-5 pb-5 mt-5 pt-5">{{ __('Select Your Gender:') }}
-                                                </legend>
-                                                <div class="container-rad mb-5 pb-5 mt-5 pt-5">
-                                                    <div class="radio-tile-group">
-
-                                                        <div class="input-container">
-                                                            <input id="gender" type="radio" name="gender" value="m">
-                                                            <div class="radio-tile">
-                                                                <i class="fa-solid fa-mars"></i>
-                                                                <label for="gender">{{ __('Male') }}</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="input-container">
-                                                            <input id="gender" type="radio" name="gender" value="f">
-                                                            <div class="radio-tile">
-                                                                <i class="fa-solid fa-venus"></i>
-                                                                <label for="gender">{{ __('Female') }}</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </fieldset>
-                                            <fieldset>
-                                                <legend class="mb-5 pb-5 mt-5 pt-5">{{ __('What is your age group?') }}
-                                                </legend>
-                                                <div class="container-rad mb-5 pb-5 mt-5 pt-5">
-                                                    <div class="radio-tile-group">
-
-                                                        <div class="input-container">
-                                                            <input id="agegroup" type="radio" name="agegroup" value="1">
-                                                            <div class="radio-tile justify-content-center text-center">
-                                                                {{-- <i class="fa-regular fa-face-angry"></i> --}}
-                                                                <label for="agegroup">{{ __('26 or Below') }}</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="input-container">
-                                                            <input id="agegroup" type="radio" name="agegroup" value="2">
-                                                            <div class="radio-tile justify-content-center text-center">
-                                                                {{-- <i class="fa-regular fa-face-frown-open"></i> --}}
-                                                                <label for="agegroup">{{ __('27 - 42') }}</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="input-container">
-                                                            <input id="agegroup" type="radio" name="agegroup" value="3">
-                                                            <div class="radio-tile justify-content-center text-center">
-                                                                {{-- <i class="fa-regular fa-face-meh"></i> --}}
-                                                                <label for="agegroup">{{ __('43 - 58') }}</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="input-container">
-                                                            <input id="agegroup" type="radio" name="agegroup" value="4">
-                                                            <div class="radio-tile justify-content-center text-center">
-                                                                {{-- <i class="fa-regular fa-face-smile"></i> --}}
-                                                                <label for="agegroup">{{ __('Above 58') }}</label>
-                                                            </div>
-                                                        </div>
-
-                                                        {{-- <div class="input-container">
-                                                            <input id="agegroup" type="radio" name="agegroup">
-                                                            <div class="radio-tile justify-content-center text-center">
-                                                                --}}
-                                                                {{-- <i class="fa-regular fa-face-smile-beam"></i> --}}
-                                                                {{-- <label for="agegroup">Fly</label>
-                                                            </div>
-                                                        </div> --}}
-
-                                                    </div>
-                                                </div>
-                                            </fieldset>
-                                            <div class="btnwxsc">
-                                                <a href="javascript:void(0)"
-                                                    class="btn btn-primary {{ app()->getLocale()=='ar'? 'float-start':'float-end'}} mt-5"
-                                                    data-bs-next>{{
-                                                    __('Next')
-                                                    }}
-
-                                                </a>
-                                            </div>
-                                        </div>
                                         @foreach ( $functions as $function )
 
-                                        <div class="my-wizard-continar">
+                                        <div @class(['my-wizard-continar', 'active' => $loop->first])>
                                             @foreach ($function->practices as $practice)
 
                                             <fieldset>
@@ -908,13 +822,6 @@
             e.target.disabled = true;
             //show loader
             document.getElementById('loader').classList.remove("d-none");
-            //get checked radio button of agegroup
-            var agegroup = document.querySelector('input[id="agegroup"]:checked').value;
-            //add agegroupradioValue to answers array
-
-            //get checked radio button of gender
-            var gender = document.querySelector('input[id="gender"]:checked').value;
-
             var oe_qeustions_ans=null
             //get all check radion button with id survey
             var radioButtons = [...form.querySelectorAll(`input[id="survey"]`)];
@@ -954,8 +861,6 @@
                 "oe_ans":  oe_qeustions_ans,
                 "EmailId": '{{ $email_id }}',
                 "answers": answers,
-                "agegroup":agegroup,
-                "gender":gender
             }];
 
 
@@ -978,7 +883,8 @@
                             if(data.url=='')
                             {
                                 setTimeout(function() {
-                                window.location.href = "{{ url('/') }}";
+                                // window.location.href = "{{ url('/') }}";
+                                window.location.href = "https://www.hrfactoryapp.com";
                                 }, 2000);
                             }
                             else

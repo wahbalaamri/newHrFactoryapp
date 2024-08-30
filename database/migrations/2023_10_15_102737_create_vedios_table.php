@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('vedios', function (Blueprint $table) {
             $table->id();
             $table->boolean('Uploaded');
+            $table->integer('service_id')->nullable();
             $table->string('EmbadedEnglish');
             $table->string('UploadedEnglish');
             $table->string('EmbadedArabic');

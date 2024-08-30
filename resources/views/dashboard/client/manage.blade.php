@@ -108,6 +108,21 @@
                                         </a>
                                     </div>
                                 </div>
+                                <div class="col-lg-3 col-6">
+
+                                    <div class="small-box bg-warning">
+                                        <div class="inner" style="min-height: 123px">
+                                            <h3 style="font-size: 1.2rem">{{ __('Customized Employee Engagment') }}</h3>
+                                            <p class="w-75">{{ __("Measure Your Employee Happiness") }}</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="ion ion-happy"></i>
+                                        </div>
+                                        <a href="{{ \App\Http\Facades\Landing::CheckUserSubscription($id,10)? route('clients.ShowSurveys',[$id,10]):'#' }}" class="small-box-footer">
+                                            {{ __('Get Started') }} <i class="fas fa-arrow-circle-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
 
                                 <div class="col-lg-3 col-6">
 
