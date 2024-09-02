@@ -14,6 +14,32 @@
                     {{-- header --}}
                     <div class="card-header">
                         <div class="d-flex text-start">
+                            <h3 class="card-title">Results</h3>
+                        </div>
+                    </div>
+                    {{-- body --}}
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6">
+                                <a href="{{ route('clients.SurveyResults',[$client_id,$Service_type,$survey_id,"all"]) }}" class="btn btn-sm btn-success">By Org chart</a>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <a href="{{ route('clients.SurveyResults',[$client_id,$Service_type,$survey_id,"gender"]) }}" class="btn btn-sm btn-success">By gender</a>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <a href="{{ route('clients.SurveyResults',[$client_id,$Service_type,$survey_id,"age"]) }}" class="btn btn-sm btn-success">By age</a>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <a href="{{ route('clients.SurveyResults',[$client_id,$Service_type,$survey_id,"service"]) }}" class="btn btn-sm btn-success">By Years of Service</a>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <div class="col-12" id="finalResult">
+                <div class="card">
+                    {{-- header --}}
+                    <div class="card-header">
+                        <div class="d-flex text-start">
                             <h3 class="card-title text-black">@if($type=='comp'){{
                                 __('Company-wise') }} | {{ $entity }}
                                 @elseif ($type=='sec')
@@ -261,7 +287,8 @@
 
                                             @if ($parctice['Favorable_score']>=75)
                                             <span class="caption"> {{ $parctice['practice_title']}}</span>
-                                            <div class="progress rounded" role="progressbar" aria-label="Warning example"
+                                            <div class="progress rounded" role="progressbar"
+                                                aria-label="Warning example"
                                                 aria-valuenow="{{  $parctice['Favorable_score'] }}" aria-valuemin="0"
                                                 aria-valuemax="100" style="height: 20px; padding: 0;">
                                                 <div class="progress-bar bg-success"
@@ -287,11 +314,11 @@
                                         <div class="row-">
                                             <div class="progress-bar bg-success" style="width: 25%"></div>
                                             @foreach ($driver_practice_asc as $parctice)
-                                            @if ($parctice['Favorable_score']<75)
-                                            <span class="caption">
+                                            @if ($parctice['Favorable_score']<75) <span class="caption">
                                                 {{$parctice['practice_title']}}
-                                            </span>
-                                                <div class="progress rounded" role="progressbar" aria-label="Warning example"
+                                                </span>
+                                                <div class="progress rounded" role="progressbar"
+                                                    aria-label="Warning example"
                                                     aria-valuenow="{{  $parctice['Favorable_score'] }}"
                                                     aria-valuemin="0" aria-valuemax="100"
                                                     style="height: 20px; padding: 0;">

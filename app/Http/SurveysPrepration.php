@@ -1444,9 +1444,34 @@ class SurveysPrepration
                         $data = $this->getResultsByGender($Client_id, $Service_type, $survey_id, "f");
                     else
                         $data = $this->getResultsByGender($Client_id, $Service_type, $survey_id);
+                } elseif ($vtype == 'age') {
+                    if ($vtype_id == 'G-1')
+                        $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id, "G-1");
+                    elseif ($vtype_id == 'G-2')
+                        $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id, "G-2");
+                    elseif ($vtype_id == 'G-3')
+                        $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id, "G-3");
+                    elseif ($vtype_id == 'G-4')
+                        $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id, "G-4");
+                    else
+                        $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id);
+                } elseif ($vtype == 'service') {
+                    if ($vtype_id == 'G-1')
+                        $data = $this->getResultsByService($Client_id, $Service_type, $survey_id, "G-1");
+                    elseif ($vtype_id == 'G-2')
+                        $data = $this->getResultsByService($Client_id, $Service_type, $survey_id, "G-2");
+                    elseif ($vtype_id == 'G-3')
+                        $data = $this->getResultsByService($Client_id, $Service_type, $survey_id, "G-3");
+                    elseif ($vtype_id == 'G-4')
+                        $data = $this->getResultsByService($Client_id, $Service_type, $survey_id, "G-4");
+                    else
+                        $data = $this->getResultsByService($Client_id, $Service_type, $survey_id);
                 } else {
                     $data = $this->get_GroupResult($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
                 }
+                $data['client_id'] = $Client_id;
+                $data['Service_type'] = $Service_type;
+                $data['survey_id'] = $survey_id;
                 return view('dashboard.client.EESurveyresults')->with($data);
             }
             if ($Service_type == 4) {
@@ -3822,7 +3847,9 @@ class SurveysPrepration
         return $candidates;
     }
     //schedule360 public function
-    public function schedule360(Request $request,  $type = null) {}
+    public function schedule360(Request $request,  $type = null)
+    {
+    }
     //ShowCustomizedSurveys function
     function ShowCustomizedSurveys($id, $type, $by_admin = false)
     {
@@ -5056,5 +5083,169 @@ class SurveysPrepration
             }
         }
         return $result;
+    }
+    function getResultsByAge($client_id, $service_type, $survey_id, $gender = null)
+    {
+        if ($gender == 'G-1' || $gender === null) {
+            Log::info("G-1");
+            $maxDate = Carbon::now()->subYears(26)->format('Y-m-d');
+            $respondents =  Respondents::join('employees', 'employees.id', '=', 'respondents.employee_id')
+                ->select('respondents.id')
+                ->where('employees.dob', ">=", $maxDate)
+                ->where('employees.client_id', $client_id)
+                ->where('respondents.client_id', $client_id)
+                ->where('respondents.survey_id', $survey_id)
+                ->pluck('respondents.id')->toArray();
+            $g_1 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $type = "Male Results";
+        }
+        if ($gender == 'G-2' || $gender === null) {
+            Log::info("G-2");
+            $maxDate = Carbon::now()->subYears(42)->format('Y-m-d');
+            $minDate = Carbon::now()->subYears(27)->format('Y-m-d');
+            $respondents = Respondents::join('employees', 'employees.id', '=', 'respondents.employee_id')
+                ->select('respondents.id')
+                ->whereBetween('employees.dob', [$maxDate, $minDate])
+                ->where('employees.client_id', $client_id)
+                ->where('respondents.client_id', $client_id)
+                ->where('respondents.survey_id', $survey_id)
+                ->pluck('respondents.id')->toArray();
+            $g_2 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $type = "Female Results";
+        }
+        if ($gender == 'G-3' || $gender === null) {
+            Log::info("G-3");
+            $maxDate = Carbon::now()->subYears(58)->format('Y-m-d');
+            $minDate = Carbon::now()->subYears(43)->format('Y-m-d');
+            $respondents = Respondents::join('employees', 'employees.id', '=', 'respondents.employee_id')
+                ->select('respondents.id')
+                ->whereBetween('employees.dob', [$maxDate, $minDate])
+                ->where('employees.client_id', $client_id)
+                ->where('respondents.client_id', $client_id)
+                ->where('respondents.survey_id', $survey_id)
+                ->pluck('respondents.id')->toArray();
+            $g_3 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $type = "Female Results";
+        }
+        if ($gender == 'G-4' || $gender === null) {
+            Log::info("G-4");
+            $minDate = Carbon::now()->subYears(59)->format('Y-m-d');
+            $respondents = Respondents::join('employees', 'employees.id', '=', 'respondents.employee_id')
+                ->select('respondents.id')
+                ->where('employees.dob', "<=", $minDate)
+                ->where('employees.client_id', $client_id)
+                ->where('respondents.client_id', $client_id)
+                ->where('respondents.survey_id', $survey_id)
+                ->pluck('respondents.id')->toArray();
+            $g_4 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $type = "Female Results";
+        }
+        //if null return average of four groups results
+        if ($gender === null) {
+            $data = $this->averageArrays($g_1, $g_2);
+            $data = $this->averageArrays($data, $g_3);
+            $data = $this->averageArrays($data, $g_4);
+            $data['type'] = "Average Results";
+            return $data;
+        }
+        //if not null return the results of the group
+        if ($gender == 'G-1') {
+            $data = $g_1;
+        }
+        if ($gender == 'G-2') {
+            $data = $g_2;
+        }
+        if ($gender == 'G-3') {
+            $data = $g_3;
+        }
+        if ($gender == 'G-4') {
+            $data = $g_4;
+        }
+        // Add $type to $data
+        $data['type'] = $type;
+
+        return $data;
+    }
+    function getResultsByService($client_id, $service_type, $survey_id, $gender = null)
+    {
+        if ($gender == 'G-1' || $gender === null) {
+            Log::info("G-1");
+            $maxDate = Carbon::now()->subYears(1)->format('Y-m-d');
+            $respondents =  Respondents::join('employees', 'employees.id', '=', 'respondents.employee_id')
+                ->select('respondents.id')
+                ->where('employees.dos', ">=", $maxDate)
+                ->where('employees.client_id', $client_id)
+                ->where('respondents.client_id', $client_id)
+                ->where('respondents.survey_id', $survey_id)
+                ->pluck('respondents.id')->toArray();
+            $g_1 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $type = "Male Results";
+        }
+        if ($gender == 'G-2' || $gender === null) {
+            Log::info("G-2");
+            $maxDate = Carbon::now()->subYears(5)->format('Y-m-d');
+            $minDate = Carbon::now()->subYears(2)->format('Y-m-d');
+            $respondents = Respondents::join('employees', 'employees.id', '=', 'respondents.employee_id')
+                ->select('respondents.id')
+                ->whereBetween('employees.dos', [$maxDate, $minDate])
+                ->where('employees.client_id', $client_id)
+                ->where('respondents.client_id', $client_id)
+                ->where('respondents.survey_id', $survey_id)
+                ->pluck('respondents.id')->toArray();
+            $g_2 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $type = "Female Results";
+        }
+        if ($gender == 'G-3' || $gender === null) {
+            Log::info("G-3");
+            $maxDate = Carbon::now()->subYears(6)->format('Y-m-d');
+            $minDate = Carbon::now()->subYears(10)->format('Y-m-d');
+            $respondents = Respondents::join('employees', 'employees.id', '=', 'respondents.employee_id')
+                ->select('respondents.id')
+                ->whereBetween('employees.dos', [$maxDate, $minDate])
+                ->where('employees.client_id', $client_id)
+                ->where('respondents.client_id', $client_id)
+                ->where('respondents.survey_id', $survey_id)
+                ->pluck('respondents.id')->toArray();
+            $g_3 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $type = "Female Results";
+        }
+        if ($gender == 'G-4' || $gender === null) {
+            Log::info("G-4");
+            $minDate = Carbon::now()->subYears(11)->format('Y-m-d');
+            $respondents = Respondents::join('employees', 'employees.id', '=', 'respondents.employee_id')
+                ->select('respondents.id')
+                ->where('employees.dos', "<=", $minDate)
+                ->where('employees.client_id', $client_id)
+                ->where('respondents.client_id', $client_id)
+                ->where('respondents.survey_id', $survey_id)
+                ->pluck('respondents.id')->toArray();
+            $g_4 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $type = "Female Results";
+        }
+        //if null return average of four groups results
+        if ($gender === null) {
+            $data = $this->averageArrays($g_1, $g_2);
+            $data = $this->averageArrays($data, $g_3);
+            $data = $this->averageArrays($data, $g_4);
+            $data['type'] = "Average Results";
+            return $data;
+        }
+        //if not null return the results of the group
+        if ($gender == 'G-1') {
+            $data = $g_1;
+        }
+        if ($gender == 'G-2') {
+            $data = $g_2;
+        }
+        if ($gender == 'G-3') {
+            $data = $g_3;
+        }
+        if ($gender == 'G-4') {
+            $data = $g_4;
+        }
+        // Add $type to $data
+        $data['type'] = $type;
+
+        return $data;
     }
 }
