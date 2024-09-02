@@ -21,11 +21,13 @@ class SendSurvey implements ShouldQueue
      */
     private $data;
     private $emails;
-    public function __construct($emails,$data)
+    private $type;
+    public function __construct($emails, $data, $type = null)
     {
         //
         $this->data = $data;
         $this->emails = $emails;
+        $this->type = $type;
     }
 
     /**
@@ -33,26 +35,26 @@ class SendSurvey implements ShouldQueue
      */
     public function handle(): void
     {
-       try
-       {
-         foreach ($this->emails as $email) {
-            //add id of email to data
-            $this->data['id'] = $email['id'];
-            //send email
-            Mail::to($email['email'])->send(new SurveyMail($this->data));
-            //update response status
-            $respondent=Respondents::where('id',$email['id'])->first();
-            $respondent->send_status=true;
-            $respondent->sent_date=date('Y-m-d H:i:s');
-            $respondent->save();
-
+        try {
+            foreach ($this->emails as $email) {
+                //add id of email to data
+                $this->data['id'] = $email['id'];
+                //send email
+                Mail::to($email['email'])->send(new SurveyMail($this->data));
+                //update response status
+                $respondent = Respondents::where('id', $email['id'])->first();
+                if ($this->type == 'r') {
+                    $respondent->reminder_status = true;
+                    $respondent->reminder_date = date('Y-m-d H:i:s');
+                } else {
+                    $respondent->send_status = true;
+                    $respondent->sent_date = date('Y-m-d H:i:s');
+                }
+                $respondent->save();
+            }
+        } catch (\Exception $e) {
+            //log error
+            Log::error('Error sending survey email: ' . $e->getMessage());
         }
-       }
-         catch (\Exception $e)
-         {
-              //log error
-              Log::error('Error sending survey email: '.$e->getMessage());
-
-         }
     }
 }

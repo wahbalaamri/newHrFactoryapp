@@ -1366,7 +1366,7 @@ class SurveysPrepration
                     'type' => $type
                 ];
 
-                $job = (new SendSurvey($emails, $data))->delay(now()->addSeconds(2));
+                $job = (new SendSurvey($emails, $data, $send_type == 'r' ? $send_type : null))->delay(now()->addSeconds(2));
                 dispatch($job);
             } else {
                 $rater_where = [];
@@ -1437,6 +1437,13 @@ class SurveysPrepration
                     $data = $this->get_resultd($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
                 } elseif ($vtype == 'sec') {
                     $data = $this->get_SectorResult($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
+                } elseif ($vtype == 'gender') {
+                    if ($vtype_id == 'male')
+                        $data = $this->getResultsByGender($Client_id, $Service_type, $survey_id, "m");
+                    elseif ($vtype_id == 'female')
+                        $data = $this->getResultsByGender($Client_id, $Service_type, $survey_id, "f");
+                    else
+                        $data = $this->getResultsByGender($Client_id, $Service_type, $survey_id);
                 } else {
                     $data = $this->get_GroupResult($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
                 }
@@ -4753,10 +4760,301 @@ class SurveysPrepration
             $employee = Employees::find($id);
             //check if employee is already assigned
             $assigned = User::where('email', $employee->email)->first();
+            if ($assigned) {
+                return response()->json(['message' => 'User already assigned', 'stat' => false], 400);
+            }
+            //create new user
+            $user = new User();
             return response()->json(['message' => 'User assigned successfully', 'stat' => true], 200);
         } catch (\Exception $e) {
             Log::error($e);
             return response()->json(['message' => 'Error assigning user', 'stat' => false], 500);
         }
+    }
+    function getResultsByGender($client_id, $service_type, $survey_id, $gender = null)
+    {
+        if ($gender == 'm' || $gender === null) {
+            Log::info("male");
+            $respondents =  Respondents::join('employees', 'employees.id', '=', 'respondents.employee_id')
+                ->select('respondents.id')
+                ->where('employees.gender', "Male")
+                ->where('employees.client_id', $client_id)
+                ->where('respondents.client_id', $client_id)
+                ->where('respondents.survey_id', $survey_id)
+                ->pluck('respondents.id')->toArray();
+            $maleData = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $type = "Male Results";
+        }
+        if ($gender == 'f' || $gender === null) {
+            Log::info("female");
+            $respondents = Respondents::join('employees', 'employees.id', '=', 'respondents.employee_id')
+                ->select('respondents.id')
+                ->where('employees.gender', "Female")
+                ->where('employees.client_id', $client_id)
+                ->where('respondents.client_id', $client_id)
+                ->where('respondents.survey_id', $survey_id)
+                ->pluck('respondents.id')->toArray();
+            $femaleData = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $type = "Female Results";
+        }
+
+        if ($gender === null) {
+            // Calculate the average of male and female data
+            $data = $this->averageArrays($maleData, $femaleData);
+            $type = "Average Results";
+        } else {
+            $data = $gender == 'm' ? $maleData : $femaleData;
+        }
+
+        // Add $type to $data
+        $data['type'] = $type;
+
+        return $data;
+    }
+    function StartCalulate($client_id, $Survey_id, $service_type, $Emails)
+    {
+        $overall_per_fun = [];
+        $driver_functions_practice = [];
+        $heat_map = [];
+
+        $practice_results = [];
+        $ENPS_data_array = [];
+        $outcome_functions_practice = [];
+        $Outcome_practice_results = [];
+        $function_results = [];
+        $outcome_function_results = [];
+        $outcome_function_results_1 = [];
+        $entity = '';
+        $this->id = $Survey_id;
+        //find service with type
+        $service = Services::where('service_type', $service_type)->first()->id;
+
+        foreach (Functions::where('service_id', $service)->where('IsDriver', true)->get() as $function) {
+            $function_Nuetral_sum = 0;
+            $function_Favorable_sum = 0;
+            $function_UnFavorable_sum = 0;
+            $function_Nuetral_count = 0;
+            $function_Favorable_count = 0;
+            $function_UnFavorable_count = 0;
+            foreach ($function->practices as $practice) {
+
+                $Favorable_result = SurveyAnswers::selectRaw('COUNT(answer_value) as count, SUM(answer_value) as sum')
+                    ->where([['survey_id', $this->id], ['answer_value', '>', 3], ['question_id', $practice->questions->first()->id]])
+                    ->whereIn('answered_by', $Emails)
+                    ->first();
+
+                if ($Favorable_result) {
+                    $sum_answer_value_Favorable = $Favorable_result->sum;
+                    $Favorable_count = $Favorable_result->count;
+                } else {
+                    $sum_answer_value_Favorable = 0;
+                    $Favorable_count = 0;
+                }
+                $UnFavorable_result = SurveyAnswers::selectRaw('COUNT(answer_value) as count, SUM(answer_value) as sum')
+                    ->where([['survey_id', $this->id], ['answer_value', '<=', 2], ['question_id', $practice->questions->first()->id]])
+                    ->whereIn('answered_by', $Emails)
+                    ->first();
+
+                if ($UnFavorable_result) {
+                    $sum_answer_value_UnFavorable = $UnFavorable_result->sum;
+                    $UnFavorable_count = $UnFavorable_result->count;
+                } else {
+                    $sum_answer_value_UnFavorable = 0;
+                    $UnFavorable_count = 0;
+                }
+                $Nuetral_result = SurveyAnswers::selectRaw('COUNT(answer_value) as count, SUM(answer_value) as sum')
+                    ->where([['survey_id', $this->id], ['answer_value', 3], ['question_id', $practice->questions->first()->id]])
+                    ->whereIn('answered_by', $Emails)
+                    ->first();
+
+                if ($Nuetral_result) {
+                    $sum_answer_value_Nuetral = $Nuetral_result->sum;
+                    $Nuetral_count = $Nuetral_result->count;
+                } else {
+                    $sum_answer_value_Nuetral = 0;
+                    $Nuetral_count = 0;
+                }
+                $practice_results = [
+                    'function' => $function->id,
+                    'practice_id' => $practice->id,
+                    'practice_title' => App()->getLocale() == 'en' ? $practice->title : $practice->title_ar,
+                    'Nuetral_score' => $Nuetral_count == 0 ? 0 : number_format(($Nuetral_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2),
+                    'Favorable_score' => $Favorable_count == 0 ? 0 : number_format(($Favorable_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2),
+                    'UnFavorable_score' => $UnFavorable_count == 0 ? 0 : number_format(($UnFavorable_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2),
+                    //get count of Favorable answers
+                    'Favorable_count' => $Favorable_count,
+                    //get count of UnFavorable answers
+                    'UnFavorable_count' => $UnFavorable_count,
+                    //get count of Nuetral answers
+                    'Nuetral_count' => $Nuetral_count,
+                ];
+                $function_Nuetral_sum += $sum_answer_value_Nuetral;
+                $function_Favorable_sum += $sum_answer_value_Favorable;
+                $function_UnFavorable_sum += $sum_answer_value_UnFavorable;
+                $function_Nuetral_count += $Nuetral_count;
+                $function_Favorable_count += $Favorable_count;
+                $function_UnFavorable_count += $UnFavorable_count;
+                array_push($driver_functions_practice, $practice_results);
+            }
+            //setup function_results
+            $function_results = [
+                'function' => $function->id,
+                'function_title' => $function->translated_title,
+                'Nuetral_score' => $function_Nuetral_count == 0 ? 0 : number_format(($function_Nuetral_count / ($function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count)) * 100, 2),
+                'Favorable_score' => $function_Favorable_count == 0 ? 0 : number_format(($function_Favorable_count / ($function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count)) * 100, 2),
+                'UnFavorable_score' => $function_UnFavorable_count == 0 ? 0 : number_format(($function_UnFavorable_count / ($function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count)) * 100, 2),
+                //get count of Favorable answers
+                'Favorable_count' => $function_Favorable_count,
+                //get count of UnFavorable answers
+                'UnFavorable_count' => $function_UnFavorable_count,
+                //get count of Nuetral answers
+                'Nuetral_count' => $function_Nuetral_count,
+            ];
+            array_push($overall_per_fun, $function_results);
+        }
+        // dd($overall_per_fun);
+        foreach (Functions::where('service_id', $service)->get() as $function) {
+            $function_Nuetral_sum = 0;
+            $function_Favorable_sum = 0;
+            $function_UnFavorable_sum = 0;
+            $function_Nuetral_count = 0;
+            $function_Favorable_count = 0;
+            $function_UnFavorable_count = 0;
+            foreach ($function->practices as $practice) {
+                //get sum of answer value from survey answers
+                $Favorable_reslut = SurveyAnswers::selectRaw('COUNT(answer_value) as count, SUM(answer_value) as sum')
+                    ->where([['survey_id', $this->id], ['answer_value', '>=', 4], ['question_id', $practice->questions->first()->id]])
+                    ->whereIn('answered_by', $Emails)
+                    ->first();
+                if ($Favorable_reslut) {
+                    $sum_answer_value_Favorable = $Favorable_reslut->sum;
+                    $Favorable_count = $Favorable_reslut->count;
+                } else {
+                    $sum_answer_value_Favorable = 0;
+                    $Favorable_count = 0;
+                }
+
+                $UnFavorable_result = SurveyAnswers::selectRaw('COUNT(answer_value) as count, SUM(answer_value) as sum')
+                    ->where([['survey_id', $this->id], ['answer_value', '<=', 2], ['question_id', $practice->questions->first()->id]])
+                    ->whereIn('answered_by', $Emails)
+                    ->first();
+
+                if ($UnFavorable_result) {
+                    $sum_answer_value_UnFavorable = $UnFavorable_result->sum;
+                    $UnFavorable_count = $UnFavorable_result->count;
+                } else {
+                    $sum_answer_value_UnFavorable = 0;
+                    $UnFavorable_count = 0;
+                }
+                $sum_answer_value_Nuetral_result = SurveyAnswers::selectRaw('COUNT(answer_value) as count, SUM(answer_value) as sum')
+                    ->where([['survey_id', $this->id], ['answer_value', 3], ['question_id', $practice->questions->first()->id]])
+                    ->whereIn('answered_by', $Emails)
+                    ->first();
+
+
+                if ($sum_answer_value_Nuetral_result) {
+                    $sum_answer_value_Nuetral = $sum_answer_value_Nuetral_result->sum;
+                    $Nuetral_count = $sum_answer_value_Nuetral_result->count;
+                } else {
+                    $sum_answer_value_Nuetral = 0;
+                    $Nuetral_count = 0;
+                }
+                $Outcome_practice_results = [
+                    'function' => $function->id,
+                    'practice_id' => $practice->id,
+                    'practice_title' => App()->getLocale() == 'en' ? $practice->title : $practice->title_ar,
+                    'Nuetral_score' => $Favorable_count + $Nuetral_count + $UnFavorable_count == 0 ? 0 : number_format(($Nuetral_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2),
+                    'Favorable_score' => $Favorable_count + $Nuetral_count + $UnFavorable_count == 0 ? 0 : number_format(($Favorable_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2),
+                    'UnFavorable_score' => $Favorable_count + $Nuetral_count + $UnFavorable_count == 0 ? 0 : number_format(($UnFavorable_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2),
+                    //get count of Favorable answers
+                    'Favorable_count' => $Favorable_count,
+                    //get count of UnFavorable answers
+                    'UnFavorable_count' => $UnFavorable_count,
+                    //get count of Nuetral nswers
+                    'Nuetral_count' => $Nuetral_count,
+                ];
+                if ($practice->questions->where('IsENPS', true)->first()) {
+                    $Favorable = $Favorable_count + $Nuetral_count + $UnFavorable_count == 0 ? 0 : number_format(($Favorable_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2);
+                    $UnFavorable = $Favorable_count + $Nuetral_count + $UnFavorable_count == 0 ? 0 : number_format(($UnFavorable_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2);
+                    $ENPS_data_array = [
+                        'function' => $function->id,
+                        'practice_id' => $practice->id,
+                        'practice_title' => App()->getLocale() == 'en' ? $practice->title : $practice->title_ar,
+                        'Nuetral_score' => $Favorable_count + $Nuetral_count + $UnFavorable_count == 0 ? 0 : number_format(($Nuetral_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2),
+                        //get count of Favorable answers
+                        'Favorable_count' => $Favorable_count,
+                        //get count of UnFavorable answers
+                        'UnFavorable_count' => $UnFavorable_count,
+                        //get count of Nuetral answers
+                        'Nuetral_count' => $Nuetral_count,
+                        'Favorable_score' => $Favorable,
+                        'UnFavorable_score' => $UnFavorable,
+                        'ENPS_index' => $Favorable - $UnFavorable,
+                    ];
+                }
+                $function_Nuetral_sum += $sum_answer_value_Nuetral;
+                $function_Favorable_sum += $sum_answer_value_Favorable;
+                $function_UnFavorable_sum += $sum_answer_value_UnFavorable;
+                $function_Nuetral_count += $Nuetral_count;
+                $function_Favorable_count += $Favorable_count;
+                $function_UnFavorable_count += $UnFavorable_count;
+                array_push($outcome_functions_practice, $Outcome_practice_results);
+            }
+            $out_come_favorable = $function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count == 0 ? 0 : number_format(($function_Favorable_count / ($function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count)) * 100, 2);
+            $out_come_unfavorable = $function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count == 0 ? 0 : number_format(($function_UnFavorable_count / ($function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count)) * 100, 2);
+            //setup function_results
+            $outcome_function_results = [
+                'function' => $function->id,
+                'function_title' => $function->translated_title,
+                'Nuetral_score' => $function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count == 0 ? 0 : number_format(($function_Nuetral_count / ($function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count)) * 100, 2),
+                'Favorable_score' => $out_come_favorable,
+                'UnFavorable_score' => $out_come_unfavorable,
+                //get count of Favorable answers
+                'Favorable_count' => $function_Favorable_count,
+                //get count of UnFavorable answers
+                'UnFavorable_count' => $function_UnFavorable_count,
+                //get count of Nuetral answers
+                'Nuetral_count' => $function_Nuetral_count,
+                'outcome_index' => $out_come_favorable,
+            ];
+            array_push($outcome_function_results_1, $outcome_function_results);
+        }
+        // $ENPS_data_array = collect($ENPS_data_array)->sortBy('ENPS_index')->reverse()->toArray();
+        // $ENPS_data_array = array_slice($ENPS_data_array, 0, 3);
+        // $ENPS_data_array = collect($ENPS_data_array)->sortBy('ENPS_index')->toArray();
+        //get first three highest items
+        //sort $driver_functions_practice asc
+        $driver_functions_practice_asc = array_slice(collect($driver_functions_practice)->sortBy('Favorable_score')->toArray(), 0, 3);
+        //sort $driver_functions_practice desc
+        $driver_functions_practice_desc = array_slice(collect($driver_functions_practice)->sortByDesc('Favorable_score')->toArray(), 0, 3);
+        $data = [
+            'drivers' => $driver_functions_practice,
+            'drivers_functions' => $overall_per_fun,
+            'outcomes' => $outcome_function_results_1,
+            'ENPS_data_array' => $ENPS_data_array,
+            'entity' => $entity,
+            // 'type' => $type,
+            // 'type_id' => $type_id,
+            'id' => $Survey_id,
+            'driver_practice_asc' => $driver_functions_practice_asc,
+            'driver_practice_desc' => $driver_functions_practice_desc,
+            'heat_map' => $heat_map,
+        ];
+        return $data;
+    }
+    function averageArrays($array1, $array2)
+    {
+        $result = [];
+        foreach ($array1 as $key => $value) {
+            if (is_array($value)) {
+                $result[$key] = $this->averageArrays($value, $array2[$key]);
+            } elseif (is_string($value)) {
+                // If the value is a string, do not average it
+                $result[$key] = $value;
+            } else {
+                $result[$key] = ($value + $array2[$key]) / 2;
+            }
+        }
+        return $result;
     }
 }
