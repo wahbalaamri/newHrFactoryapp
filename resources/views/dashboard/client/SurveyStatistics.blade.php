@@ -6,7 +6,8 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Welcome to HR Factory</h1>
+                    {{-- format date --}}
+                    <h1 class="m-0">{{ ('Welcome to Survey Statistics') }}</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -24,7 +25,15 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">{{ __('Statistics of ') . $survey->survey_title }} </h3>
+                <h3 class="card-title">{{ __('Statistics of ') . $survey->survey_title . ' '. __(' which conducted for ') . $client->name . ' on ' . \Carbon\Carbon::parse($survey->created_at)->format('d-m-Y') . ''}}</h3>
+                {{-- tools --}}
+                <div class="card-tools">
+                    {{-- back --}}
+                    <a href="{{ route('clients.surveyDetails',[$client->id,$type,$survey->id])}}"
+                        class="btn btn-sm btn-tool {{ App()->getLocale()=='ar'? 'float-start':'float-end' }}">{{
+                        __('Back') }}</a>
+                    {{-- create new survey --}}
+                </div>
             </div>
             <div class="card-body">
                 <div class="card-body">

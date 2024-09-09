@@ -10,6 +10,7 @@ use App\Models\Services;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class LandingService
 {
@@ -91,5 +92,9 @@ class LandingService
     function getDefaultCountry()
     {
         return Countries::where('name', "Oman")->first()->id;
+    }
+    function generateRandomPassword()
+    {
+        return Str::password(8, true, true, false, false);
     }
 }

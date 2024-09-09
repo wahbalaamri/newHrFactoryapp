@@ -22,7 +22,7 @@ class SendSurvey implements ShouldQueue
     private $data;
     private $emails;
     private $type;
-    public function __construct($emails, $data, $type = null)
+    public function __construct($emails, $data, $type)
     {
         //
         $this->data = $data;
@@ -43,7 +43,8 @@ class SendSurvey implements ShouldQueue
                 Mail::to($email['email'])->send(new SurveyMail($this->data));
                 //update response status
                 $respondent = Respondents::where('id', $email['id'])->first();
-                if ($this->type == 'r') {
+                //log type
+                if ($this->type == 'r' || $this->type == 'ir') {
                     $respondent->reminder_status = true;
                     $respondent->reminder_date = date('Y-m-d H:i:s');
                 } else {

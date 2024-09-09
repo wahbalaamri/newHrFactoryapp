@@ -14,7 +14,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">{{ __('Employees') }}</h1>
+                        <h1 class="m-0">{{ $client->name }} {{ __('Employees') }}</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -425,6 +425,23 @@
                         }
                     });
                 }
+            }
+            //assignUser click
+            assignUser = (id) => {
+                url = "{{ route('clients.AssignAsUser', [':d',':c']) }}";
+                url = url.replace(':d', id);
+                url = url.replace(':c', "{{ $client->id }}");
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    success: function(data) {
+                        console.log(data);
+                        $('#Employee-data').DataTable().ajax.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
             }
         });
     </script>

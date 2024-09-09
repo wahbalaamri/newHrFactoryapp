@@ -100,8 +100,8 @@ class RegisterController extends Controller
         //     'password' => 'required|string|min:8',
         // ]);
         //check if the user is already registered
-        $user = User::where('email', $request->focal_email)->first();
-        if ($user) {
+        $user = User::where('email', $request->focal_email)->get();
+        if (count($user) > 0) {
             //return back with error message
             return back()->with('fail', 'You are already registered');
         } else {
@@ -194,5 +194,4 @@ class RegisterController extends Controller
             return redirect('/login')->with('success', 'You are registered successfully');
         }
     }
-
 }

@@ -24,7 +24,7 @@
         <link rel="stylesheet" href="{{ asset('assets/css/animate.css')}}">
     </noscript>
 
-
+    <link rel="stylesheet" href="{{ asset('assets/css/CircularProgress.css') }}">
     <!-- owl Carousel assets -->
     <link rel="preload" href="{{ asset('assets/css/owl.carousel.css')}}" as="style" onload="this.rel='stylesheet'">
     <noscript>

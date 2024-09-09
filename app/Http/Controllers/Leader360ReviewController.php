@@ -255,7 +255,7 @@ class Leader360ReviewController extends Controller
             }
             $the_self_overall = $the_self_overall / $prac_counter;
             $the_others_overall = $the_others_overall / $prac_counter;
-            array_push($functions_lbl, $function->FunctionTitle);
+            array_push($functions_lbl, $function->translated_title);
             array_push($Self_Functions, $the_self_overall);
             array_push($Others_Functions, $the_others_overall);
             $_one_fun = [

@@ -44,6 +44,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name("Home");
+// Route::get('/', [Re::class, 'index'])->name("Home");
+Route::get('/backupClients', [HomeController::class, 'backupClients'])->name("Home.backupClients");
+Route::get('/backupSurveyanswers', [HomeController::class, 'backupSurveyanswers'])->name("Home.backupSurveyanswers");
 
 Route::get('/SetupNameRev', [HomeController::class, 'SetupNameRev'])->name("SetupNameRev");
 Route::get('/GetDataFromOldTools/{cid}/{tool}/{use_dep}', [HomeController::class, 'GetDataFromOldTools'])->name("GetDataFromOldTools");

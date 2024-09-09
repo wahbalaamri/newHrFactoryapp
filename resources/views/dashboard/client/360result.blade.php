@@ -1,27 +1,8 @@
 {{-- extends --}}
 @extends('layouts.main')
-@push('styles')
-    <link href="{{ asset('assets/css/CircularProgress.css') }}" rel="stylesheet">
-    <style>
-        .col-title {
-            background-color: #DCE6F2;
-            background-color: #DCE6F2;
-            min-width: 19px;
-            max-width: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #376092;
-            font-size: 1.5rem;
-            font-weight: bold
-        }
-
-        /* col-title text */
-        .col-title p {
-            -webkit-transform: rotate(90deg);
-        }
-    </style>
-@endpush
+{{-- @push('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/CircularProgress.css') }}">
+@endpush --}}
 {{-- content --}}
 @section('content')
     {{-- container --}}
@@ -54,7 +35,8 @@
                                                     {{ $survey->created_at->format('d M Y') }}</th>
                                             </tr>
                                             <tr class="bg-secondary text-white">
-                                                <td class="text-center" colspan="{{ $Others > 0 ? 7 : 6 }}">{{ __('Raters') }}
+                                                <td class="text-center" colspan="{{ $Others > 0 ? 7 : 6 }}">
+                                                    {{ __('Raters') }}
                                                 </td>
                                             </tr>
                                             <tr class="bg-secondary text-white">
@@ -73,51 +55,54 @@
                                                 <td>
                                                     <div class="card-body">
                                                         <div class="progress">
-                                                            <div class="progress-bar @if (number_format(($Self>0?($Self_answers / $Self):0) * 100) > 80) bg-success
+                                                            <div class="progress-bar @if (number_format(($Self > 0 ? $Self_answers / $Self : 0) * 100) > 80) bg-success
 
-                                                        @elseif (number_format(($Self>0?($Self_answers / $Self):0) * 100) > 50)
+                                                        @elseif (number_format(($Self > 0 ? $Self_answers / $Self : 0) * 100) > 50)
                                                             bg-warning
                                                         @else
                                                             bg-danger @endif"
                                                                 role="progressbar"
-                                                                aria-valuenow="{{ number_format(($Self>0?($Self_answers / $Self):0) * 100) }}"
+                                                                aria-valuenow="{{ number_format(($Self > 0 ? $Self_answers / $Self : 0) * 100) }}"
                                                                 aria-valuemin="0" aria-valuemax="100"
-                                                                style="width: {{ number_format(($Self>0?($Self_answers / $Self):0) * 100) }}%; min-width: 20px;">
-                                                                {{ number_format(($Self>0?($Self_answers / $Self):0) * 100) }}%</div>
+                                                                style="width: {{ number_format(($Self > 0 ? $Self_answers / $Self : 0) * 100) }}%; min-width: 20px;">
+                                                                {{ number_format(($Self > 0 ? $Self_answers / $Self : 0) * 100) }}%
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="card-body">
                                                         <div class="progress">
-                                                            <div class="progress-bar @if (number_format($DM>0?($DM_answers / $DM):0 * 100) > 80) bg-success
+                                                            <div class="progress-bar @if (number_format($DM > 0 ? $DM_answers / $DM : 0 * 100) > 80) bg-success
 
-                                                        @elseif (number_format($DM>0?($DM_answers / $DM):0 * 100) > 50)
+                                                        @elseif (number_format($DM > 0 ? $DM_answers / $DM : 0 * 100) > 50)
                                                             bg-warning
                                                         @else
                                                             bg-danger @endif"
                                                                 role="progressbar"
-                                                                aria-valuenow="{{ number_format($DM>0?($DM_answers / $DM):0 * 100) }}"
+                                                                aria-valuenow="{{ number_format($DM > 0 ? $DM_answers / $DM : 0 * 100) }}"
                                                                 aria-valuemin="0" aria-valuemax="100"
-                                                                style="width: {{ number_format($DM>0?($DM_answers / $DM):0 * 100) }}%; min-width: 20px;">
-                                                                {{ number_format($DM>0?($DM_answers / $DM):0 * 100) }}%</div>
+                                                                style="width: {{ number_format($DM > 0 ? $DM_answers / $DM : 0 * 100) }}%; min-width: 20px;">
+                                                                {{ number_format($DM > 0 ? $DM_answers / $DM : 0 * 100) }}%
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="card-body">
                                                         <div class="progress">
-                                                            <div class="progress-bar @if (number_format($Peer>0?($Peer_answers / $Peer):0 * 100) > 80) bg-success
+                                                            <div class="progress-bar @if (number_format($Peer > 0 ? $Peer_answers / $Peer : 0 * 100) > 80) bg-success
 
-                                                        @elseif (number_format($Peer>0?($Peer_answers / $Peer):0 * 100) > 50)
+                                                        @elseif (number_format($Peer > 0 ? $Peer_answers / $Peer : 0 * 100) > 50)
                                                             bg-warning
                                                         @else
                                                             bg-danger @endif"
                                                                 role="progressbar"
-                                                                aria-valuenow="{{ number_format($Peer>0?($Peer_answers / $Peer):0 * 100) }}"
+                                                                aria-valuenow="{{ number_format($Peer > 0 ? $Peer_answers / $Peer : 0 * 100) }}"
                                                                 aria-valuemin="0" aria-valuemax="100"
-                                                                style="width: {{ number_format($Peer>0?($Peer_answers / $Peer):0 * 100) }}%; min-width: 20px;">
-                                                                {{ number_format($Peer>0?($Peer_answers / $Peer):0 * 100) }}%</div>
+                                                                style="width: {{ number_format($Peer > 0 ? $Peer_answers / $Peer : 0 * 100) }}%; min-width: 20px;">
+                                                                {{ number_format($Peer > 0 ? $Peer_answers / $Peer : 0 * 100) }}%
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -125,17 +110,18 @@
                                                     @if ($DR > 0)
                                                         <div class="card-body">
                                                             <div class="progress">
-                                                                <div class="progress-bar @if (number_format(($DR>0?($DR_answers / $DR):0) * 100) > 80) bg-success
+                                                                <div class="progress-bar @if (number_format(($DR > 0 ? $DR_answers / $DR : 0) * 100) > 80) bg-success
 
-                                                        @elseif (number_format(($DR>0?($DR_answers / $DR):0) * 100) > 50)
+                                                        @elseif (number_format(($DR > 0 ? $DR_answers / $DR : 0) * 100) > 50)
                                                             bg-warning
                                                         @else
                                                             bg-danger @endif"
                                                                     role="progressbar"
-                                                                    aria-valuenow="{{ number_format(($DR>0?($DR_answers / $DR):0) * 100) }}"
+                                                                    aria-valuenow="{{ number_format(($DR > 0 ? $DR_answers / $DR : 0) * 100) }}"
                                                                     aria-valuemin="0" aria-valuemax="100"
-                                                                    style="width: {{ number_format(($DR>0?($DR_answers / $DR):0) * 100) }}%; min-width: 20px;">
-                                                                    {{ number_format(($DR>0?($DR_answers / $DR):0) * 100) }}%</div>
+                                                                    style="width: {{ number_format(($DR > 0 ? $DR_answers / $DR : 0) * 100) }}%; min-width: 20px;">
+                                                                    {{ number_format(($DR > 0 ? $DR_answers / $DR : 0) * 100) }}%
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     @else
@@ -147,17 +133,17 @@
                                                     <td>
                                                         <div class="card-body">
                                                             <div class="progress">
-                                                                <div class="progress-bar @if (number_format($Others>0?($Others_answers / $Others):0 * 100) > 80) bg-success
+                                                                <div class="progress-bar @if (number_format($Others > 0 ? $Others_answers / $Others : 0 * 100) > 80) bg-success
 
-                                                        @elseif (number_format($Others>0?($Others_answers / $Others):0 * 100) > 50)
+                                                        @elseif (number_format($Others > 0 ? $Others_answers / $Others : 0 * 100) > 50)
                                                             bg-warning
                                                         @else
                                                             bg-danger @endif"
                                                                     role="progressbar"
-                                                                    aria-valuenow="{{ number_format($Others>0?($Others_answers / $Others):0 * 100) }}"
+                                                                    aria-valuenow="{{ number_format($Others > 0 ? $Others_answers / $Others : 0 * 100) }}"
                                                                     aria-valuemin="0" aria-valuemax="100"
-                                                                    style="width: {{ number_format($Others>0?($Others_answers / $Others):0 * 100) }}%; min-width: 20px;">
-                                                                    {{ number_format($Others>0?($Others_answers / $Others):0 * 100) }}%
+                                                                    style="width: {{ number_format($Others > 0 ? $Others_answers / $Others : 0 * 100) }}%; min-width: 20px;">
+                                                                    {{ number_format($Others > 0 ? $Others_answers / $Others : 0 * 100) }}%
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -277,7 +263,7 @@
                                                                         aria-valuenow="{{ $l_practice['All'] }}"
                                                                         aria-valuemin="0" aria-valuemax="100"
                                                                         style="width: {{ $l_practice['All'] }}%; min-width: 20px;">
-                                                                        {{ number_format($l_practice['All'],2) }}%</div>
+                                                                        {{ number_format($l_practice['All'], 2) }}%</div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -354,28 +340,39 @@
                                                     @foreach ($functions as $function)
                                                         <div class="bg-info m-2 p-2 text-center text-white"
                                                             style="width:{{ 100 / count($functions) - 2.5 }}%; border-radius: 10px; -webkit-box-shadow: 0px 0px 5px 1px #ABABAB;box-shadow: 0px 0px 5px 1px #ABABAB; font-size: 1.1rem">
-                                                            {{  $function->translated_title }}
-                                                            <br>{{ number_format($all_fun->where('id', $function->id)->first()['score'],2) }}%
+                                                            {{ $function->translated_title }}
+                                                            <br>{{ number_format($all_fun->where('id', $function->id)->first()['score'], 2) }}%
                                                         </div>
                                                     @endforeach
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-1 col-title" style="">
-                                                <p>{{ __('Behaviours') }}</p>
+                                            <div class="col-1 col-title"
+                                                style="background-color: #DCE6F2;
+            background-color: #DCE6F2;
+            min-width: 19px;
+            max-width: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #376092;
+            font-size: 1.5rem;
+            font-weight: bold">
+                                                <p style="-webkit-transform: rotate(90deg);">{{ __('Behaviours') }}</p>
                                             </div>
                                             <div class="col-11">
                                                 <div class="row" style="width: 100%">
                                                     @foreach ($functions as $function)
                                                         <?php $firstofFirstLoop = $loop->first; ?>
-                                                        <div class="col-1 justify-content-center m-2 p-2 pb-1 pt-1"
+                                                        <div class="m-2 p-2 justify-content-center pb-1 pt-1"
                                                             style="width: {{ 100 / count($functions) - 2.5 }}%; font-size: 0.96rem">
                                                             @foreach ($practices as $practice)
                                                                 @if ($practice['function'] == $function->id)
                                                                     <div class="@if (!$loop->first) mt-1 p-2 m-2 @endif @if ($firstofFirstLoop) p-2 m-2 @else p-2 m-2 @endif @if ($practice['All'] <= 50) bg-danger text-white @elseif ($practice['All'] > 50 && $practice['All'] < 80) bg-warning text-black @else bg-success text-white @endif text-center"
                                                                         style=" width:100%; border-radius: 10px;">
-                                                                        {{ $practice['name'] }} [{{ number_format($practice['All'],2 )}}%]
+                                                                        {{ $practice['name'] }}
+                                                                        [{{ number_format($practice['All'], 2) }}%]
                                                                     </div>
                                                                 @endif
                                                             @endforeach
@@ -599,17 +596,19 @@
 @section('scripts')
     {{-- html2pdf --}}
     {{-- html2pdf cdn --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script> --}}
     {{-- html2canvas cdn --}}
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    {{-- <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script> --}}
     {{-- html2pdf --}}
-    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    {{-- <script src="http://code.jquery.com/jquery-1.9.1.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         Labels = @json($functions_lbl);
         self = @json($Self_Functions);
         others = @json($Others_Functions);
-
+        console.log(others);
+        console.log(self);
+        console.log(Labels);
         const ctx = document.getElementById('myChart');
         //get max of hr
         var max = 0;

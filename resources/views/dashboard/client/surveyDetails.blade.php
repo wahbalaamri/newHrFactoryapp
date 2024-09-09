@@ -11,7 +11,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Dashboard</h1>
+                    <h1 class="m-0">{{ $survey->survey_title }} {{ __('Dashboard') }}</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -32,7 +32,7 @@
                 <div class="col-12 mt-3">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">{{ __('Show Survey Details') }}</h3>
+                            <h3 class="card-title">{{ $survey->survey_title }} {{ __('Tools') }}</h3>
                             {{-- tool --}}
                             <div class="card-tools">
                                 {{-- back --}}
@@ -100,7 +100,7 @@
                                         <div class="icon">
                                             <i class="ion ion-email-unread"></i>
                                         </div>
-                                        <a href="#" class="small-box-footer">
+                                        <a href="{{ route('clients.showSendSurvey',[$id,$type,$survey->id,'r']) }}" class="small-box-footer">
                                             {{ __('Start') }}<i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>

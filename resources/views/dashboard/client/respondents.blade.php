@@ -14,7 +14,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">{{ __('Employees') }}</h1>
+                    <h1 class="m-0">{{ $client->name.__('\'s') }} {{ $survey->survey_title }} {{ __('Respondents') }}</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -35,7 +35,7 @@
                 <div class="col-12 mt-3">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">{{ __('Manage Your Employees') }}</h3>
+                            <h3 class="card-title">{{ __('Manage Your Respondents') }}</h3>
                             {{-- tool --}}
                             <div class="card-tools">
                                 {{-- back --}}

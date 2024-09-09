@@ -6,6 +6,7 @@ use App\Http\SurveysPrepration;
 use App\Jobs\SendDemoSurveyJob;
 use App\Jobs\SetEmployeeDataFromOldTools;
 use App\Jobs\SetupUsersIdInUsersOldSections;
+use App\Models\Clients;
 use App\Models\Content;
 use App\Models\Countries;
 use App\Models\DefaultMB;
@@ -14,11 +15,17 @@ use App\Models\Functions;
 use App\Models\PracticeQuestions;
 use App\Models\RequestDemo;
 use App\Models\Services;
+use App\Models\SurveyAnswers;
 use App\Models\User;
 use App\Models\UserPlans;
 use App\Models\UserSections;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
+use ZipArchive;
 
 class HomeController extends Controller
 {
@@ -159,7 +166,7 @@ class HomeController extends Controller
     public function EmployeeEngagmentDemo($id)
     {
         //check if id is exist in request demo
-        $request_demo = RequestDemo::where('id',$id)->where('service_type',3)->first();
+        $request_demo = RequestDemo::where('id', $id)->where('service_type', 3)->first();
         if ($request_demo) {
             //get servcie id
             //create empty array
@@ -187,7 +194,7 @@ class HomeController extends Controller
     public function HRDiagnosisDemo($id)
     {
         //check if id is exist in request demo
-        $request_demo = RequestDemo::where('id',$id)->where('service_type',4)->first();
+        $request_demo = RequestDemo::where('id', $id)->where('service_type', 4)->first();
         if ($request_demo) {
             //get servcie id
             //create empty array
@@ -215,7 +222,7 @@ class HomeController extends Controller
     public function leader360ReviewDemo($id)
     {
         //check if id is exist in request demo
-        $request_demo = RequestDemo::where('id',$id)->where('service_type',5)->first();
+        $request_demo = RequestDemo::where('id', $id)->where('service_type', 5)->first();
         if ($request_demo) {
             //get servcie id
             //create empty array
@@ -261,11 +268,13 @@ class HomeController extends Controller
             abort(404);
         }
         $func_iteration = 0;
-        foreach (Functions::where('service_id', function ($quere) {
-            $quere->select('id')
-                ->from('services')
-                ->where('service_type', 3);
-        })->where('IsDriver', true)->get() as $function) {
+        foreach (
+            Functions::where('service_id', function ($quere) {
+                $quere->select('id')
+                    ->from('services')
+                    ->where('service_type', 3);
+            })->where('IsDriver', true)->get() as $function
+        ) {
             $func_iteration++;
             $function_Nuetral_sum = 0;
             $function_Favorable_sum = 0;
@@ -431,11 +440,13 @@ class HomeController extends Controller
             ];
             array_push($overall_per_fun, $function_results);
         }
-        foreach (Functions::where('service_id',  function ($quere) {
-            $quere->select('id')
-                ->from('services')
-                ->where('service_type', 3);
-        })->get() as $function) {
+        foreach (
+            Functions::where('service_id',  function ($quere) {
+                $quere->select('id')
+                    ->from('services')
+                    ->where('service_type', 3);
+            })->get() as $function
+        ) {
             $function_Nuetral_sum = 0;
             $function_Favorable_sum = 0;
             $function_UnFavorable_sum = 0;
@@ -552,7 +563,7 @@ class HomeController extends Controller
             'entity_id' => 1,
             'indecators' => $heat_map_indecators,
         ];
-        $heat_map_indecators=[];
+        $heat_map_indecators = [];
         array_push($heat_map, $heat_map_item);
         $outcome_function_results_HM = [
             'function_title' => "title",
@@ -587,7 +598,7 @@ class HomeController extends Controller
             'indecators' => $heat_map_indecators,
         ];
         array_push($heat_map, $heat_map_item);
-        $heat_map_indecators=[];
+        $heat_map_indecators = [];
         $outcome_function_results_HM = [
             'function_title' => "title",
             'score' => 58,
@@ -741,9 +752,62 @@ class HomeController extends Controller
             }
         }
     }
-    public function GetDataFromOldTools($client_id,$tool,$use_dep){
+    public function GetDataFromOldTools($client_id, $tool, $use_dep)
+    {
         //new job SetEmployeeDataFromOldTools
-        $job = new SetEmployeeDataFromOldTools($client_id,$use_dep,$tool);
+        $job = new SetEmployeeDataFromOldTools($client_id, $use_dep, $tool);
         dispatch($job);
+    }
+    //function backupClients
+    public function backupClients()
+    {
+        $tables = Schema::getAllTables();
+        $tableKey = 'Tables_in_new_hrhealth'; // Replace with your database name
+        $zipFilePath = tempnam(sys_get_temp_dir(), 'tables_zip');
+        $zip = new ZipArchive();
+        if ($zip->open($zipFilePath, ZipArchive::CREATE) === TRUE) {
+            foreach ($tables as $table) {
+                // Log::info($table->$tableKey);
+                $data = DB::table($table->$tableKey)->get();
+                $json = json_encode($data,JSON_PRETTY_PRINT);
+                $date = date('Y-m-d-H:i:s');
+                $file = 'newP_' . $table->$tableKey . "_" . $date ;
+                $zip->addFromString("{$file}.json", $json);
+                // $file = public_path() . '/backup/newP_' . $table->$tableKey . ".json";
+                // file_put_contents($file, $json);
+            }
+            $zip->close();
+        }
+        $zip_fileName= 'newP_FullData_' . date('Y-m-d-H:i:s') . '.zip';
+        return Response::download($zipFilePath, "{$zip_fileName}")->deleteFileAfterSend(true);
+
+    }
+    //function backupSurveyanswers
+    public function backupSurveyanswers()
+    {
+        $tables = Schema::getAllTables();
+        $file = "";
+        $tableKey = 'Tables_in_new_hrhealth'; // Replace with your database name
+        foreach ($tables as $table) {
+            if ($table->$tableKey == "survey_answers") {
+                $data = DB::table($table->$tableKey)->get();
+                //get date and time
+                $date = date('Y-m-d-H:i:s');
+                $file = 'newP_' . $table->$tableKey . "_" . $date . ".json";
+                $json = json_encode($data);
+                //download $json without saving to disk
+                // Convert the data to JSON format
+                $jsonContent = json_encode($data, JSON_PRETTY_PRINT);
+
+                // Create a response with the JSON data as a downloadable file
+                return Response::make($jsonContent, 200, [
+                    'Content-Type' => 'application/json',
+                    'Content-Disposition' => 'attachment; filename="' . $file . '.json"',
+                ]);
+            }
+        }
+        //download file
+
+        return response()->download($file);
     }
 }
