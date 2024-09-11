@@ -4521,8 +4521,9 @@ class SurveysPrepration
             //check if use multiple sectors
             if ($client->multiple_sectors) {
                 foreach ($client->sectors as $sector) {
+                    //get employees
                     $employees = [];
-                    $employees = $this->getEmployeeOfEntity($sector->id, $cid, 'sector');
+                    $employees = Employees::where('sector_id', $sector->id)->pluck('id')->toArray();
                     $respondents = $this->getRespondentsIds($employees, $id);
                     $answered = $this->getNumberAnswered($respondents, $id);
                     $entity_stat = [
@@ -4542,7 +4543,7 @@ class SurveysPrepration
             if ($client->multiple_company && !$collected && !$client->multiple_sectors) {
                 foreach ($client->sectors->first()->companies as $company) {
                     $employees = [];
-                    $employees = $this->getEmployeeOfEntity($company->id, $cid, 'company');
+                    $employees = Employees::where('comp_id', $company->id)->pluck('id')->toArray();
                     $respondents = $this->getRespondentsIds($employees, $id);
                     $answered = $this->getNumberAnswered($respondents, $id);
                     $entity_stat = [
@@ -4561,8 +4562,8 @@ class SurveysPrepration
             }
             if ($client->use_departments && !$client->multiple_company && !$collected && !$client->multiple_sectors) {
                 $company = $client->sectors->first()->companies()->first();
-                //region
-                foreach ($company->departments->where('dep_level', 3) as $department) {
+                //Superdir
+                foreach ($company->departments->where('dep_level', 1) as $department) {
                     $employees = [];
                     $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
                     $respondents = $this->getRespondentsIds($employees, $id);
@@ -4576,17 +4577,16 @@ class SurveysPrepration
                         'percentage' => ($answered / count($respondents)) * 100,
                         'type' => 'department'
                     ];
-                    array_push($region_stat, $entity_stat);
-                    array_merge($all_employees, $employees);
+                    array_push($super_dir_stat, $entity_stat);
+                    // array_merge($all_employees, $employees);
+                    $all_employees = array_unique(array_merge($all_employees, $employees));
                 }
-                //branch
-                foreach ($company->departments->where('dep_level', 4) as $department) {
+                //directorate
+                foreach ($company->departments->where('dep_level', 2) as $department) {
                     $employees = [];
                     $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
                     $respondents = $this->getRespondentsIds($employees, $id);
                     $answered = $this->getNumberAnswered($respondents, $id);
-                    $sum_of_employees += count($employees);
-                    $sum_of_respondents += count($respondents);
                     $sum_of_answered += $answered;
                     $entity_stat = [
                         'entity_name' => $department->name,
@@ -4596,13 +4596,13 @@ class SurveysPrepration
                         'answered' => $answered,
                         'percentage' => ($answered / count($respondents)) * 100,
                         'type' => 'department',
-                        'region' => $department->region_name
 
                     ];
-                    array_push($branch_stat, $entity_stat);
+                    array_push($dir_stat, $entity_stat);
+                    $all_employees = array_unique(array_merge($all_employees, $employees));
                 }
-                //Super directorate
-                foreach ($company->departments->where('dep_level', 5) as $department) {
+                //division
+                foreach ($company->departments->where('dep_level', 3) as $department) {
                     $employees = [];
                     $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
                     $respondents = $this->getRespondentsIds($employees, $id);
@@ -4616,55 +4616,18 @@ class SurveysPrepration
                         'answered' => $answered,
                         'percentage' => ($answered / count($respondents)) * 100,
                         'type' => 'department',
-                        'region' => $department->region_name,
-                        'branch' => $department->branch_name
-                    ];
-                    array_push($super_dir_stat, $entity_stat);
-                }
-                //directorate
-                foreach ($company->departments->where('dep_level', 6) as $department) {
-                    $employees = [];
-                    $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
-                    $respondents = $this->getRespondentsIds($employees, $id);
-                    $answered = $this->getNumberAnswered($respondents, $id);
-                    $entity_stat = [
-                        'entity_name' => $department->name,
-                        'entity_id' => $department->id,
-                        'employee' => count($employees),
-                        'respondents' => count($respondents),
-                        'answered' => $answered,
-                        'percentage' => ($answered / count($respondents)) * 100,
-                        'type' => 'department',
-                        'region' => $department->region_name,
-                        'branch' => $department->branch_name,
-                    ];
-                    array_push($dir_stat, $entity_stat);
-                }
-                //division
-                foreach ($company->departments->where('dep_level', 7) as $department) {
-                    $employees = [];
-                    $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
-                    $respondents = $this->getRespondentsIds($employees, $id);
-                    $answered = $this->getNumberAnswered($respondents, $id);
-                    $entity_stat = [
-                        'entity_name' => $department->name,
-                        'entity_id' => $department->id,
-                        'employee' => count($employees),
-                        'respondents' => count($respondents),
-                        'answered' => $answered,
-                        'percentage' => ($answered / count($respondents)) * 100,
-                        'type' => 'department',
-                        'region' => $department->region_name,
-                        'branch' => $department->branch_name,
                     ];
                     array_push($div_stat, $entity_stat);
+                    $all_employees = array_unique(array_merge($all_employees, $employees));
                 }
                 //department
-                foreach ($company->departments->where('dep_level', 8) as $department) {
+                foreach ($company->departments->where('dep_level', 4) as $department) {
                     $employees = [];
                     $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
                     $respondents = $this->getRespondentsIds($employees, $id);
                     $answered = $this->getNumberAnswered($respondents, $id);
+                    $sum_of_employees += count($employees);
+                    $sum_of_respondents += count($respondents);
                     $entity_stat = [
                         'entity_name' => $department->name,
                         'entity_id' => $department->id,
@@ -4673,66 +4636,37 @@ class SurveysPrepration
                         'answered' => $answered,
                         'percentage' => ($answered / count($respondents)) * 100,
                         'type' => 'department',
-                        'region' => $department->region_name,
-                        'branch' => $department->branch_name,
                     ];
                     array_push($deps_stat, $entity_stat);
+                    $all_employees = array_unique(array_merge($all_employees, $employees));
                 }
+                //section
+                // foreach ($company->departments->where('dep_level', 5) as $department) {
+                //     $employees = [];
+                //     $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
+                //     $respondents = $this->getRespondentsIds($employees, $id);
+                //     $answered = $this->getNumberAnswered($respondents, $id);
+                //     $entity_stat = [
+                //         'entity_name' => $department->name,
+                //         'entity_id' => $department->id,
+                //         'employee' => count($employees),
+                //         'respondents' => count($respondents),
+                //         'answered' => $answered,
+                //         'percentage' => ($answered / count($respondents)) * 100,
+                //         'type' => 'department',
+                //         'region' => $department->region_name,
+                //         'branch' => $department->branch_name,
+                //     ];
+                //     array_push($div_stat, $entity_stat);
+                // }
+                //get all employees of company
+                $employees_ = Employees::where('comp_id', $company->id)->pluck('id')->toArray();
+
+                $respondents_ = Respondents::where('survey_id', $id)->pluck('id')->toArray();
+                //get answers distinct answered by
+                $answered_ = SurveyAnswers::where('survey_id', $id)->distinct()->count('answered_by');
             }
-            //modified super_dir_stat
-            $modified_super = [];
-            $collection = collect($super_dir_stat);
 
-            // Group by 'name' and merge scores
-            $result = $collection->groupBy('entity_name')->map(function ($items) {
-                $merged = $items->first(); // Take the first item as a base
-                $merged['employee'] = $items->sum('employee'); // Sum up the 'score'
-                $merged['respondents'] = $items->sum('respondents'); // Sum up the 'score'
-                $merged['answered'] = $items->sum('answered'); // Sum up the 'score'
-                //calculate percentage
-                $merged['percentage'] = ($merged['answered'] / $merged['respondents']) * 100;
-                return $merged;
-            })->values();
-            $super_dir_stat = $result->all();
-            $collection = collect($dir_stat);
-
-            // Group by 'name' and merge scores
-            $result = $collection->groupBy('entity_name')->map(function ($items) {
-                $merged = $items->first(); // Take the first item as a base
-                $merged['employee'] = $items->sum('employee'); // Sum up the 'score'
-                $merged['respondents'] = $items->sum('respondents'); // Sum up the 'score'
-                $merged['answered'] = $items->sum('answered'); // Sum up the 'score'
-                //calculate percentage
-                $merged['percentage'] = ($merged['answered'] / $merged['respondents']) * 100;
-                return $merged;
-            })->values();
-            $dir_stat = $result->all();
-            $collection = collect($div_stat);
-
-            // Group by 'name' and merge scores
-            $result = $collection->groupBy('entity_name')->map(function ($items) {
-                $merged = $items->first(); // Take the first item as a base
-                $merged['employee'] = $items->sum('employee'); // Sum up the 'score'
-                $merged['respondents'] = $items->sum('respondents'); // Sum up the 'score'
-                $merged['answered'] = $items->sum('answered'); // Sum up the 'score'
-                //calculate percentage
-                $merged['percentage'] = ($merged['answered'] / $merged['respondents']) * 100;
-                return $merged;
-            })->values();
-            $div_stat = $result->all();
-            $collection = collect($deps_stat);
-
-            // Group by 'name' and merge scores
-            $result = $collection->groupBy('entity_name')->map(function ($items) {
-                $merged = $items->first(); // Take the first item as a base
-                $merged['employee'] = $items->sum('employee'); // Sum up the 'score'
-                $merged['respondents'] = $items->sum('respondents'); // Sum up the 'score'
-                $merged['answered'] = $items->sum('answered'); // Sum up the 'score'
-                //calculate percentage
-                $merged['percentage'] = ($merged['answered'] / $merged['respondents']) * 100;
-                return $merged;
-            })->values();
-            $deps_stat = $result->all();
 
             $data = [
                 'sector_stat' => $sector_stat,
@@ -4744,10 +4678,10 @@ class SurveysPrepration
                 'div_stat' => $div_stat,
                 'deps_stat' => $deps_stat,
                 'survey' => $survey,
-                'sum_of_employees' => $sum_of_employees,
-                'sum_of_respondents' => $sum_of_respondents,
-                'sum_of_answered' => $sum_of_answered,
-                'total_percentage' => ($sum_of_answered / $sum_of_respondents) * 100,
+                'sum_of_employees' => count($employees_),
+                'sum_of_respondents' => count($respondents_),
+                'sum_of_answered' => $answered_,
+                'total_percentage' => ($answered_ / count($respondents_)) * 100,
                 'client' => $client,
                 'type'=>$survey->plans->service_->service_type
             ];
@@ -4780,7 +4714,7 @@ class SurveysPrepration
             //check if client use department
             if ($client->use_departments) {
                 //foreach company departments
-                foreach ($company->departments->where('dep_level', 3) as $department) {
+                foreach ($company->departments->where('dep_level', 1) as $department) {
                     $employees = array_merge($employees, $this->getEmployeeOfEntity($department->id, $client, 'department'));
                 }
             } else {

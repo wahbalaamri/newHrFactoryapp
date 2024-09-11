@@ -33,6 +33,8 @@ return new class extends Migration
             $table->json('acting_for')->nullable();
             $table->boolean('is_hr_manager')->default(false);
             $table->boolean('site')->default(true);
+            $table->string('region')->nullable();
+            $table->string('branch')->nullable();
             $table->boolean('active')->default(true);
             $table->integer('added_by');
             $table->softDeletes();

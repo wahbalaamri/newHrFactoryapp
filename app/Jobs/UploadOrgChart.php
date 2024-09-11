@@ -127,40 +127,40 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
             } else {
                 $company_id = $client->sectors->first()->companies->first()->id;
             }
-            //check if region has value and $company_id not null
-            if (trim($entity['regions'])!='' && $company_id && $client->use_departments && $entity['regions']!=null && $entity['regions']!='') {
-                $region = Departments::where('name_en', trim($entity['regions']))->where('company_id', $company_id)->first();
-                if (!$region) {
-                    $region = new Departments();
-                }
-                $region->name_en = trim($entity['regions']);
-                $region->name_ar = trim($entity['regions']);
-                $region->company_id = $company_id;
-                $region->type = 3;
-                $region->dep_level = 3;
-                $region->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
-                $region->save();
-                $region_id = $region->id;
-            }
-            //check if branch has value and $region_id not null
-            if (trim($entity['branches'])!='' && $region_id && $client->use_departments && $entity['branches']!=null && $entity['branches']!='') {
-                $branch = Departments::where('name_en', trim($entity['branches']))->where('parent_id', $region_id)->first();
-                if (!$branch) {
-                    $branch = new Departments();
-                }
-                $branch->name_en = trim($entity['branches']);
-                $branch->name_ar = trim($entity['branches']);
-                $branch->company_id = $company_id;
-                $branch->parent_id = $region_id;
-                $branch->type = 4;
-                $branch->dep_level = 4;
-                $branch->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
-                $branch->save();
-                $branch_id = $branch->id;
-                $new_parent_id = $branch->id;
-            }
+            // //check if region has value and $company_id not null
+            // if (trim($entity['regions'])!='' && $company_id && $client->use_departments && $entity['regions']!=null && $entity['regions']!='') {
+            //     $region = Departments::where('name_en', trim($entity['regions']))->where('company_id', $company_id)->first();
+            //     if (!$region) {
+            //         $region = new Departments();
+            //     }
+            //     $region->name_en = trim($entity['regions']);
+            //     $region->name_ar = trim($entity['regions']);
+            //     $region->company_id = $company_id;
+            //     $region->type = 3;
+            //     $region->dep_level = 3;
+            //     $region->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
+            //     $region->save();
+            //     $region_id = $region->id;
+            // }
+            // //check if branch has value and $region_id not null
+            // if (trim($entity['branches'])!='' && $region_id && $client->use_departments && $entity['branches']!=null && $entity['branches']!='') {
+            //     $branch = Departments::where('name_en', trim($entity['branches']))->where('parent_id', $region_id)->first();
+            //     if (!$branch) {
+            //         $branch = new Departments();
+            //     }
+            //     $branch->name_en = trim($entity['branches']);
+            //     $branch->name_ar = trim($entity['branches']);
+            //     $branch->company_id = $company_id;
+            //     $branch->parent_id = $region_id;
+            //     $branch->type = 4;
+            //     $branch->dep_level = 4;
+            //     $branch->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
+            //     $branch->save();
+            //     $branch_id = $branch->id;
+            //     $new_parent_id = $branch->id;
+            // }
             //check if super_directorate has value and $branch_id not null
-            if (trim($entity['super_directorates'])!='' && $branch_id && $client->use_departments && $entity['super_directorates']!=null && $entity['super_directorates']!='') {
+            if (trim($entity['super_directorates'])!='' && $company_id && $client->use_departments && $entity['super_directorates']!=null && $entity['super_directorates']!='') {
                 $super_directorate = Departments::where('name_en', ($entity['super_directorates']))->where('parent_id', $new_parent_id)->first();
                 if (!$super_directorate) {
                     $super_directorate = new Departments();
@@ -169,8 +169,8 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
                 $super_directorate->name_ar = ($entity['super_directorates']);
                 $super_directorate->company_id = $company_id;
                 $super_directorate->parent_id = $new_parent_id;
-                $super_directorate->type = 5;
-                $super_directorate->dep_level = 5;
+                $super_directorate->type = 1;
+                $super_directorate->dep_level = 1;
                 $super_directorate->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
                 $super_directorate->save();
                 $super_directorate_id = $super_directorate->id;
@@ -186,8 +186,8 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
                 $directorate->name_ar = trim($entity['directorates']);
                 $directorate->company_id = $company_id;
                 $directorate->parent_id = $new_parent_id;
-                $directorate->type = 6;
-                $directorate->dep_level = 6;
+                $directorate->type = 2;
+                $directorate->dep_level = 2;
                 $directorate->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
                 $directorate->save();
                 $directorate_id = $directorate->id;
@@ -203,8 +203,8 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
                 $div->name_ar = trim($entity['division']);
                 $div->company_id = $company_id;
                 $div->parent_id = $new_parent_id;
-                $div->type = 7;
-                $div->dep_level = 7;
+                $div->type = 3;
+                $div->dep_level = 3;
                 $div->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
                 $div->save();
                 $div_id = $div->id;
@@ -220,8 +220,8 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
                 $department->name_ar = trim($entity['department']);
                 $department->company_id = $company_id;
                 $department->parent_id = $new_parent_id;
-                $department->type = 8;
-                $department->dep_level = 8;
+                $department->type = 4;
+                $department->dep_level = 4;
                 $department->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
                 $department->save();
                 $department_id = $department->id;
@@ -237,8 +237,8 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
                 $section->name_ar = trim($entity['section']);
                 $section->company_id = $company_id;
                 $section->parent_id = $department_id;
-                $section->type = 9;
-                $section->dep_level = 9;
+                $section->type = 5;
+                $section->dep_level = 5;
                 $section->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
                 $section->save();
                 $section_id = $section->id;

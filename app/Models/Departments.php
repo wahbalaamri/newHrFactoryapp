@@ -42,21 +42,5 @@ class Departments extends Model
     {
         return app()->getLocale() == 'ar' ? $this->name_ar : $this->name_en;
     }
-    public function getBranchNameAttribute()
-    {
-        $parent=$this->parent;
-        if($parent->dep_level==4){
-            return $parent->name;
-        }
-        return $parent->getBranchNameAttribute();
-    }
-    //region
-    public function getRegionNameAttribute()
-    {
-        $parent=$this->parent;
-        if($parent->dep_level==3){
-            return $parent->name;
-        }
-        return $parent->getRegionNameAttribute();
-    }
+
 }

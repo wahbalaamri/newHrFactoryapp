@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('name_ar');
             $table->string('dep_level');//0 ,1,2
             $table->string('location')->nullable();//0 ,1,2
-            $table->string('type')->nullable();//1= CEO offices, 2=Chiefs, 3= region, 4=branch, 5=directorate, 6=directorate, 7=department
+            $table->string('type')->nullable();//1= CEO offices, 2= Chiefs & Super_directorate, 3=directorate, 4=division, 4=department
             $table->boolean('feild')->default(false);
             // bool is HR department
             $table->boolean('is_hr')->default(false);

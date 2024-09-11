@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('industry');
             $table->integer('client_size');
             $table->integer('partner_id')->nullable();
+            $table->integer('usr_max_number')->nullable();
             $table->string('logo_path')->nullable();
             $table->string('phone')->nullable();
             $table->string('webiste')->nullable();
