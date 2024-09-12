@@ -42,5 +42,42 @@ class Departments extends Model
     {
         return app()->getLocale() == 'ar' ? $this->name_ar : $this->name_en;
     }
+/**
+     * Check if the department is a Super Directorate.
+     */
+    public function isSuperDirectorate()
+    {
+        return $this->dep_level === 1;
+    }
 
+    /**
+     * Check if the department is a Directorate.
+     */
+    public function isDirectorate()
+    {
+        return $this->dep_level === 2;
+    }
+
+    /**
+     * Check if the department is a Division.
+     */
+    public function isDivision()
+    {
+        return $this->dep_level === 3;
+    }
+
+    /**
+     * Check if the department is a Department.
+     */
+    public function isDepartment()
+    {
+        return $this->dep_level === 4;
+    }
+    /**
+     * Check if the department is a Section.
+     */
+    public function isSection()
+    {
+        return $this->dep_level === 5;
+    }
 }
