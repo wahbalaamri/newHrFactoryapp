@@ -645,7 +645,7 @@ class SurveysPrepration
                         $send_status = false;
                     }
                     $url_text = $send_status ? __('Sent') . ' ' . __('On ') . $send_date . ' Resend <i class="fa fa-paper-plane"></i>' : '<i class="fa fa-paper-plane"></i>';
-                    return in_array($employee->id, $respondents_ids) ? '<a href="' . route('clients.showSendSurvey', [$id, $survey_type, $survey_id, 'i', $employee->id]) . 'class="btn btn-info btn-xs">' . $url_text . '</a>' : '<span class="badge bg-danger">' . __('Not Added') . '</span>';
+                    return in_array($employee->id, $respondents_ids) ? '<a href="' . route('clients.showSendSurvey', [$id, $survey_type, $survey_id, 'i', $employee->id]) . '" class="btn btn-info btn-xs">' . $url_text . '</a>' : '<span class="badge bg-danger">' . __('Not Added') . '</span>';
                 })
                 ->addColumn('SendReminder', function ($employee) use ($respondents_ids, $survey_id, $id, $survey_type) {
                     //check if the reminder sent to the employee
