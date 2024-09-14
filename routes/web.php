@@ -71,7 +71,9 @@ Route::get('/CheckUser', [HomeController::class, 'CheckUser'])->name("CheckUser"
 Route::get('/setupUsrPlans', [HomeController::class, 'setupUsrPlans'])->name("setupUsrPlans");
 Route::get('/MigrateUsersOldSections', [MigrationConrtoller::class, 'MigrateUsersOldSections'])->name("MigrateUsersOldSections");
 Route::get('/sections/editSec/{id}', [SectionsController::class, 'EditSe'])->name('sections.editSec');
-Auth::routes();
+Route::middleware('web')->group(function () {
+    Auth::routes();
+});
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/admin/dashboard', [HomeController::class, 'dashboard'])->name('admin.dashboard')->middleware('auth:web');
 Route::get('/client/dashboard', [HomeController::class, 'client'])->name('client.dashboard')->middleware('auth:web');

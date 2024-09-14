@@ -645,9 +645,9 @@ class SurveysPrepration
                         $send_status = false;
                     }
                     $url_text = $send_status ? __('Sent') . ' ' . __('On ') . $send_date . ' Resend <i class="fa fa-paper-plane"></i>' : '<i class="fa fa-paper-plane"></i>';
-                    return in_array($employee->id, $respondents_ids) ? '<a href="' . route('clients.showSendSurvey', [$id, $survey_type, $survey_id, 'i', $employee->id]) . '" onclick="SendSurvey(\'' . $employee->id . '\',\'' . $survey_id . '\')" class="btn btn-info btn-xs">' . $url_text . '</a>' : '<span class="badge bg-danger">' . __('Not Added') . '</span>';
+                    return in_array($employee->id, $respondents_ids) ? '<a href="' . route('clients.showSendSurvey', [$id, $survey_type, $survey_id, 'i', $employee->id]) . 'class="btn btn-info btn-xs">' . $url_text . '</a>' : '<span class="badge bg-danger">' . __('Not Added') . '</span>';
                 })
-                ->addColumn('SendReminder', function ($employee) use ($respondents_ids, $survey_id) {
+                ->addColumn('SendReminder', function ($employee) use ($respondents_ids, $survey_id, $id, $survey_type) {
                     //check if the reminder sent to the employee
                     $emp_respondent = Respondents::where('survey_id', $survey_id)->where('employee_id', $employee->id)->first();
                     if ($emp_respondent) {
@@ -659,7 +659,7 @@ class SurveysPrepration
                         $reminder_status = false;
                     }
                     $url_text = $reminder_status ? __('Sent') . ' ' . __('On ') . $reminder_date . ' Resend <i class="fa fa-paper-plane"></i>' : '<i class="fa fa-paper-plane"></i>';
-                    return in_array($employee->id, $respondents_ids) ? '<a href="javascript:void(0);" onclick="SendReminder(\'' . $employee->id . '\',\'' . $survey_id . '\')" class="btn btn-warning btn-xs">' . $url_text . '</a>' : '<span class="badge bg-danger">' . __('Not Added') . '</span>';
+                    return in_array($employee->id, $respondents_ids) ? '<a href="' . route('clients.showSendSurvey', [$id, $survey_type, $survey_id, 'i', $employee->id]) .' class="btn btn-warning btn-xs">' . $url_text . '</a>' : '<span class="badge bg-danger">' . __('Not Added') . '</span>';
                 })
                 ->rawColumns(['action', 'hr', 'SendSurvey', 'SendReminder', 'raters', 'result'])
                 ->make(true);
