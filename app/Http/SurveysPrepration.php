@@ -659,7 +659,7 @@ class SurveysPrepration
                         $reminder_status = false;
                     }
                     $url_text = $reminder_status ? __('Sent') . ' ' . __('On ') . $reminder_date . ' Resend <i class="fa fa-paper-plane"></i>' : '<i class="fa fa-paper-plane"></i>';
-                    return in_array($employee->id, $respondents_ids) ? '<a href="' . route('clients.showSendSurvey', [$id, $survey_type, $survey_id, 'ir', $employee->id]) .'" class="btn btn-warning btn-xs">' . $url_text . '</a>' : '<span class="badge bg-danger">' . __('Not Added') . '</span>';
+                    return in_array($employee->id, $respondents_ids) ? '<a href="' . route('clients.showSendSurvey', [$id, $survey_type, $survey_id, 'ir', $employee->id]) . '" class="btn btn-warning btn-xs">' . $url_text . '</a>' : '<span class="badge bg-danger">' . __('Not Added') . '</span>';
                 })
                 ->rawColumns(['action', 'hr', 'SendSurvey', 'SendReminder', 'raters', 'result'])
                 ->make(true);
@@ -1548,7 +1548,10 @@ class SurveysPrepration
                 ->where('respondents.client_id', $Client_id)
                 ->where('respondents.survey_id', $Survey_id)
                 ->pluck('respondents.id')->toArray();
-            $data = $this->StartCalulate($Client_id, $Survey_id, $service_type, $respondents);
+                Log::info("department-name_en: $department->name_en");
+                Log::info("department-id: ".count($respondents));
+                Log::info(($respondents));
+            $data = $this->StartCalulate($Client_id, $Survey_id, $service_type, $department->name_en, $department->id, $respondents);
         }
         $data['entity'] = $department->name_en;
         $data['type'] = $department->name_en;
@@ -1581,7 +1584,7 @@ class SurveysPrepration
                 ->where('respondents.client_id', $Client_id)
                 ->where('respondents.survey_id', $Survey_id)
                 ->pluck('respondents.id')->toArray();
-            $data = $this->StartCalulate($Client_id, $Survey_id, $service_type, $respondents);
+            $data = $this->StartCalulate($Client_id, $Survey_id, $service_type, $entity, $type_id, $respondents);
         }
         $data['type'] = $entity;
         return $data;
@@ -3120,6 +3123,17 @@ class SurveysPrepration
         $overall_per_fun = [];
         $driver_functions_practice = [];
         $outcome_function_results_1 = [];
+        $heat_map_last = [];
+        $hand_favorable_score = 0;
+        $head_favorable_score = 0;
+        $heart_favorable_score = 0;
+        $out_come_favorable_val = 0;
+        $enps_favorable = 0;
+        $sum_hand_favorable_score = 0;
+        $sum_head_favorable_score = 0;
+        $sum_heart_favorable_score = 0;
+        $sum_out_come_favorable_val = 0;
+        $sum_enps_favorable = 0;
         $data_size = count($array_of_data);
         foreach ($array_of_data as $singl_data) {
             foreach ($singl_data['drivers_functions'] as $driver) {
@@ -3134,7 +3148,32 @@ class SurveysPrepration
             foreach ($singl_data['drivers'] as $practice) {
                 array_push($practices, $practice);
             }
+            //heat_map_item
+            //get entity_name
+            Log::info("entity_name, ". $singl_data['entity_name']);
+            Log::info("entity_id, ". $singl_data['entity_id']);
+            $heat_map_item = [
+                'entity_name' => $singl_data['entity_name'],
+                'entity_id' => $singl_data['entity_id'],
+                'hand_favorable_score' => $singl_data['hand_favorable_score'],
+                'head_favorable_score' => $singl_data['head_favorable_score'],
+                'heart_favorable_score' => $singl_data['heart_favorable_score'],
+                'outcome_favorable_score' => $singl_data['outcome_favorable_score'],
+                'enps_favorable' => $singl_data['enps_favorable'],
+            ];
+            array_push($heat_map_last, $heat_map_item);
+            $sum_hand_favorable_score += $singl_data['hand_favorable_score'];
+            $sum_head_favorable_score += $singl_data['head_favorable_score'];
+            $sum_heart_favorable_score += $singl_data['heart_favorable_score'];
+            $sum_out_come_favorable_val += $singl_data['outcome_favorable_score'];
+            $sum_enps_favorable += $singl_data['enps_favorable'];
         }
+        //get average of functions
+        $hand_favorable_score = $sum_hand_favorable_score / $data_size;
+        $head_favorable_score = $sum_head_favorable_score / $data_size;
+        $heart_favorable_score = $sum_heart_favorable_score / $data_size;
+        $out_come_favorable_val = $sum_out_come_favorable_val / $data_size;
+        $enps_favorable = $sum_enps_favorable / $data_size;
         foreach ($functions as $function) {
             if ($function->IsDriver) {
                 $function_results = [
@@ -3381,13 +3420,20 @@ class SurveysPrepration
             'outcomes' => $outcome_function_results_1,
             'ENPS_data_array' => $ENPS_data_array1,
             'entity' => $entity_name,
+            'entity_name' => $entity_name,
+            'entity_id' => $entity_id,
             'type' => $type_v,
             'type_id' => $entity_id,
             'id' => $survey_id,
             'driver_practice_asc' => $driver_functions_practice_asc,
             'driver_practice_desc' => $driver_functions_practice_desc,
-            // 'heat_map' => $heat_map,
+            'heat_map' => $heat_map_last,
             'cal_type' => 'countD',
+            'hand_favorable_score' => $hand_favorable_score,
+            'head_favorable_score' => $head_favorable_score,
+            'heart_favorable_score' => $heart_favorable_score,
+            'outcome_favorable_score' => $out_come_favorable_val,
+            'enps_favorable_score' => $enps_favorable,
         ];
         return $data;
     }
@@ -4592,7 +4638,7 @@ class SurveysPrepration
                 ->where('respondents.survey_id', $survey_id)
                 ->pluck('respondents.id')->toArray();
             Log::info(count($respondents));
-            $maleData = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $maleData = $this->StartCalulate($client_id, $survey_id, $service_type, 'Male', 'm', $respondents);
             $type = "Male Results";
         }
         if ($gender == 'f' || $gender === null) {
@@ -4605,7 +4651,7 @@ class SurveysPrepration
                 ->where('respondents.survey_id', $survey_id)
                 ->pluck('respondents.id')->toArray();
             Log::info(count($respondents));
-            $femaleData = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $femaleData = $this->StartCalulate($client_id, $survey_id, $service_type, 'Female', 'f', $respondents);
             $type = "Female Results";
         }
 
@@ -4622,12 +4668,16 @@ class SurveysPrepration
 
         return $data;
     }
-    function StartCalulate($client_id, $Survey_id, $service_type, $Emails)
+    function StartCalulate($client_id, $Survey_id, $service_type, $entity_name, $entity_id, $Emails)
     {
         $overall_per_fun = [];
         $driver_functions_practice = [];
         $heat_map = [];
-
+        $hand_favorable_score = 0;
+        $head_favorable_score = 0;
+        $heart_favorable_score = 0;
+        $out_come_favorable_val = 0;
+        $enps_favorable = 0;
         $practice_results = [];
         $ENPS_data_array = [];
         $outcome_functions_practice = [];
@@ -4711,12 +4761,22 @@ class SurveysPrepration
                 $function_UnFavorable_count += $UnFavorable_count;
                 array_push($driver_functions_practice, $practice_results);
             }
+            $function_Favorable_score = $function_Favorable_count == 0 ? 0 : number_format(($function_Favorable_count / ($function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count)) * 100, 2);
+            if (str_contains(strtolower($function->title),  "head")) {
+                $head_favorable_score = $function_Favorable_score;
+            }
+            if (str_contains(strtolower($function->title),  "hand")) {
+                $hand_favorable_score = $function_Favorable_score;
+            }
+            if (str_contains(strtolower($function->title),  "heart")) {
+                $heart_favorable_score = $function_Favorable_score;
+            }
             //setup function_results
             $function_results = [
                 'function' => $function->id,
                 'function_title' => $function->translated_title,
                 'Nuetral_score' => $function_Nuetral_count == 0 ? 0 : number_format(($function_Nuetral_count / ($function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count)) * 100, 2),
-                'Favorable_score' => $function_Favorable_count == 0 ? 0 : number_format(($function_Favorable_count / ($function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count)) * 100, 2),
+                'Favorable_score' => $function_Favorable_score,
                 'UnFavorable_score' => $function_UnFavorable_count == 0 ? 0 : number_format(($function_UnFavorable_count / ($function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count)) * 100, 2),
                 //get count of Favorable answers
                 'Favorable_count' => $function_Favorable_count,
@@ -4795,6 +4855,7 @@ class SurveysPrepration
                 if ($practice->questions->where('IsENPS', true)->first()) {
                     $Favorable = $Favorable_count + $Nuetral_count + $UnFavorable_count == 0 ? 0 : number_format(($Favorable_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2);
                     $UnFavorable = $Favorable_count + $Nuetral_count + $UnFavorable_count == 0 ? 0 : number_format(($UnFavorable_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2);
+                    $enps_favorable = $Favorable;
                     $ENPS_data_array = [
                         'function' => $function->id,
                         'practice_id' => $practice->id,
@@ -4821,6 +4882,7 @@ class SurveysPrepration
             }
             $out_come_favorable = $function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count == 0 ? 0 : number_format(($function_Favorable_count / ($function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count)) * 100, 2);
             $out_come_unfavorable = $function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count == 0 ? 0 : number_format(($function_UnFavorable_count / ($function_Favorable_count + $function_Nuetral_count + $function_UnFavorable_count)) * 100, 2);
+            $out_come_favorable_val = $out_come_favorable;
             //setup function_results
             $outcome_function_results = [
                 'function' => $function->id,
@@ -4858,6 +4920,13 @@ class SurveysPrepration
             'driver_practice_asc' => $driver_functions_practice_asc,
             'driver_practice_desc' => $driver_functions_practice_desc,
             'heat_map' => $heat_map,
+            'hand_favorable_score' => $hand_favorable_score,
+            'head_favorable_score' => $head_favorable_score,
+            'heart_favorable_score' => $heart_favorable_score,
+            'outcome_favorable_score' => $out_come_favorable_val,
+            'enps_favorable' => $enps_favorable,
+            'entity_name' => $entity_name,
+            'entity_id' => $entity_id
         ];
         return $data;
     }
@@ -4888,7 +4957,7 @@ class SurveysPrepration
                 ->where('respondents.client_id', $client_id)
                 ->where('respondents.survey_id', $survey_id)
                 ->pluck('respondents.id')->toArray();
-            $g_1 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $g_1 = $this->StartCalulate($client_id, $survey_id, $service_type, 'Group -age < 26', 'G-1', $respondents);
             array_push($globalData, $g_1);
             $type = "Male Results";
         }
@@ -4902,7 +4971,7 @@ class SurveysPrepration
                 ->where('respondents.client_id', $client_id)
                 ->where('respondents.survey_id', $survey_id)
                 ->pluck('respondents.id')->toArray();
-            $g_2 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $g_2 = $this->StartCalulate($client_id, $survey_id, $service_type,  'Group -age < 42 > 26', 'G-2', $respondents);
             array_push($globalData, $g_2);
             $type = "Female Results";
         }
@@ -4916,7 +4985,7 @@ class SurveysPrepration
                 ->where('respondents.client_id', $client_id)
                 ->where('respondents.survey_id', $survey_id)
                 ->pluck('respondents.id')->toArray();
-            $g_3 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $g_3 = $this->StartCalulate($client_id, $survey_id, $service_type,  'Group -age < 58 > 42', 'G-3', $respondents);
             array_push($globalData, $g_3);
             $type = "Female Results";
         }
@@ -4929,7 +4998,7 @@ class SurveysPrepration
                 ->where('respondents.client_id', $client_id)
                 ->where('respondents.survey_id', $survey_id)
                 ->pluck('respondents.id')->toArray();
-            $g_4 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $g_4 = $this->StartCalulate($client_id, $survey_id, $service_type,  'Group -age < 58', 'G-4', $respondents);
             array_push($globalData, $g_4);
             $type = "Female Results";
         }
@@ -4971,7 +5040,7 @@ class SurveysPrepration
                 ->where('respondents.client_id', $client_id)
                 ->where('respondents.survey_id', $survey_id)
                 ->pluck('respondents.id')->toArray();
-            $g_1 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $g_1 = $this->StartCalulate($client_id, $survey_id, $service_type, 'Year-of-Service >= 1', 'G-1', $respondents);
             $type = "Male Results";
         }
         if ($gender == 'G-2' || $gender === null) {
@@ -4984,7 +5053,7 @@ class SurveysPrepration
                 ->where('respondents.client_id', $client_id)
                 ->where('respondents.survey_id', $survey_id)
                 ->pluck('respondents.id')->toArray();
-            $g_2 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $g_2 = $this->StartCalulate($client_id, $survey_id, $service_type, 'Year-of-Service > 1 <=5', 'G-2', $respondents);
             $type = "Female Results";
         }
         if ($gender == 'G-3' || $gender === null) {
@@ -4997,7 +5066,7 @@ class SurveysPrepration
                 ->where('respondents.client_id', $client_id)
                 ->where('respondents.survey_id', $survey_id)
                 ->pluck('respondents.id')->toArray();
-            $g_3 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $g_3 = $this->StartCalulate($client_id, $survey_id, $service_type, 'Year-of-Service > 5 <=10', 'G-3', $respondents);
             $type = "Female Results";
         }
         if ($gender == 'G-4' || $gender === null) {
@@ -5009,7 +5078,7 @@ class SurveysPrepration
                 ->where('respondents.client_id', $client_id)
                 ->where('respondents.survey_id', $survey_id)
                 ->pluck('respondents.id')->toArray();
-            $g_4 = $this->StartCalulate($client_id, $survey_id, $service_type, $respondents);
+            $g_4 = $this->StartCalulate($client_id, $survey_id, $service_type, 'Year-of-Service > 10', 'G-4', $respondents);
             $type = "Female Results";
         }
         //if null return average of four groups results
