@@ -1393,9 +1393,10 @@ class SurveysPrepration
                     'client_logo' => $emailContent->use_client_logo ? $client->logo_path : null,
                     'type' => $type
                 ];
-                Log::info("gggg");
+
                 $job = (new SendSurvey($emails, $data, $send_type))->delay(now()->addSeconds(2));
                 dispatch($job);
+                Log::info("ggggddfuiuewu");
             } else {
                 $rater_where = [];
                 $rater_where[] = ['survey_id', $survey_id];
