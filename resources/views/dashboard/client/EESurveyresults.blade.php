@@ -365,7 +365,7 @@
                                                         $vtype = $component['vtype'];
                                                         $entity_id = $component['entity_id'];
                                                     @endphp
-                                                    <tr style="cursor: pointer;"
+                                                    <tr class="text-center" style="cursor: pointer;"
                                                         onclick="window.open('{{ route('clients.SurveyResults', [$client_id, $Service_type, $survey_id, $vtype, $entity_id]) }}')">
                                                         <td>{{ $component['entity_name'] }}</td>
                                                         <td @class([
