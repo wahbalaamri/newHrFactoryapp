@@ -356,7 +356,7 @@
                                                     <th>{{ __('Head Score') }}</th>
                                                     <th>{{ __('Heart Score') }}</th>
                                                     <th>{{ __('Outcome Index') }}</th>
-                                                    <th>{{ __('ENPs Index') }}</th>
+                                                    <th>{{ __('ENP Score') }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
