@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Exports\SurveyAnswersExport;
 use App\Http\Facades\Landing;
 use App\Jobs\SendAccountInfoJob;
 use App\Jobs\SendSurvey;
@@ -5179,5 +5180,11 @@ class SurveysPrepration
         $data['type'] = $type;
 
         return $data;
+    }
+    //DownloadSurveyResults function
+    function DownloadSurveyResults($survey_id, $type, $type_id=null, $admin = null)
+    {
+        //export result
+        return Excel::download(new SurveyAnswersExport($survey_id, $type, $type_id=null), 'survey_results.xlsx');
     }
 }

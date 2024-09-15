@@ -47,7 +47,7 @@ class Departments extends Model
      */
     public function isSuperDirectorate()
     {
-        return $this->dep_level === 1;
+        return $this->dep_level == 1;
     }
 
     /**
@@ -55,7 +55,7 @@ class Departments extends Model
      */
     public function isDirectorate()
     {
-        return $this->dep_level === 2;
+        return $this->dep_level == 2;
     }
 
     /**
@@ -63,7 +63,7 @@ class Departments extends Model
      */
     public function isDivision()
     {
-        return $this->dep_level === 3;
+        return $this->dep_level == 3;
     }
 
     /**
@@ -71,13 +71,13 @@ class Departments extends Model
      */
     public function isDepartment()
     {
-        return $this->dep_level === 4;
+        return $this->dep_level == 4;
     }
     /**
      * Check if the department is a Section.
      */
     public function isSection()
     {
-        return $this->dep_level === 5;
+        return $this->dep_level == 5;
     }
 }

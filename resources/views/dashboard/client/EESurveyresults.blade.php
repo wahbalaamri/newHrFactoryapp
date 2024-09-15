@@ -345,7 +345,45 @@
                                 </div>
                             </div>
                         </div>
+                        @if (count($heat_map)>0)
+                        <div class="card shadow p-3 mb-5 bg-white rounded">
+                            {{-- header --}}
+                            <div class="card-header d-flex align-items-center">
+                                <h2 class="h4 text-orange">{{ __('Heat Map') }}
+                                </h2>
+                            </div>
+                            {{-- body --}}
 
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>{{ __('Component Name') }}</th>
+                                                <th>{{ __('Hand Score') }}</th>
+                                                <th>{{ __('Head Score') }}</th>
+                                                <th>{{ __('Heart Score') }}</th>
+                                                <th>{{ __('Outcome Score') }}</th>
+                                                <th>{{ __('ENPs Score') }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($heat_map as $component)
+                                                <tr>
+                                                    <td>{{ $component['entity_name']}}</td>
+                                                    <td>{{ number_format($component['hand_favorable_score'] ,2)}}</td>
+                                                    <td>{{ number_format($component['head_favorable_score'] ,2)}}</td>
+                                                    <td>{{ number_format($component['heart_favorable_score'] ,2)}}</td>
+                                                    <td>{{ number_format($component['outcome_favorable_score'] ,2)}}</td>
+                                                    <td>{{ number_format($component['enps_favorable'] ,2)}}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                         <div class="card mt-3">
                             {{-- header --}}
                             <div class="card-header">
@@ -357,7 +395,7 @@
                                 <div class="row text-start">
                                     <div class="col-4 p-3 ">
 
-                                        <a href="{{-- {{ route('surveys.DownloadSurvey',[$id,$type,$type_id]) }} --}}" class="btn btn-success mt-3"
+                                        <a href="{{ route('clients.DownloadSurveyResults',[$id,"all"]) }}" class="btn btn-success mt-3"
                                             style="border-radius: 10px;
             -webkit-box-shadow: 5px 5px 20px 5px #ababab;
             box-shadow: 5px 5px 20px 5px #ababab;">{{ __('Download Survey Answers') }}</a>

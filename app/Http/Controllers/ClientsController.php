@@ -377,4 +377,9 @@ class ClientsController extends Controller
     {
         return $surveysPrepration->AssignAsUser($request, $id, $cid, true);
     }
+    //DownloadSurveyResults function
+    public function DownloadSurveyResults(SurveysPrepration $surveysPrepration,$survey_id, $type, $type_id=null) {
+        ini_set('max_execution_time', 300);
+        return $surveysPrepration->DownloadSurveyResults($survey_id, $type, $type_id, true);
+    }
 }

@@ -395,6 +395,7 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     // Route::get('clients/showSendSurvey/{id}/{type}/{survey}', [ClientsController::class, 'showSendSurvey'])->name('clients.showSendSurvey');
     Route::post('clients/sendSurvey/{id}/{type}/{survey}/{send_type?}', [ClientsController::class, 'sendSurvey'])->name('clients.sendSurvey');
     Route::get('clients/SurveyResults/{id}/{type}/{survey}/{vtype}/{vtype_id?}', [ClientsController::class, 'SurveyResults'])->name('clients.SurveyResults');
+    Route::get('clients/DownloadSurveyResults/{survey}/{type}/{type_id?}', [ClientsController::class, 'DownloadSurveyResults'])->name('clients.DownloadSurveyResults');
     Route::get('clients/candidateResult/{id}/{sid}', [Leader360ReviewController::class, 'candidateResult'])->name('clients.candidateResult');
     Route::post('clients/SaveRaters', [ClientsController::class, 'SaveRaters'])->name('clients.SaveRaters');
     Route::post('clients/candidates', [ClientsController::class, 'candidates'])->name('client.candidates');
