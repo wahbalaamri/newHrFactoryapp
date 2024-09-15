@@ -355,8 +355,8 @@
                                                     <th>{{ __('Hand Score') }}</th>
                                                     <th>{{ __('Head Score') }}</th>
                                                     <th>{{ __('Heart Score') }}</th>
-                                                    <th>{{ __('Outcome Score') }}</th>
-                                                    <th>{{ __('ENPs Score') }}</th>
+                                                    <th>{{ __('Outcome Index') }}</th>
+                                                    <th>{{ __('ENPs Index') }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
