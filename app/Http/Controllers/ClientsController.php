@@ -240,6 +240,7 @@ class ClientsController extends Controller
     //SurveyResults function
     public function SurveyResults(SurveysPrepration $surveysPrepration, $Client_id, $Service_type, $survey_id, $vtype, $vtype_id = null)
     {
+        ini_set('max_execution_time', 300);
         try {
             return $surveysPrepration->SurveyResults($Client_id, $Service_type, $survey_id, $vtype, $vtype_id, true);
         } catch (\Exception $e) {

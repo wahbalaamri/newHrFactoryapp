@@ -1467,6 +1467,15 @@ class SurveysPrepration
                     $data = $this->get_resultd($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
                 } elseif ($vtype == 'sec') {
                     $data = $this->get_SectorResult($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
+                } elseif ($vtype == 'dep') {
+                    $data = $this->getDepartment3hResults(
+                        $Client_id,
+                        $vtype_id,
+                        $survey_id,
+                        $Client_id,
+                        $Service_type,
+                        Departments::find($vtype_id)->dep_level
+                    );
                 } elseif ($vtype == 'gender') {
                     if ($vtype_id == 'male')
                         $data = $this->getResultsByGender($Client_id, $Service_type, $survey_id, "m");
@@ -1548,8 +1557,10 @@ class SurveysPrepration
                 $department->id,
                 $respondents
             );
+            $there_is_answer = (bool)$the_dep_result['there_is_answer'];
             //push $the_dep_result into sub_data
-            $sub_data[] = $the_dep_result;
+            if ($there_is_answer)
+                $sub_data[] = $the_dep_result;
             //get the average
             $data = $this->calculateTheAverage(
                 $department->name_en,
@@ -1592,7 +1603,9 @@ class SurveysPrepration
             $company_heat_map = [];
             //loop throgh $departments
             foreach ($departments as $department) {
-                $sub_data[] = $this->getDepartment3hResults($type_id, $department->id, $Survey_id, $Client_id, $service_type, 1);
+                $sub_data_ = $this->getDepartment3hResults($type_id, $department->id, $Survey_id, $Client_id, $service_type, 1);
+                if ((bool)$sub_data_['there_is_answer'])
+                    $sub_data[] = $sub_data_;
             }
             //get the average
             $data = $this->calculateTheAverage(
@@ -1600,7 +1613,7 @@ class SurveysPrepration
                 $type_id,
                 $Survey_id,
                 $service_type,
-                "comp",
+                "dep",
                 $sub_data
             );
         } else {
@@ -1630,7 +1643,7 @@ class SurveysPrepration
             $type_id,
             $id,
             $service_type,
-            "sec",
+            "comp",
             $sub_data
         );
         $data['type'] = $sector->name;
@@ -2025,7 +2038,7 @@ class SurveysPrepration
             $Client_id,
             $id,
             $service_type,
-            "client",
+            "sec",
             $sub_data
         );
         return $data;
@@ -3192,6 +3205,7 @@ class SurveysPrepration
         $sum_out_come_favorable_val = 0;
         $sum_enps_favorable = 0;
         $data_size = count($array_of_data);
+        $there_is_answer = false;
         foreach ($array_of_data as $singl_data) {
             foreach ($singl_data['drivers_functions'] as $driver) {
                 array_push($driver_functions, $driver);
@@ -3210,12 +3224,16 @@ class SurveysPrepration
             $heat_map_item = [
                 'entity_name' => $singl_data['entity_name'],
                 'entity_id' => $singl_data['entity_id'],
+                'vtype' => $type_v,
                 'hand_favorable_score' => $singl_data['hand_favorable_score'],
                 'head_favorable_score' => $singl_data['head_favorable_score'],
                 'heart_favorable_score' => $singl_data['heart_favorable_score'],
                 'outcome_favorable_score' => $singl_data['outcome_favorable_score'],
                 'enps_favorable' => $singl_data['enps_favorable'],
             ];
+            if ($singl_data['hand_favorable_score'] > 0 || $singl_data['head_favorable_score'] > 0 || $singl_data['heart_favorable_score'] > 0 || $singl_data['outcome_favorable_score'] > 0 || $singl_data['enps_favorable'] > 0) {
+                $there_is_answer = true;
+            }
             array_push($heat_map_last, $heat_map_item);
             $sum_hand_favorable_score += $singl_data['hand_favorable_score'];
             $sum_head_favorable_score += $singl_data['head_favorable_score'];
@@ -3489,6 +3507,7 @@ class SurveysPrepration
             'heart_favorable_score' => $heart_favorable_score,
             'outcome_favorable_score' => $out_come_favorable_val,
             'enps_favorable' => $enps_favorable,
+            'there_is_answer' => $there_is_answer
         ];
         return $data;
     }
@@ -4695,7 +4714,7 @@ class SurveysPrepration
                 ->where('respondents.survey_id', $survey_id)
                 ->pluck('respondents.id')->toArray();
             $maleData = $this->StartCalulate($client_id, $survey_id, $service_type, 'Male', 'm', $respondents);
-            $sub_data[]=$maleData;
+            $sub_data[] = $maleData;
             $type = "Male Results";
         }
         if ($gender == 'f' || $gender === null) {
@@ -4713,7 +4732,7 @@ class SurveysPrepration
 
         if ($gender === null) {
             // Calculate the average of male and female data
-            $data=$this->calculateTheAverage(
+            $data = $this->calculateTheAverage(
                 "Gender-Wise",
                 null,
                 $survey_id,
@@ -4765,6 +4784,7 @@ class SurveysPrepration
                 $Favorable_result = collect();
                 $sum_answer_value_Favorable = 0;
                 $Favorable_count = 0;
+                $there_is_answer = false;
                 foreach (array_chunk($Emails, $chunkSize) as $chunkedEmails) {
                     $result = SurveyAnswers::selectRaw('COUNT(answer_value) as count, SUM(answer_value) as sum')
                         ->where('survey_id', $Survey_id)
@@ -4774,6 +4794,7 @@ class SurveysPrepration
                         ->get();
                     $sum_answer_value_Favorable += intval($result->first()->sum);
                     $Favorable_count += intval($result->first()->count);
+                    $there_is_answer = intval($result->first()->count) > 0;
                     // Add results together
                 }
                 $sum_answer_value_UnFavorable = 0;
@@ -4990,7 +5011,8 @@ class SurveysPrepration
             'outcome_favorable_score' => $out_come_favorable_val,
             'enps_favorable' => $enps_favorable,
             'entity_name' => $entity_name,
-            'entity_id' => $entity_id
+            'entity_id' => $entity_id,
+            'there_is_answer' => $there_is_answer
         ];
         return $data;
     }
@@ -5153,7 +5175,7 @@ class SurveysPrepration
         }
         //if null return average of four groups results
         if ($gender === null) {
-            $data=$this->calculateTheAverage(
+            $data = $this->calculateTheAverage(
                 'service-wise',
                 null,
                 $survey_id,
@@ -5182,9 +5204,9 @@ class SurveysPrepration
         return $data;
     }
     //DownloadSurveyResults function
-    function DownloadSurveyResults($survey_id, $type, $type_id=null, $admin = null)
+    function DownloadSurveyResults($survey_id, $type, $type_id = null, $admin = null)
     {
         //export result
-        return Excel::download(new SurveyAnswersExport($survey_id, $type, $type_id=null), 'survey_results.xlsx');
+        return Excel::download(new SurveyAnswersExport($survey_id, $type, $type_id = null), 'survey_results.xlsx');
     }
 }
