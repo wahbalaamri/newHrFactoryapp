@@ -1537,7 +1537,7 @@ class SurveysPrepration
         $department = Departments::find($dep_id);
         //check if department has sub departments
         if ($department->subDepartments->count() > 0) {
-            foreach ($department->subDepartments as $subDepartment) {
+            foreach ($department->subDepartments->whereNotIn('id', [ 14339,14375,14357,14380]) as $subDepartment) {
                 $sub_data[] = $this->getDepartment3hResults($company, $subDepartment->id, $Survey_id, $Client_id, $service_type, $subDepartment->dep_level);
             }
             $respondents =  Respondents::join('employees', 'employees.id', '=', 'respondents.employee_id')
