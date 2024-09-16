@@ -4879,7 +4879,7 @@ class SurveysPrepration
             array_push($overall_per_fun, $function_results);
         }
         // dd($overall_per_fun);
-        foreach (Functions::where('service_id', $service)->get() as $function) {
+        foreach (Functions::where('service_id', $service)->where('IsDriver', false)->get() as $function) {
             $function_Nuetral_sum = 0;
             $function_Favorable_sum = 0;
             $function_UnFavorable_sum = 0;
