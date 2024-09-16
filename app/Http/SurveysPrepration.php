@@ -1598,8 +1598,8 @@ class SurveysPrepration
         $client = Clients::find($Client_id);
         //check if client using departments
         if ($client->use_departments) {
-            //find department with dep_level =1
-            $departments = $company->departments()->where('dep_level', 1)->get();
+            //find department parent is null
+            $departments = $company->departments()->whereNull('parent_id')->get();
             $company_heat_map = [];
             //loop throgh $departments
             foreach ($departments as $department) {
