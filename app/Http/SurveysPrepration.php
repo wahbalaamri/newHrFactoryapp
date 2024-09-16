@@ -3198,12 +3198,13 @@ class SurveysPrepration
         $head_favorable_score = 0;
         $heart_favorable_score = 0;
         $out_come_favorable_val = 0;
-        $enps_favorable = 0;
+        $enps_unfavorable = 0;
         $sum_hand_favorable_score = 0;
         $sum_head_favorable_score = 0;
         $sum_heart_favorable_score = 0;
         $sum_out_come_favorable_val = 0;
         $sum_enps_favorable = 0;
+        $sum_enps_unfavorable = 0;
         $data_size = count($array_of_data);
         $there_is_answer = false;
         foreach ($array_of_data as $singl_data) {
@@ -3230,6 +3231,7 @@ class SurveysPrepration
                 'heart_favorable_score' => $singl_data['heart_favorable_score'],
                 'outcome_favorable_score' => $singl_data['outcome_favorable_score'],
                 'enps_favorable' => $singl_data['enps_favorable'],
+                'enps_unfavorable' => $singl_data['enps_unfavorable'],
             ];
             if ($singl_data['hand_favorable_score'] > 0 || $singl_data['head_favorable_score'] > 0 || $singl_data['heart_favorable_score'] > 0 || $singl_data['outcome_favorable_score'] > 0 || $singl_data['enps_favorable'] > 0) {
                 $there_is_answer = true;
@@ -3240,6 +3242,7 @@ class SurveysPrepration
             $sum_heart_favorable_score += $singl_data['heart_favorable_score'];
             $sum_out_come_favorable_val += $singl_data['outcome_favorable_score'];
             $sum_enps_favorable += $singl_data['enps_favorable'];
+            $sum_enps_unfavorable += $singl_data['enps_unfavorable'];
         }
         //get average of functions
         $hand_favorable_score = $sum_hand_favorable_score / $data_size;
@@ -3247,6 +3250,7 @@ class SurveysPrepration
         $heart_favorable_score = $sum_heart_favorable_score / $data_size;
         $out_come_favorable_val = $sum_out_come_favorable_val / $data_size;
         $enps_favorable = $sum_enps_favorable / $data_size;
+        $enps_unfavorable = $sum_enps_unfavorable / $data_size;
         foreach ($functions as $function) {
             if ($function->IsDriver) {
                 $function_results = [
@@ -3507,6 +3511,7 @@ class SurveysPrepration
             'heart_favorable_score' => $heart_favorable_score,
             'outcome_favorable_score' => $out_come_favorable_val,
             'enps_favorable' => $enps_favorable,
+            'enps_unfavorable' => $enps_unfavorable,
             'there_is_answer' => $there_is_answer
         ];
         return $data;
@@ -4761,6 +4766,7 @@ class SurveysPrepration
         $heart_favorable_score = 0;
         $out_come_favorable_val = 0;
         $enps_favorable = 0;
+        $enps_unfavorable = 0;
         $practice_results = [];
         $ENPS_data_array = [];
         $outcome_functions_practice = [];
@@ -4941,6 +4947,7 @@ class SurveysPrepration
                     $Favorable = $Favorable_count + $Nuetral_count + $UnFavorable_count == 0 ? 0 : number_format(($Favorable_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2);
                     $UnFavorable = $Favorable_count + $Nuetral_count + $UnFavorable_count == 0 ? 0 : number_format(($UnFavorable_count / ($Favorable_count + $Nuetral_count + $UnFavorable_count)) * 100, 2);
                     $enps_favorable = $Favorable;
+                    $enps_unfavorable = $UnFavorable;
                     $ENPS_data_array = [
                         'function' => $function->id,
                         'practice_id' => $practice->id,
@@ -5010,6 +5017,7 @@ class SurveysPrepration
             'heart_favorable_score' => $heart_favorable_score,
             'outcome_favorable_score' => $out_come_favorable_val,
             'enps_favorable' => $enps_favorable,
+            'enps_unfavorable' => $enps_unfavorable,
             'entity_name' => $entity_name,
             'entity_id' => $entity_id,
             'there_is_answer' => $there_is_answer
