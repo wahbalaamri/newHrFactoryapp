@@ -406,8 +406,8 @@
                                                             {{ number_format($component['outcome_favorable_score'], 2) }}
                                                         </td>
                                                         <td @class([
-                                                            'bg-success' => number_format($component['enps_favorable'], 2) > 0,
-                                                            'bg-warning' => number_format($component['enps_favorable'], 2) == 0,
+                                                            'bg-success' => number_format($component['enps_favorable'], 2) > 30,
+                                                            'bg-warning' => number_format($component['enps_favorable'], 2) >=0 &&number_format($component['enps_favorable'], 2) <=30,
                                                             'bg-danger' => number_format($component['enps_favorable'], 2) < 0,
                                                         ])>
                                                             {{ number_format($component['enps_favorable'], 2) }}</td>
