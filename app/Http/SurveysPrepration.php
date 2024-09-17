@@ -1353,7 +1353,10 @@ class SurveysPrepration
                 if ($send_type == null) {
                     $respondents = Respondents::where('survey_id', $survey_id)->where('client_id', $id)->where('survey_type', $type)->where('send_status', false)->get();
                     //get all employees based on the where querey and id of respondents
-                    $employees = Employees::select('email', 'id')->where($where)->whereIn('id', $respondents->pluck('employee_id')->toArray())->whereIn('dep_id', $this->ids)->get();
+                    if (count($this->ids) > 0)
+                        $employees = Employees::select('email', 'id')->where($where)->whereIn('id', $respondents->pluck('employee_id')->toArray())->whereIn('dep_id', $this->ids)->get();
+                    else
+                        $employees = Employees::select('email', 'id')->where($where)->whereIn('id', $respondents->pluck('employee_id')->toArray())->get();
                     //create a collection of emails from $employees and ids from $respondents
                     foreach ($employees as $employee) {
                         $rid = $respondents->where('employee_id', $employee->id)->first()->id;
@@ -1537,7 +1540,7 @@ class SurveysPrepration
         $department = Departments::find($dep_id);
         //check if department has sub departments
         if ($department->subDepartments->count() > 0) {
-            foreach ($department->subDepartments->whereNotIn('id', [ 14339,14375,14357,14380]) as $subDepartment) {
+            foreach ($department->subDepartments->whereNotIn('id', [14339, 14375, 14357, 14380]) as $subDepartment) {
                 $sub_data[] = $this->getDepartment3hResults($company, $subDepartment->id, $Survey_id, $Client_id, $service_type, $subDepartment->dep_level);
             }
             $respondents =  Respondents::join('employees', 'employees.id', '=', 'respondents.employee_id')
