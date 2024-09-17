@@ -238,7 +238,7 @@
                                 <li>
                                     <a href="#" id="subscribeForFree" class="btn btn-acc blink_me"
                                         data-bs-toggle="modal" data-bs-target="#FreeSub">
-                                        <h4>{{ __('Demo') }} </h4>
+                                        <h4>{{ __('Demofff') }} </h4>
                                     </a>
 
                                 </li>
