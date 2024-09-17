@@ -227,16 +227,12 @@
                                     <h3 class="caption">{{ $function['Favorable_score'] }}%</h3>
                                     @foreach ($drivers as $practice)
                                     @if ($practice['function'] == $function['function'])
-                                    <div class="col-12 pt-2 pb-2 text-center mb-2 rounded
-                                @if ($practice['Favorable_score'] >= 75) bg-success text-white
-                                @elseif($practice['Favorable_score'] >= 40)
-                                    bg-warning
-                                    @else
-                                    bg-danger text-white @endif
-                                ">
-                                        {{ $practice['practice_title'] }}{{-- -- {{
-                                        $practice['Favorable_score']}}
-                                        --}}
+                                    <div @class(['col-12 pt-2 pb-2 text-center mb-2 rounded',
+                                     'bg-success text-white' => $practice['Favorable_score'] >= 75,
+                                     'bg-warning' => $practice['Favorable_score'] < 75 &&$practice['Favorable_score']>= 40 ,
+                                     'bg-danger text-white' => $practice['Favorable_score'] <40,
+                                     ])>
+                                        {{ $practice['practice_title'] }} | {{$practice['Favorable_score']}}%
                                     </div>
                                     @endif
                                     @endforeach
