@@ -1362,6 +1362,7 @@ class SurveysPrepration
                         $rid = $respondents->where('employee_id', $employee->id)->first()->id;
                         $emails->push(['email' => $employee->email, 'id' => $rid]);
                     }
+                    Log::info($emails);
                 }
                 if ($send_type == 'r') {
                     //get distinct answered_by as an array from survey_answers

@@ -28,7 +28,6 @@ class SendSurvey implements ShouldQueue
         $this->data = $data;
         $this->emails = $emails;
         $this->type = $type;
-        Log::info("init");
     }
 
     /**
@@ -37,9 +36,7 @@ class SendSurvey implements ShouldQueue
     public function handle(): void
     {
         try {
-            Log::info("start try");
             foreach ($this->emails as $email) {
-                Log::info("start foreach");
                 //add id of email to data
                 $this->data['id'] = $email['id'];
                 //send email
@@ -55,9 +52,7 @@ class SendSurvey implements ShouldQueue
                     $respondent->sent_date = date('Y-m-d H:i:s');
                 }
                 $respondent->save();
-                Log::info("end foreach");
             }
-            Log::info("end try");
         } catch (\Exception $e) {
             //log error
             Log::error('Error sending survey email: ' . $e->getMessage());
