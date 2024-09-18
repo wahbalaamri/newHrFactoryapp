@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Exports\SurveyAnswersExport;
+use App\Http\Facades\Calculate3hResultsFacade;
 use App\Http\Facades\Landing;
 use App\Jobs\SendAccountInfoJob;
 use App\Jobs\SendSurvey;
@@ -1466,55 +1467,62 @@ class SurveysPrepration
     {
         try {
             if ($Service_type == 3 || $Service_type == 10) {
-                if ($vtype == 'comp') {
-                    $data = $this->get_resultd($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
-                } elseif ($vtype == 'sec') {
-                    $data = $this->get_SectorResult($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
-                } elseif ($vtype == 'dep') {
-                    $data = $this->getDepartment3hResults(
-                        $Client_id,
-                        $vtype_id,
-                        $survey_id,
-                        $Client_id,
-                        $Service_type,
-                        Departments::find($vtype_id)->dep_level
-                    );
-                } elseif ($vtype == 'gender') {
-                    if ($vtype_id == 'male')
-                        $data = $this->getResultsByGender($Client_id, $Service_type, $survey_id, "m");
-                    elseif ($vtype_id == 'female')
-                        $data = $this->getResultsByGender($Client_id, $Service_type, $survey_id, "f");
-                    else
-                        $data = $this->getResultsByGender($Client_id, $Service_type, $survey_id);
-                } elseif ($vtype == 'age') {
-                    if ($vtype_id == 'G-1')
-                        $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id, "G-1");
-                    elseif ($vtype_id == 'G-2')
-                        $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id, "G-2");
-                    elseif ($vtype_id == 'G-3')
-                        $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id, "G-3");
-                    elseif ($vtype_id == 'G-4')
-                        $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id, "G-4");
-                    else
-                        $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id);
-                } elseif ($vtype == 'service') {
-                    if ($vtype_id == 'G-1')
-                        $data = $this->getResultsByService($Client_id, $Service_type, $survey_id, "G-1");
-                    elseif ($vtype_id == 'G-2')
-                        $data = $this->getResultsByService($Client_id, $Service_type, $survey_id, "G-2");
-                    elseif ($vtype_id == 'G-3')
-                        $data = $this->getResultsByService($Client_id, $Service_type, $survey_id, "G-3");
-                    elseif ($vtype_id == 'G-4')
-                        $data = $this->getResultsByService($Client_id, $Service_type, $survey_id, "G-4");
-                    else
-                        $data = $this->getResultsByService($Client_id, $Service_type, $survey_id);
-                } else {
-                    $data = $this->get_GroupResult($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
-                }
-                $data['client_id'] = $Client_id;
-                $data['Service_type'] = $Service_type;
-                $data['survey_id'] = $survey_id;
-                return view('dashboard.client.EESurveyresults')->with($data);
+                // if ($vtype == 'comp') {
+                //     $data = $this->get_resultd($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
+                // } elseif ($vtype == 'sec') {
+                //     $data = $this->get_SectorResult($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
+                // } elseif ($vtype == 'dep') {
+                //     $data = $this->getDepartment3hResults(
+                //         $Client_id,
+                //         $vtype_id,
+                //         $survey_id,
+                //         $Client_id,
+                //         $Service_type,
+                //         Departments::find($vtype_id)->dep_level
+                //     );
+                // } elseif ($vtype == 'gender') {
+                //     if ($vtype_id == 'male')
+                //         $data = $this->getResultsByGender($Client_id, $Service_type, $survey_id, "m");
+                //     elseif ($vtype_id == 'female')
+                //         $data = $this->getResultsByGender($Client_id, $Service_type, $survey_id, "f");
+                //     else
+                //         $data = $this->getResultsByGender($Client_id, $Service_type, $survey_id);
+                // } elseif ($vtype == 'age') {
+                //     if ($vtype_id == 'G-1')
+                //         $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id, "G-1");
+                //     elseif ($vtype_id == 'G-2')
+                //         $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id, "G-2");
+                //     elseif ($vtype_id == 'G-3')
+                //         $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id, "G-3");
+                //     elseif ($vtype_id == 'G-4')
+                //         $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id, "G-4");
+                //     else
+                //         $data = $this->getResultsByAge($Client_id, $Service_type, $survey_id);
+                // } elseif ($vtype == 'service') {
+                //     if ($vtype_id == 'G-1')
+                //         $data = $this->getResultsByService($Client_id, $Service_type, $survey_id, "G-1");
+                //     elseif ($vtype_id == 'G-2')
+                //         $data = $this->getResultsByService($Client_id, $Service_type, $survey_id, "G-2");
+                //     elseif ($vtype_id == 'G-3')
+                //         $data = $this->getResultsByService($Client_id, $Service_type, $survey_id, "G-3");
+                //     elseif ($vtype_id == 'G-4')
+                //         $data = $this->getResultsByService($Client_id, $Service_type, $survey_id, "G-4");
+                //     else
+                //         $data = $this->getResultsByService($Client_id, $Service_type, $survey_id);
+                // } else {
+                //     $data = $this->get_GroupResult($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
+                // }
+                // $data['client_id'] = $Client_id;
+                // $data['Service_type'] = $Service_type;
+                // $data['survey_id'] = $survey_id;
+                return view('dashboard.client.EESurveyresults')->with(Calculate3hResultsFacade::SurveyResults(
+                    $Client_id,
+                    $Service_type,
+                    $survey_id,
+                    $vtype,
+                    $vtype_id,
+                    $by_admin
+                ));
             }
             if ($Service_type == 4) {
                 if ($vtype == "comp") {
