@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\services\Calculate3hResults;
 use App\Http\services\LandingService;
 use App\Http\services\TempURLServices;
 use Illuminate\Support\ServiceProvider;
@@ -20,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
         // register Landing Facade
         $this->app->singleton('Landing', function () {
             return new LandingService();
+        });
+        // register Calculate3hResults Facade
+        $this->app->singleton('Calculate3hResults', function () {
+            return new Calculate3hResults();
         });
     }
 

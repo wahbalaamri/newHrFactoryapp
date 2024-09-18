@@ -6,6 +6,7 @@ use App\Models\Clients;
 use App\Http\Requests\StoreClientsRequest;
 use App\Http\Requests\UpdateClientsRequest;
 use App\Http\SurveysPrepration;
+use App\Jobs\Calculate3hResultsJob;
 use App\Models\Departments;
 use App\Models\PartnerFocalPoint;
 use App\Models\Partners;
@@ -379,8 +380,24 @@ class ClientsController extends Controller
         return $surveysPrepration->AssignAsUser($request, $id, $cid, true);
     }
     //DownloadSurveyResults function
-    public function DownloadSurveyResults(SurveysPrepration $surveysPrepration,$survey_id, $type, $type_id=null) {
+    public function DownloadSurveyResults(SurveysPrepration $surveysPrepration, $survey_id, $type, $type_id = null)
+    {
         ini_set('max_execution_time', 300);
         return $surveysPrepration->DownloadSurveyResults($survey_id, $type, $type_id, true);
+    }
+    //StartSurveyResults function
+    public function StartSurveyResults($Client_id, $Service_type, $survey_id, $vtype, $vtype_id = null)
+    {
+        //job to calculate 3h results
+        $job = (new Calculate3hResultsJob($Client_id, $Service_type, $survey_id, $vtype, $vtype_id = null, true));
+        dispatch($job);
+        return redirect()->route('clients.surveyDetails', [$Client_id, $Service_type, $survey_id]);
+    }
+    //ShowSurveyResults function
+    public function ShowSurveyResults()
+    {
+        //get session data
+        $data = session()->get('data');
+        Log::info($data);
     }
 }
