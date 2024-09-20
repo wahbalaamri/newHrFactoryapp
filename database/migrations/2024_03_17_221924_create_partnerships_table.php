@@ -23,6 +23,8 @@ return new class extends Migration
             $table->boolean('is_exclusive')->default(0);
             //is_active
             $table->boolean('is_active')->default(0);
+            //list of services as json array
+            $table->json('services')->nullable();
             $table->softDeletes();
             //unique constraint on partner_id and country_id
             $table->unique(['partner_id', 'country_id']);

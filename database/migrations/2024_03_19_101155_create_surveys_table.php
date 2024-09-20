@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('survey_title');
             $table->text('survey_des')->nullable();
             $table->boolean('survey_stat')->default(0);
+            $table->boolean('customized')->default(false);
             //soft delete
             $table->softDeletes();
             $table->timestamps();

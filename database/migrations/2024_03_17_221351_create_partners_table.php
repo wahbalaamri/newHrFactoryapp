@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('logo_path')->nullable();
             $table->string('webiste')->nullable();
             //is_active
+            $table->boolean('is_main')->default(0);
             $table->boolean('is_active')->default(0);
             $table->softDeletes();
             $table->timestamps();

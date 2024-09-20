@@ -529,7 +529,7 @@
 </div>
 
 
-<section class="text-grey  background-overlay" style="background-image: url('{{ asset(" assets/img/hrconsultant.jpg")
+<section class="text-grey  background-overlay" style="background-image: url('{{ asset("assets/img/hrconsultant.jpg")
     }}');">
     <div id="consultHR" class="container padding-tb-100px z-index-2 position-relative">
         <div class="row justify-content-center text-center">
@@ -558,7 +558,7 @@
 
 
 
-<section class="text-grey  background-overlay" style="background-image: url('{{ asset(" assets/img/elearning.png") }}')
+<section class="text-grey  background-overlay" style="background-image: url('{{ asset("assets/img/elearning.png") }}')
     ;background-position:center">
     <div id="learnOnline" class="container padding-tb-100px z-index-2 position-relative">
         <div class="row justify-content-center text-center">

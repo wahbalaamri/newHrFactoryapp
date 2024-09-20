@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string('slug');
             $table->string('slug_ar');
             $table->integer('service_user');
+            $table->integer('service_client')->nullable();
+            $table->boolean('validated')->default(false);
             $table->string('service_icon');
             $table->boolean('FW_uploaded_video')->default(false);
             $table->string('framework_media_path');

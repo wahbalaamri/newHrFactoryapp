@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             //string for request type
             $table->string('request_type');
+            $table->integer('client_id')->nullable();
             $table->integer('plan_id');
             $table->string('company_name');
             $table->string('company_phone');

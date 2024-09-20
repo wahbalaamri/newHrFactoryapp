@@ -27,6 +27,8 @@ return new class extends Migration
             $table->boolean('use_sections')->default(false);
             $table->boolean('multiple_sectors')->default(false);
             $table->boolean('multiple_company')->default(false);
+            $table->integer('added_by')->nullable();
+            $table->integer('updated_by')->nullable();
             //is_active
             $table->boolean('is_active')->default(0);
             $table->softDeletes();

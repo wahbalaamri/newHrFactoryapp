@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('customized_survey_functions', function (Blueprint $table) {
             $table->id();
             $table->integer('client')->references('id')->on('clients')->onDelete('cascade');
-            $table->integer('survey')->references('id')->on('customized_surveys')->onDelete('cascade');
+            $table->integer('survey')->references('id');
             $table->integer('system_function')->nullable();
             $table->string('title');
             $table->string('title_ar');
