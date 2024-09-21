@@ -281,7 +281,8 @@
                                 toastr.success(data.message);
                             }
                             if (!data.status) {
-                                console.log(data);
+                                $('#Employee-data').DataTable().ajax.reload();
+                                toastr.error(data.message);
                             }
                         }
                     });
@@ -314,7 +315,8 @@
                             $('#Employee-data').DataTable().ajax.reload();
                         }
                         if (!data.status) {
-                            console.log(data);
+                            toastr.error(data.message);
+                            $('#Employee-data').DataTable().ajax.reload();
                         }
                     }
                 });

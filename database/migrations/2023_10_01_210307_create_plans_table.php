@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('name_ar');
             $table->boolean('demo_plan')->default(0);
+            $table->integer('plan_type')->default(0);
             $table->longText('delivery_mode')->nullable();
             $table->longText('delivery_mode_ar')->nullable();
             $table->longText('limitations')->nullable();

@@ -17,7 +17,6 @@ class Calculate3hResults
 {
     function SurveyResults($Client_id, $Service_type, $survey_id, $vtype, $vtype_id = null, $by_admin = false)
     {
-        Log::info('SurveyResults: using Facade');
         try {
             if ($vtype == 'comp') {
                 $data = $this->get_resultd($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);

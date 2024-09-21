@@ -191,6 +191,7 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
         'Calculate3hResults' => App\Http\Facades\Calculate3hResultsFacade::class,
+        'UserSubscriptions' => App\Http\Facades\UserSubscriptionsFacade::class,
     ])->toArray(),
 
 ];

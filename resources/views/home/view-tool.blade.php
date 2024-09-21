@@ -68,7 +68,7 @@
                                 <thead>
                                     <tr>
                                         <th scope="col"><h3>{{ __('Feature') }}</h3></th>
-                                        @foreach ($service->plans as $plan)
+                                        @foreach ($service->plans->where('plan_type','!=', '5') as $plan)
                                         <th class="text-center" scope="col"><h3>{{ $plan->name }}</h3></th>
                                         @endforeach
                                     </tr>
@@ -77,7 +77,7 @@
                                     @foreach ($service->features as $feature)
                                     <tr>
                                         <th>{{ $feature->feature }}</th>
-                                        @foreach ($service->plans as $plan)
+                                        @foreach ($service->plans->where('plan_type','!=', '5') as $plan)
                                         <td class="text-center">
                                             @if (in_array($feature->id, $plan->Features))
                                             <i class="fas fa-check text-success"></i>
@@ -90,7 +90,7 @@
                                     @endforeach
                                     <tr >
                                         <th>{{ __('Plan Example Report') }}</th>
-                                        @foreach ($service->plans as $plan)
+                                        @foreach ($service->plans->where('plan_type','!=', '5') as $plan)
                                         <td class="text-center">
                                             <a href="{{ asset('uploads/services/sample_reports/' . $plan->sample_report) }}"
                                                 target="_blank" rel="noopener noreferrer">
@@ -100,7 +100,7 @@
                                         @endforeach
                                     <tr>
                                         <th>{{ __('One time Subscription Fee') }}</th>
-                                        @foreach ($service->plans as $plan)
+                                        @foreach ($service->plans->where('plan_type','!=', '5') as $plan)
                                         <td>{{ $plan->plansPrices[0]->monthly_price }}
                                             {{ $plan->plansPrices[0]->currency_symbol }}
                                             <a href="javascript:void(0)" class="btn btn-sm btn-warning">{{ __('Subscribe
@@ -110,7 +110,7 @@
                                     </tr>
                                     <tr>
                                         <th>{{ __('Annual Subscription Fee') }}</th>
-                                        @foreach ($service->plans as $plan)
+                                        @foreach ($service->plans->where('plan_type','!=', '5') as $plan)
                                         @php
 
                                         $TotalMonthlyprice = $plan->plansPrices[0]->monthly_price * 12;
@@ -131,7 +131,7 @@
                                     @if (Auth::check())
                                     <tr>
                                         <th>{{ __('Action') }}</th>
-                                        @foreach ($service->plans as $plan)
+                                        @foreach ($service->plans->where('plan_type','!=', '5') as $plan)
                                         <td>
                                             @if(Auth::check())
                                             <a href="@if(auth()->user()->isAdmin || auth()->user()->user_type="
@@ -150,7 +150,7 @@
                                             {{ __('Demo') }}
                                         </th>
                                         @if ($service->service_type == 1)
-                                        @foreach ($service->plans as $plan)
+                                        @foreach ($service->plans->where('plan_type','!=', '5') as $plan)
                                         <td class="text-center">
                                             <a href="{{ route('tools.manualbuilderDemo', ['country' => \App\Http\Facades\Landing::getCurrentCountry(), 'plan' => $plan->id]) }}"
                                                 class="btn btn-sm btn-outline-dark w-75">
@@ -158,7 +158,7 @@
                                         </td>
                                         @endforeach
                                         @else
-                                        <td colspan="{{ count($service->plans) }}" class="text-center">
+                                        <td colspan="{{ count($service->plans->where('plan_type','!=', '5')) }}" class="text-center">
                                             <a href="javascript:void(0)" class="btn btn-sm btn-outline-dark"
                                                 data-bs-toggle="modal" data-bs-target="#requestDemo">{{ __('Demo')
                                                 }}</a>

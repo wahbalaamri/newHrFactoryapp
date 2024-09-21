@@ -88,8 +88,14 @@
                                                 </div>
                                             </div>
                                             @if (count($children) > 0)
+                                            @php
+                                                $max_allowed=0;
+                                            @endphp
                                             <ul class="list-group d-none">
                                                 @foreach ($children as $child)
+                                                @php
+                                                    $max_allowed++;
+                                                @endphp
                                                 <li class="list-group-item" data-ordering="{{ $child->ordering }}"
                                                     data-id="{{ $child->id }}">
                                                     <div class="row">
@@ -101,14 +107,20 @@
                                                                 <div class="col-sm-4">
                                                                     <a href="javascript:void(0)"
                                                                         class="btn btn-xs btn-warning"
-                                                                        onclick="ShowEdit({{ $child }})">
+                                                                        @disabled($plan_type==5 && $max_allowed>2)
+                                                                        @if($plan_type==5 && $max_allowed<3)
+                                                                        onclick="ShowEdit({{ $child }})"
+                                                                        @endif>
                                                                         <i class="fa fa-edit"></i>
                                                                     </a>
                                                                 </div>
                                                                 <div class="col-sm-4">
                                                                     <a href="javascript:void(0)"
                                                                         class="btn btn-xs btn-danger"
-                                                                        onclick="delectSection({{ $child->id }},'c')">
+                                                                        @disabled($plan_type==5 && $max_allowed>2)
+                                                                        @if($plan_type==5 && $max_allowed<3)
+                                                                        onclick="delectSection({{ $child->id }},'c')"
+                                                                        @endif>
                                                                         <i class="fa fa-trash"></i>
                                                                     </a>
                                                                 </div>
@@ -117,9 +129,12 @@
                                                                         <input type="checkbox"
                                                                             class="custom-control-input"
                                                                             @checked($child->IsActive)
+                                                                            @disabled($plan_type==5 && $max_allowed>2)
                                                                         id="section_available_c{{ $child->id }}"
+                                                                        @if($plan_type==5 && $max_allowed<3)
                                                                         onchange="updateSectionAvailablity(this,{{
-                                                                        $child->id }})">
+                                                                        $child->id }})"
+                                                                        @endif>
                                                                         <label class="custom-control-label"
                                                                             for="section_available_c{{ $child->id }}"></label>
                                                                     </div>
@@ -419,15 +434,6 @@
         ParentClicked = (ctr1) => {
             //check if class fa-minus is exsit
             open_i = $(".fa-minus");
-            if (open_i.length > 0) {
-                //change fa-minus to plus
-                open_i.removeClass('fa-minus');
-                open_i.addClass('fa-plus');
-                open_i.addClass('text-success');
-                open_i.removeClass('text-warning');
-                //hide ul
-                open_i.closest('li').children('ul').addClass('d-none');
-            }
             //get ctr child of ul
             ctr = $(ctr1).closest('li');
             ul = $(ctr).children('ul');
@@ -450,6 +456,15 @@
                 i_element.addClass('fa-plus');
                 i_element.addClass('text-success');
                 i_element.removeClass('text-warning');
+            }
+            if (open_i.length > 0) {
+                //change fa-minus to plus
+                open_i.removeClass('fa-minus');
+                open_i.addClass('fa-plus');
+                open_i.addClass('text-success');
+                open_i.removeClass('text-warning');
+                //hide ul
+                open_i.closest('li').children('ul').addClass('d-none');
             }
         }
         ShowEdit = (section) => {

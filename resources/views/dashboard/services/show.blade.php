@@ -644,6 +644,18 @@
                         }
                     });
                     $('#planInfo_P').html(data.plan.name);
+                    if(data.plan.plan_type == 1){
+                        $('#planInfo_P').append('<br /> <b>Premium Plan</b>');
+                    }
+                    else if(data.plan.plan_type == 2){
+                        $('#planInfo_P').append('<br /> <b>Professional Plan</b>');
+                    }
+                    else if(data.plan.plan_type == 3){
+                        $('#planInfo_P').append('<br /> <b>Basic Plan</b>');
+                    }
+                    else if(data.plan.plan_type == 5){
+                        $('#planInfo_P').append('<br /> <b>Demo Plan</b>');
+                    }
                     $('#deliveryMode_P').html(data.plan.delivery_mode);
                     $('#limitations_P').html(data.plan.limitations);
                     // $('#features_P').html(data.plan.features);

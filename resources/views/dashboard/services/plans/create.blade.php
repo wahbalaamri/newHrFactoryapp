@@ -100,6 +100,41 @@
                                                     <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
+                                                {{-- select plan type --}}
+                                                <div class="form-group col-md-6 col-sm-12">
+                                                    <label for="plan_type">{{ __('Plan Type') }}</label>
+                                                    <select name="plan_type" id="plan_type" class="form-control" required>
+                                                        <option value="">{{ __('Select Plan Type') }}</option>
+                                                        <option value="1" @if(old('plan_type')=="1" ) selected @endif>
+                                                            {{ __('Premium') }}
+                                                        </option>
+                                                        <option value="2" @if(old('plan_type')=="2" ) selected @endif>
+                                                            {{ __('Professional') }}
+                                                        </option>
+                                                        <option value="3" @if(old('plan_type')=="3" ) selected @endif>
+                                                            {{ __('Basic') }}
+                                                        </option>
+                                                        <option value="5" @if(old('plan_type')=="5" ) selected @endif>
+                                                            {{ __('Demo') }}
+                                                        </option>
+                                                    </select>
+                                                    {{-- validation --}}
+                                                    @error('plan_type')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                                {{-- is_active switch --}}
+                                                <div class="form-group col-md-6 col-sm-12">
+                                                    <label for="is_active">{{ __('Plan Status') }}</label>
+                                                    <div class="custom-control custom-switch">
+                                                        <input type="checkbox" class="custom-control-input"
+                                                            id="is_active" name="is_active" @if($plan)
+                                                            @if($plan->is_active) checked @endif @else
+                                                        checked @endif>
+                                                        <label class="custom-control-label" for="is_active">{{
+                                                            __('Active') }}</label>
+                                                    </div>
+                                                </div>
                                                 {{-- sample_report file upload --}}
                                                 <div class="form-group col-md-6 col-sm-12">
                                                     <label for="sample_report">{{ __('Sample Report') }}</label>
@@ -110,17 +145,9 @@
                                                     <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
-                                                {{-- is_active switch --}}
-                                                <div class="form-group col-md-6 col-sm-12">
-                                                    <label for="is_active">{{ __('Plan Status') }}</label>
-                                                    <div class="custom-control custom-switch">
-                                                        <input type="checkbox" class="custom-control-input"
-                                                            id="is_active" name="is_active" @if($plan) @if($plan->is_active) checked @endif @else
-                                                             checked @endif>
-                                                        <label class="custom-control-label" for="is_active">{{
-                                                            __('Active') }}</label>
-                                                    </div>
-                                                </div>
+
+                                            </div>
+                                            <div class="row">
                                                 {{-- delivery_mode --}}
                                                 <div class="form-group col-md-6 col-sm-12">
                                                     <label for="delivery_mode">{{ __('delivery_mode (English)')
@@ -149,7 +176,8 @@
                                                 </div>
                                                 {{-- limitations --}}
                                                 <div class="form-group col-md-6 col-sm-12">
-                                                    <label for="limitations">{{ __('Limitations (English)') }}</label>
+                                                    <label for="limitations">{{ __('Limitations (English)')
+                                                        }}</label>
                                                     <textarea name="limitations" id="limitations"
                                                         class="form-control summernote"
                                                         placeholder="{{ __('Limitations in English') }}"
@@ -161,7 +189,8 @@
                                                 </div>
                                                 {{-- limitations arabic --}}
                                                 <div class="form-group col-md-6 col-sm-12">
-                                                    <label for="limitations_ar">{{ __('Limitations (Arabic)') }}</label>
+                                                    <label for="limitations_ar">{{ __('Limitations (Arabic)')
+                                                        }}</label>
                                                     <textarea name="limitations_ar" id="limitations_ar"
                                                         class="form-control summernote"
                                                         placeholder="{{ __('Limitations in Arabic') }}"
@@ -192,9 +221,10 @@
                                                         @foreach ( $service->features as $feature)
                                                         <div class="form-check col-md-4 col-sm-12">
                                                             <input class="form-check-input" type="checkbox"
-                                                                name="pf-{{ $feature->id }}" id="pf-{{ $feature->id }}" @if($plan) @if (in_array($feature->id,$features))
-                                                                    checked
-                                                                @endif @endif>
+                                                                name="pf-{{ $feature->id }}" id="pf-{{ $feature->id }}"
+                                                                @if($plan) @if (in_array($feature->id,$features))
+                                                            checked
+                                                            @endif @endif>
                                                             <label class="form-check-label" for="pf-{{ $feature->id }}">
                                                                 {{ $feature->feature }}
                                                             </label>

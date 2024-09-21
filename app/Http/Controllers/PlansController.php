@@ -336,6 +336,7 @@ class PlansController extends Controller
             $plan->delivery_mode_ar = $request->delivery_mode_ar;
             $plan->limitations = $request->limitations;
             $plan->limitations_ar = $request->limitations_ar;
+            $plan->plan_type = (int)$request->plan_type;
             if ($request->plan_id && $sample_report_name == "");
             else
                 $plan->sample_report = $sample_report_name;

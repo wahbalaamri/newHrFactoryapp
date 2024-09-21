@@ -6,10 +6,12 @@ use App\Models\DefaultMB;
 use App\Http\Requests\StoreDefaultMBRequest;
 use App\Http\Requests\UpdateDefaultMBRequest;
 use App\Models\Clients;
+use App\Models\ClientSubscriptions;
 use App\Models\Countries;
 use App\Models\FocalPoints;
 use App\Models\Partnerships;
 use App\Models\Plans;
+use App\Models\Services;
 use App\Models\UserSections;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
@@ -272,6 +274,16 @@ class DefaultMBController extends Controller
     public function ClientSections(Request $request, $id)
     {
         try {
+            //get service of manaul builder
+            $service = Services::where('service_type', 1)->first();
+            //get ids plans of manual builder
+            $plans = Plans::where('service', $service->id)->pluck('id')->toArray();
+            //get active user subscriptions
+            $subscriptions = ClientSubscriptions::where('client_id', $id)
+            ->whereIn('plan_id', $plans)
+            ->where('is_active', true)->first();
+            //get type of plan
+            $plan_type = Plans::where('id', $subscriptions->plan_id)->first()->plan_type;
             $sections = UserSections::where('user_id', $id)->whereNull('paren_id')->where('language', app()->getLocale())->get();
             $contents = [];
             // if (count($sections) <= 0) {
@@ -280,11 +292,13 @@ class DefaultMBController extends Controller
             //     //check if remote has for this user
             //     $contents = json_decode(file_get_contents('https://www.hrfactoryapp.com/Home/UserSctions?email=' . $focal_point->email . '&lang=1'), true);
             // }
+            Log::info("plan_type: ".$plan_type);
             $data = [
                 'sections' => $sections->sortBy('ordering'),
                 'contents' => $contents,
                 'id' => $id,
                 'client' => Clients::find($id),
+                'plan_type' => $plan_type
             ];
             return view('dashboard.admin.ManualBuilder.ClientSections')->with($data);
         } catch (\Exception $e) {

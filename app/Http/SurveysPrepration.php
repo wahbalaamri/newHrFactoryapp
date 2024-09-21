@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Exports\SurveyAnswersExport;
 use App\Http\Facades\Calculate3hResultsFacade;
 use App\Http\Facades\Landing;
+use App\Http\Facades\UserSubscriptionsFacade;
 use App\Jobs\SendAccountInfoJob;
 use App\Jobs\SendSurvey;
 use App\Models\CustomizedSurveyFunctions;
@@ -1077,6 +1078,7 @@ class SurveysPrepration
             'client' => $client,
             'departments' => $departments,
             'client_survyes' => $client_survyes,
+            'can_add' => UserSubscriptionsFacade::canAddNewSurvey($client->id, $service_id)
         ];
         return view('dashboard.client.Surveys')->with($data);
     }
@@ -1086,11 +1088,24 @@ class SurveysPrepration
         try {
 
             if ($request->tool_type != 'customized') { //check if ID from IDs is not added
+                //get count of respondents
+                $count = Respondents::where([['survey_id', $request->survey], ['client_id', $request->client], ['survey_type', $request->type]])->count();
+                //get survey
+                $survey = Surveys::find($request->survey);
+                //get plan
+                $plan = $survey->plans;
+                if ($plan->plan_type == 5 && $count > 4) {
+                    return response()->json(['status' => false, 'message' => '5 Respondents added successfully, But You reached the limit of respondents']);
+                }
                 if ($request->isAll == 'all') {
                     //get all employee of the client
                     $employees = Employees::where('client_id', $request->client)->get();
                     //loop to add them into respondents
                     foreach ($employees as $employee) {
+                        $count = Respondents::where([['survey_id', $request->survey], ['client_id', $request->client], ['survey_type', $request->type]])->count();
+                        if ($plan->plan_type == 5 && $count > 4) {
+                            return response()->json(['status' => true, 'message' => 'You reached the limit of respondents']);
+                        }
                         $respondent = Respondents::where('employee_id', $employee->id)
                             ->where([['survey_id', $request->survey], ['client_id', $request->client], ['survey_type', $request->type]])
                             ->first();
@@ -1105,6 +1120,10 @@ class SurveysPrepration
                     }
                 } else {
                     foreach ($request->ids as $idr) {
+                        $count = Respondents::where([['survey_id', $request->survey], ['client_id', $request->client], ['survey_type', $request->type]])->count();
+                        if ($plan->plan_type == 5 && $count > 4) {
+                            return response()->json(['status' => true, 'message' => 'You reached the limit of respondents']);
+                        }
                         $respondent = Respondents::where('employee_id', $idr)
                             ->where([['survey_id', $request->survey], ['client_id', $request->client], ['survey_type', $request->type]])
                             ->first();
@@ -3547,16 +3566,48 @@ class SurveysPrepration
     {
         try {
             if ($request->tool_type != 'customized') {
+                //get current candidates count
+                $current_candidates = Respondents::where('survey_id', $request->survey)
+                    ->where('client_id', $request->client)
+                    ->count();
+                //get survey
+                $survey = Surveys::find($request->survey);
+                //get plan
+                $plan = Plans::find($survey->plan_id);
+                if ($plan->plan_type == 5 && $current_candidates > 4) {
+                    return response()->json(['status' => false, 'message' => 'You can not add more than 5 candidates']);
+                }
                 //type
                 foreach ($request->ids as $candidate) {
-                    $rater = new Raters();
+                    $current_candidates = Respondents::where('survey_id', $request->survey)
+                        ->where('client_id', $request->client)
+                        ->count();
+                    if ($plan->plan_type == 5 && $current_candidates > 4) {
+                        return response()->json(['status' => true, 'message' => '5 Candidates saved successfully, but You can not add more than 5 candidates'], 200);
+                    }
+                    //if rater with type Self exist
+                    $rater = Raters::where('candidate_id', $candidate)
+                        ->where('survey_id', $request->survey)
+                        ->where('type', 'Self')
+                        ->first();
+                    if (!$rater)
+                        $rater = new Raters();
                     $rater->candidate_id = $candidate;
                     $rater->rater_id = $candidate;
                     $rater->survey_id = $request->survey;
                     $rater->type = 'Self';
                     $rater->save();
+                    //check if respondent exist
+                    $respondent = Respondents::where('survey_id', $request->survey)
+                        ->where('client_id', $request->client)
+                        ->where('candidate_id', $candidate)
+                        ->where('rater_id', $rater->id)
+                        ->first();
+
                     //add new respondent
-                    $respondent = new Respondents();
+                    if (!$respondent) {
+                        $respondent = new Respondents();
+                    }
                     $respondent->survey_id = $request->survey;
                     $respondent->employee_id = $candidate;
                     $respondent->client_id = $request->client;
@@ -3585,10 +3636,10 @@ class SurveysPrepration
                     $respondent->save();
                 }
             }
-            return response()->json(['message' => 'Candidates saved successfully'], 200);
+            return response()->json(['status' => true, 'message' => 'Candidates saved successfully'], 200);
         } catch (\Exception $e) {
             Log::error($e);
-            return response()->json(['message' => 'Error saving Candidates'], 500);
+            return response()->json(['status' => false, 'message' => 'Error saving Candidates']);
         }
     }
     //getRaters function

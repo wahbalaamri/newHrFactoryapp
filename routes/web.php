@@ -88,8 +88,8 @@ Route::get('tools/leader360ReviewDemo/{id}', [HomeController::class, 'leader360R
 Route::post('tools/SubmitDemoRequest', [HomeController::class, 'SubmitDemoRequest'])->name('tools.SubmitDemoRequest');
 Route::post('register/newclient', [RegisterController::class, 'registerNewClient'])->name('register.newclient');
 Route::get('ChangePass', [ResetPasswordController::class, 'showResetForm'])->name('ChangePass');
-Route::get('lang/{locale}', function () {
-    session()->put('locale', request()->locale);
+Route::get('lang/{locale}', function ($local) {
+    session()->put('locale', $local);
     return redirect()->back();
 })->name('lang.swap');
 //get all industries route
