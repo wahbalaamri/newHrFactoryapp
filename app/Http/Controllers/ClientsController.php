@@ -2,19 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\NumberOfEmployees;
+use App\Http\Facades\Landing;
 use App\Models\Clients;
 use App\Http\Requests\StoreClientsRequest;
 use App\Http\Requests\UpdateClientsRequest;
 use App\Http\SurveysPrepration;
 use App\Jobs\Calculate3hResultsJob;
+use App\Jobs\SendAccountInfoJob;
+use App\Models\Companies;
+use App\Models\Countries;
 use App\Models\Departments;
+use App\Models\Employees;
+use App\Models\FocalPoints;
+use App\Models\Industry;
 use App\Models\PartnerFocalPoint;
 use App\Models\Partners;
 use App\Models\Partnerships;
 use App\Models\Plans;
+use App\Models\Sectors;
 use App\Models\Services;
 use App\Models\Surveys;
+use App\Models\TermsConditions;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class ClientsController extends Controller
@@ -58,14 +71,151 @@ class ClientsController extends Controller
     public function create()
     {
         //
+        //get current country
+        $current_country = Landing::getCurrentCountry();
+        //get Default country
+        $default_country = Landing::getDefaultCountry();
+        //get terms & conditions
+        $terms = TermsConditions::where('for', "Singup")->where('country_id', $current_country)->first();
+        $terms = $terms ? $terms : TermsConditions::where('for', "Singup")->where('country_id', $default_country)->first();
+        $Employee = new NumberOfEmployees();
+        $data = [
+            'industries' => Industry::all(),
+            'countries' => Countries::all(),
+            'numberOfEmployees' => $Employee->getList(),
+            'terms' => $terms
+        ];
+        return view('dashboard.client.edit')->with($data);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreClientsRequest $request)
+    public function store(Request $request)
     {
-        //
+        //validate request
+        //validate company name english
+        // $request->validate([
+        //     'company_name_en' => 'required|string|max:255',
+        //     'company_name_ar' => 'required|string|max:255',
+        //     'phone' => 'required|string|max:255',
+        //     'company_country' => 'required|integer',
+        //     'company_sector' => 'required|integer',
+        //     'company_size' => 'required|integer',
+        //     'focal_name' => 'required|string|max:255',
+        //     'focal_email' => 'required|string|max:255',
+        //     'focal_phone' => 'required|string|max:255',
+        //     'password' => 'required|string|min:8',
+        // ]);
+        //check if the user is already registered
+        $user = User::where('email', $request->focal_email)->get();
+        if (count($user) > 0) {
+            //return back with error message
+            Log::info("fffffff");
+            return back()->with('fail', 'You are already registered');
+        } else {
+            //check if logo_path has file
+            Log::info("ddddddddddddddddd");
+            if ($request->hasFile('logo_path')) {
+                Log::info("r54r45r4r");
+                $file = $request->file('logo_path');
+                $extension = $file->getClientOriginalExtension();
+                $filename = time() . '.' . $extension;
+                $file->move('uploads/companies/logos/', $filename);
+            } else {
+                Log::info("rrgege");
+                $filename = null;
+            }
+            Log::info("eregegrwerv");
+            $request_hasPass = $request->has('password');
+            Log::info("44343f");
+            $password = $request_hasPass ? $request->password : Landing::generateRandomPassword();
+            Log::info("wfdsssdddfd");
+            $country_id = Landing::getCurrentCountry();
+            //find the country from countries table
+            $country = Countries::where('id', operator: $country_id)->first();
+            // get partner id from partnerships table
+            $partnership = Partnerships::where('country_id', $country->id)->first();
+            //create new Client
+            $newClient = new Clients();
+            $newClient->name = $request->company_name_en;
+            $newClient->name_ar = $request->company_name_ar;
+            $newClient->country = $request->company_country;
+            $newClient->industry = $request->company_sector;
+            $newClient->client_size = $request->company_size;
+            $newClient->phone = $request->phone;
+            $newClient->logo_path = $filename;
+            $newClient->webiste = $request->website;
+            $newClient->partner_id = $partnership == null ? null : $partnership->partner_id;
+            $newClient->added_by = Auth::user()->id;
+            $newClient->updated_by = Auth::user()->id;
+            $newClient->save();
+            //retrieve industry
+            $industry = Industry::find($request->company_sector);
+            //create new sector
+            $newSector = new Sectors();
+            $newSector->client_id = $newClient->id;
+            $newSector->name_en = $industry->name;
+            $newSector->name_ar = $industry->name_ar;
+            $newSector->save();
+            //add new comapny
+            //create new company
+            $company = new Companies();
+            $company->client_id = $newClient->id;
+            $company->sector_id = $newSector->id;
+            $company->name_en = $request->company_name_en;
+            $company->name_ar = $request->company_name_ar != null ? $request->company_name_ar : $request->company_name_en;
+            $company->save();
+            //new Employee
+            $newEmployee = new Employees();
+            $newEmployee->name = $request->focal_name;
+            $newEmployee->client_id = $newClient->id;
+            $newEmployee->email = $request->focal_email;
+            $newEmployee->mobile = $request->focal_phone;
+            $newEmployee->sector_id = $newSector->id;
+            $newEmployee->comp_id = $company->id;
+            $newEmployee->emp_id = null;
+            $newEmployee->employee_type = 2;
+            $newEmployee->isCandidate = false;
+            $newEmployee->isBoard = false;
+            $newEmployee->acting_for = null;
+            $newEmployee->is_hr_manager = false;
+            $newEmployee->added_by = 0;
+            $newEmployee->save();
+            //create new user
+            $newUser = new User();
+            $newUser->name = $request->focal_name;
+            $newUser->email = $request->focal_email;
+            $newUser->password = Hash::make($password);
+            $newUser->client_id = $newClient->id;
+            $newUser->sector_id = $newSector->id;
+            $newUser->emp_id = $newEmployee->id;
+            $newUser->is_main = true;
+            //user_type
+            $newUser->user_type = "client";
+            //is_active
+            $newUser->is_active = true;
+            $newUser->save();
+            //create new focal point
+            $newFocal = new FocalPoints();
+            $newFocal->name = $request->focal_name;
+            $newFocal->email = $request->focal_email;
+            $newFocal->phone = $request->focal_phone;
+            $newFocal->client_id = $newClient->id;
+            $newFocal->is_active = true;
+            $newFocal->save();
+            //
+            //redirect to login page with success message
+            // (new SendSurvey($emails, $data))->delay(now()->addSeconds(2));
+            if (!$request_hasPass) {
+                $job = (new SendAccountInfoJob($request->focal_email, $password))->delay(now()->addSeconds(2));
+                dispatch($job);
+                //redirect to route name('clients.index')
+
+                return redirect()->route('clients.index')->with('success', 'You are registered successfully');
+            }
+            return redirect('/login')->with('success', 'You are registered successfully');
+        }
     }
 
     /**

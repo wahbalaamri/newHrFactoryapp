@@ -2,6 +2,8 @@
 {{-- Header --}}
 <x-slot:header>
 <x-mail::header :url="config('app.url')">
+    {{-- logo --}}
+    <img src="{{ asset('assets/img/logo-01.png') }}" alt="HRFACTORY LOG">
 {{ config('app.name') }}
 </x-mail::header>
 </x-slot:header>

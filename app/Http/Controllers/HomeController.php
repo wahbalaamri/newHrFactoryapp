@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\SurveysPrepration;
 use App\Jobs\SendDemoSurveyJob;
+use App\Jobs\SendWelcomeEmail;
+use App\Jobs\SendWelcomeEmailJob;
 use App\Jobs\SetEmployeeDataFromOldTools;
 use App\Jobs\SetupUsersIdInUsersOldSections;
 use App\Models\Clients;
@@ -22,6 +24,7 @@ use App\Models\UserSections;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
@@ -769,18 +772,17 @@ class HomeController extends Controller
             foreach ($tables as $table) {
                 // Log::info($table->$tableKey);
                 $data = DB::table($table->$tableKey)->get();
-                $json = json_encode($data,JSON_PRETTY_PRINT);
+                $json = json_encode($data, JSON_PRETTY_PRINT);
                 $date = date('Y-m-d-H:i:s');
-                $file = 'newP_' . $table->$tableKey . "_" . $date ;
+                $file = 'newP_' . $table->$tableKey . "_" . $date;
                 $zip->addFromString("{$file}.json", $json);
                 // $file = public_path() . '/backup/newP_' . $table->$tableKey . ".json";
                 // file_put_contents($file, $json);
             }
             $zip->close();
         }
-        $zip_fileName= 'newP_FullData_' . date('Y-m-d-H:i:s') . '.zip';
+        $zip_fileName = 'newP_FullData_' . date('Y-m-d-H:i:s') . '.zip';
         return Response::download($zipFilePath, "{$zip_fileName}")->deleteFileAfterSend(true);
-
     }
     //function backupSurveyanswers
     public function backupSurveyanswers()
@@ -809,5 +811,18 @@ class HomeController extends Controller
         //download file
 
         return response()->download($file);
+    }
+    //testSendMail function
+    public function testSendMail()
+    {
+        // Example data
+        $data = [
+            'name' => 'John Doe',
+            'message' => 'This is a test message.'
+        ];
+        //create job to send mail
+        $job = new SendWelcomeEmailJob($data);
+        dispatch($job);
+
     }
 }

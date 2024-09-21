@@ -44,6 +44,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name("Home");
+Route::get('/testSendMail', [HomeController::class, 'testSendMail'])->name("Home.testSendMail");
 // Route::get('/', [Re::class, 'index'])->name("Home");
 Route::get('/backupClients', [HomeController::class, 'backupClients'])->name("Home.backupClients");
 Route::get('/backupSurveyanswers', [HomeController::class, 'backupSurveyanswers'])->name("Home.backupSurveyanswers");
@@ -355,6 +356,8 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
       =                                                                                                                =
       ==================================================================================================================*/
     Route::get('clients/index', [ClientsController::class, 'index'])->name('clients.index');
+    Route::get('clients/create', [ClientsController::class, 'create'])->name('clients.create');
+    Route::post('clients/store', [ClientsController::class, 'store'])->name('clients.store');
     Route::get('clients/manage/{id}', [ClientsController::class, 'manage'])->name('clients.manage');
     Route::get('clients/ShowSurveys/{id}/{type}', [ClientsController::class, 'ShowSurveys'])->name('clients.ShowSurveys');
     Route::get('clients/createSurvey/{id}/{type}', [ClientsController::class, 'createSurvey'])->name('clients.createSurvey');

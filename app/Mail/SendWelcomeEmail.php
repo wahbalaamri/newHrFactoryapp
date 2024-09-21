@@ -4,17 +4,17 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendWelcomeEmail extends Mailable implements ShouldQueue
+class SendWelcomeEmail extends Mailable
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable, SerializesModels;
 
     /**
-     * Create a new job instance.
+     * Create a new message instance.
      */
     public $data;
     public function __construct($data)
@@ -23,19 +23,13 @@ class SendWelcomeEmail extends Mailable implements ShouldQueue
         $this->data = $data;
     }
 
-    /**
-     * Execute the job.
-     */
-    public function handle(): void
-    {
-        //
-
-    }
     public function build()
     {
         return $this
             ->subject('Your Email Subject')
-            ->markdown('vendor.mail.html.message') // Use the default message template
+            ->markdown('vendor.mail.html.message', [
+                'slot' => 'This is the content that will be displayed in the email body.'
+            ])
             ->with('data', $this->data);
     }
 }

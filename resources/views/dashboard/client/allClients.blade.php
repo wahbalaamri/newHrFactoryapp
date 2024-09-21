@@ -41,6 +41,12 @@
                                 {{ __('List of All Clients') }}
                             </h3>
                             <div class="card-tools">
+                                {{-- add new client --}}
+                                <a href="{{ route('clients.create') }}"
+                                    class="btn btn-tool btn-sm">
+                                    <i class="fa fa-plus"></i>
+                                    {{ __('Add New Client') }}
+                                </a>
                             </div>
                         </div><!-- /.card-header -->
                         {{-- card body --}}
