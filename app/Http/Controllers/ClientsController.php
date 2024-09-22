@@ -146,7 +146,7 @@ class ClientsController extends Controller
             $newClient->phone = $request->phone;
             $newClient->logo_path = $filename;
             $newClient->webiste = $request->website;
-            $newClient->partner_id = $partnership == null ? null : $partnership->partner_id;
+            $newClient->partner_id = Auth::user()->partner_id;
             $newClient->added_by = Auth::user()->id;
             $newClient->updated_by = Auth::user()->id;
             $newClient->save();
