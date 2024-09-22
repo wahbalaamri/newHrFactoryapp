@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->integer('country_id');/* ->constrained()->onDelete('cascade'); */
+            $table->integer('company_id')->nullable();/* ->constrained()->onDelete('cascade'); */
             $table->integer('plan_id');
             $table->integer('ordering')->nullable();
             $table->integer('paren_id')->nullable()->references('id')->on('user_sections')->onDelete('cascade');
