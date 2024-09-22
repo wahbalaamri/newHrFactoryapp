@@ -280,8 +280,8 @@ class DefaultMBController extends Controller
             $plans = Plans::where('service', $service->id)->pluck('id')->toArray();
             //get active user subscriptions
             $subscriptions = ClientSubscriptions::where('client_id', $id)
-            ->whereIn('plan_id', $plans)
-            ->where('is_active', true)->first();
+                ->whereIn('plan_id', $plans)
+                ->where('is_active', true)->first();
             //get type of plan
             $plan_type = Plans::where('id', $subscriptions->plan_id)->first()->plan_type;
             $sections = UserSections::where('user_id', $id)->whereNull('paren_id')->where('language', app()->getLocale())->get();
@@ -292,7 +292,7 @@ class DefaultMBController extends Controller
             //     //check if remote has for this user
             //     $contents = json_decode(file_get_contents('https://www.hrfactoryapp.com/Home/UserSctions?email=' . $focal_point->email . '&lang=1'), true);
             // }
-            Log::info("plan_type: ".$plan_type);
+            Log::info("plan_type: " . $plan_type);
             $data = [
                 'sections' => $sections->sortBy('ordering'),
                 'contents' => $contents,
@@ -320,8 +320,13 @@ class DefaultMBController extends Controller
             })->get();
             //get plans id
             $plans_id = $plans->pluck('id')->toArray();
+            $subscribed_plan_ = $client->subscriptions->where('is_active', true)->whereIn('plan_id', $plans_id)->first();
+            $subscribed_plan = $subscribed_plan_->plan_id;
+            if($plans->where('id', $subscribed_plan)->first()->plan_type == 5){
+                //get
+                $subscribed_plan = $plans->where('plan_type', 1)->first()->id;
+            }
             //get client active subscriptions
-            $subscribed_plan = $client->subscriptions->where('is_active', true)->whereIn('plan_id', $plans_id)->first()->plan_id;
             $sections = DefaultMB::where('country_id', $country)->where('plan_id', $subscribed_plan)->whereNull('paren_id')->get();
             //check if $sections has value
             $sections = count($sections) > 0 ? $sections : DefaultMB::where('country_id', 155)->where('plan_id', $subscribed_plan)->whereNull('paren_id')->get();
@@ -368,6 +373,7 @@ class DefaultMBController extends Controller
             return redirect()->route('manualBuilder.ClientSections', $id);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
+            Log::error($e);
             return response()->json(['message' => 'Something went wrong, please try again later', 'stat' => false], 500);
         }
     }

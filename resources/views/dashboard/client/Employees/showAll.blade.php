@@ -364,7 +364,7 @@
                 });
             }
             getdepartments = (id) => {
-                url = "{{ route('client.departments', [':d', 'd']) }}";
+                url = "{{ route('client.departments', [':d', 'r']) }}";
                 url = url.replace(':d', id);
                 if (id) {
                     $.ajax({
