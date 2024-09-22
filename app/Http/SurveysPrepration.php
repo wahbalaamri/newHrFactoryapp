@@ -964,7 +964,7 @@ class SurveysPrepration
     function departments(Request $request, $id, $type, $by_admin = false)
     {
         if ($type == 'r')
-            return Departments::where('company_id', $id)->where('dep_level', 3)->get()->append('name');
+            return Departments::where('company_id', $id)->where('dep_level', 1)->get()->append('name');
         else
             return Departments::where('parent_id', $id)->get()->append('name');
     }
