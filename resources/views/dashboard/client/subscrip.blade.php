@@ -327,11 +327,11 @@
                             $('#subscripTable').DataTable().ajax.reload();
                             toastr.success(data.message);
                         } else {
-                            toastr.error(data.error);
+                            toastr.error(data.message);
                         }
                     },
                     error: function(data) {
-                        toastr.error(data.error);
+                        toastr.error(data.message);
                         // console.log('Error:', data);
                     }
                 });

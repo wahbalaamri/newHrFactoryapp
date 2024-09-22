@@ -1286,8 +1286,17 @@ class SurveysPrepration
             } else {
                 $subscription = ClientSubscriptions::find($request->subscription);
             }
+            //check if there is an active subscription of same service
             //find plan
             $plan = Plans::find($request->plan);
+            //get service
+            $service = Services::find($plan->service);
+            //get all plans of the service
+            $service_plan=$service->plans->pluck('id')->toArray();
+            //check if plan is active
+            if (ClientSubscriptions::where('client_id', $id)->whereIn('plan_id', $service_plan)->where('is_active', true)->exists()) {
+                return response()->json(['status' => false, 'message' => 'This client already have an active subscription of this service.']);
+            }
             //find client
             $client = Clients::find($id);
             //get plan price
@@ -1314,7 +1323,7 @@ class SurveysPrepration
             return response()->json(['status' => true, 'message' => 'Subscription created successfully', 'subscription' => $subscription]);
         } catch (\Exception $e) {
             //json response with status
-            return response()->json(['status' => false, 'error' => $e->getMessage()]);
+            return response()->json(['status' => false, 'message' => $e->getMessage()]);
         }
     }
     //sendSurvey function

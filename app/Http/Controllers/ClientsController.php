@@ -38,17 +38,7 @@ class ClientsController extends Controller
 
     public function index()
     {
-        // get all clients
-        // $clients = Clients::all();
-        // //update client status based on delete_at
-        // foreach ($clients as $client) {
-        //     if ($client->deleted_at != null) {
-        //         $client->Status = false;
-        //     } else {
-        //         $client->Status = true;
-        //     }
-        // }
-        //get all undeleted clients
+
         if (Auth()->user()->user_type == 'partner') {
             //find the partner focal point
             $partner_id = PartnerFocalPoint::where('Email', Auth()->user()->email)->first()->partner_id;
@@ -111,11 +101,9 @@ class ClientsController extends Controller
         $user = User::where('email', $request->focal_email)->get();
         if (count($user) > 0) {
             //return back with error message
-            Log::info("fffffff");
             return back()->with('fail', 'You are already registered');
         } else {
             //check if logo_path has file
-            Log::info("ddddddddddddddddd");
             if ($request->hasFile('logo_path')) {
                 Log::info("r54r45r4r");
                 $file = $request->file('logo_path');
@@ -123,14 +111,10 @@ class ClientsController extends Controller
                 $filename = time() . '.' . $extension;
                 $file->move('uploads/companies/logos/', $filename);
             } else {
-                Log::info("rrgege");
                 $filename = null;
             }
-            Log::info("eregegrwerv");
             $request_hasPass = $request->has('password');
-            Log::info("44343f");
             $password = $request_hasPass ? $request->password : Landing::generateRandomPassword();
-            Log::info("wfdsssdddfd");
             $country_id = Landing::getCurrentCountry();
             //find the country from countries table
             $country = Countries::where('id', operator: $country_id)->first();

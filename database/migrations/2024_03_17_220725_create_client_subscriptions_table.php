@@ -29,8 +29,6 @@ return new class extends Migration
             $table->boolean('is_active')->default(0);
             $table->softDeletes();
             $table->timestamps();
-            //unique constraint on client_id and plan_id and subscription_period
-            $table->unique(['client_id', 'plan_id', 'period']);
         });
     }
 

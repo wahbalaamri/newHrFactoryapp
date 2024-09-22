@@ -76,6 +76,7 @@
                                         </a>
                                     </div>
                                 </div>
+                                @if(App\Http\Facades\UserSubscriptionsFacade::canViewService(Auth()->user()->user_type,$id,1))
                                 <div class="col-lg-3 col-6">
 
                                     <div class="small-box bg-info">
@@ -92,7 +93,8 @@
                                         </a>
                                     </div>
                                 </div>
-
+                                @endif
+                                @if(App\Http\Facades\UserSubscriptionsFacade::canViewService(Auth()->user()->user_type,$id,3))
                                 <div class="col-lg-3 col-6">
 
                                     <div class="small-box bg-warning">
@@ -103,11 +105,14 @@
                                         <div class="icon">
                                             <i class="ion ion-happy"></i>
                                         </div>
-                                        <a href="{{ \App\Http\Facades\Landing::CheckUserSubscription($id,3)? route('clients.ShowSurveys',[$id,3]):'#' }}" class="small-box-footer">
+                                        <a href="{{ \App\Http\Facades\Landing::CheckUserSubscription($id,3)? route('clients.ShowSurveys',[$id,3]):'#' }}"
+                                            class="small-box-footer">
                                             {{ __('Get Started') }} <i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>
                                 </div>
+                                @endif
+                                @if(App\Http\Facades\UserSubscriptionsFacade::canViewService(Auth()->user()->user_type,$id,10))
                                 <div class="col-lg-3 col-6">
 
                                     <div class="small-box bg-warning">
@@ -118,12 +123,14 @@
                                         <div class="icon">
                                             <i class="ion ion-happy"></i>
                                         </div>
-                                        <a href="{{ \App\Http\Facades\Landing::CheckUserSubscription($id,10)? route('clients.ShowSurveys',[$id,10]):'#' }}" class="small-box-footer">
+                                        <a href="{{ \App\Http\Facades\Landing::CheckUserSubscription($id,10)? route('clients.ShowSurveys',[$id,10]):'#' }}"
+                                            class="small-box-footer">
                                             {{ __('Get Started') }} <i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>
                                 </div>
-
+                                @endif
+                                @if(App\Http\Facades\UserSubscriptionsFacade::canViewService(Auth()->user()->user_type,$id,4))
                                 <div class="col-lg-3 col-6">
 
                                     <div class="small-box bg-secondary">
@@ -134,12 +141,14 @@
                                         <div class="icon">
                                             <i class="fas fa-business-time"></i>
                                         </div>
-                                        <a href="{{\App\Http\Facades\Landing::CheckUserSubscription($id,4)? route('clients.ShowSurveys',[$id,4]):'#'}}" class="small-box-footer">
+                                        <a href="{{\App\Http\Facades\Landing::CheckUserSubscription($id,4)? route('clients.ShowSurveys',[$id,4]):'#'}}"
+                                            class="small-box-footer">
                                             {{ __('Get Started') }} <i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>
                                 </div>
-
+                                @endif
+                                @if(App\Http\Facades\UserSubscriptionsFacade::canViewService(Auth()->user()->user_type,$id,5))
                                 <div class="col-lg-3 col-6">
 
                                     <div class="small-box bg-warning">
@@ -150,11 +159,14 @@
                                         <div class="icon">
                                             <i class="fas fa-user-tie"></i>
                                         </div>
-                                        <a href="{{\App\Http\Facades\Landing::CheckUserSubscription($id,5)? route('clients.ShowSurveys',[$id,5]):'#'}}" class="small-box-footer">
+                                        <a href="{{\App\Http\Facades\Landing::CheckUserSubscription($id,5)? route('clients.ShowSurveys',[$id,5]):'#'}}"
+                                            class="small-box-footer">
                                             {{ __('Get Started') }} <i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>
                                 </div>
+                                @endif
+                                @if(App\Http\Facades\UserSubscriptionsFacade::canViewService(Auth()->user()->user_type,$id,6) || Auth()->user()->client_id == 164)
                                 <div class="col-lg-3 col-6">
 
                                     <div class="small-box bg-olive">
@@ -165,11 +177,14 @@
                                         <div class="icon">
                                             <i class="fas fa-user-tie"></i>
                                         </div>
-                                        <a href="{{\App\Http\Facades\Landing::CheckUserSubscription($id,6)? route('clients.ShowSurveys',[$id,6]):'#'}}" class="small-box-footer">
+                                        <a href="{{\App\Http\Facades\Landing::CheckUserSubscription($id,6)? route('clients.ShowSurveys',[$id,6]):'#'}}"
+                                            class="small-box-footer">
                                             {{ __('Get Started') }} <i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>
                                 </div>
+                                @endif
+                                @if(App\Http\Facades\UserSubscriptionsFacade::canViewService(Auth()->user()->user_type,$id,1))
                                 <div class="col-lg-3 col-6">
 
                                     <div class="small-box bg-orange">
@@ -180,11 +195,14 @@
                                         <div class="icon">
                                             <i class="fas fa-folder-open"></i>
                                         </div>
-                                        <a href="{{\App\Http\Facades\Landing::CheckUserSubscription($id,1)? route('manualBuilder.ClientSections',[$id,1]):'#'}}" class="small-box-footer">
+                                        <a href="{{\App\Http\Facades\Landing::CheckUserSubscription($id,1)? route('manualBuilder.ClientSections',[$id,1]):'#'}}"
+                                            class="small-box-footer">
                                             {{ __('Get Started') }} <i class="fas fa-arrow-circle-right"></i>
                                         </a>
                                     </div>
                                 </div>
+                                @endif
+                                @if(App\Http\Facades\UserSubscriptionsFacade::canViewService(Auth()->user()->user_type,$id,7))
                                 <div class="col-lg-3 col-6">
 
                                     <div class="small-box bg-info">
@@ -201,6 +219,7 @@
                                         </a>
                                     </div>
                                 </div>
+                                @endif
                             </div>
                         </div>
                     </div>

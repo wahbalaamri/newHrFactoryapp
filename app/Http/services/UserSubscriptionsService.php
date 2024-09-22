@@ -53,4 +53,20 @@ class UserSubscriptionsService
             $subscription->save();
         }
     }
+    public function canViewService($user_role, $client_id, $service_type):bool{
+        if($user_role=='admin'){
+            return true;
+        }
+        //get service
+        $service = Services::where('service_type', $service_type)->first();
+        if($service){
+            if($service->public_availability){
+                return true;
+            }
+            if($service->service_client==$client_id){
+                return true;
+            }
+        }
+        return false;
+    }
 }
