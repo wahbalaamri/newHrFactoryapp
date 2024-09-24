@@ -83,7 +83,6 @@ class SendAccountInfoJob implements ShouldQueue
         } catch (\Exception $e) {
             //log error
             Log::error('Error sending account info email: ' . $e->getMessage());
-            Log::error($e);
         }
     }
 }

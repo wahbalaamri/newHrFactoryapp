@@ -101,12 +101,10 @@ class EmailContentsController extends Controller
             }
             //if request is ajax
             if (request()->ajax()) {
-                Log::info($request->country);
                 //build where
                 $where = [];
                 //if country is not null
                 if ($request->country != "all")
-                Log::info($request->country);
                     if ($request->country) {
                         $where[] = ['country', $request->country];
                     }

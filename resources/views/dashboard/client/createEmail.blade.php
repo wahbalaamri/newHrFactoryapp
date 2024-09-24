@@ -106,7 +106,7 @@
                                         <label for="client_logo">{{ __('Client Logo') }}</label>
                                         <input type="file" name="client_logo" id="client_logo"
                                             class="form-control form-control-file" placeholder="{{ __('Client Logo') }}"
-                                            @if($emailContet!=null) @if($emailContet->use_client_logo) required @endif @endif>
+                                            @required($emailContet!=null?($emailContet->use_client_logo && $client->logo_path==null):true)>
                                         @error('client_logo')
                                         <span class="text-danger">{{ $message }}</span>
                                         @enderror

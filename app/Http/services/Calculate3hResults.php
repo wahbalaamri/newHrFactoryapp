@@ -69,7 +69,6 @@ class Calculate3hResults
             return $data;
         } catch (\Exception $e) {
             Log::info($e->getMessage());
-            Log::info($e);
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -857,7 +856,6 @@ class Calculate3hResults
                 $sub_data
             );
             $type = "Average Results";
-            Log::info($type);
         } else {
             $data = $gender == 'm' ? $maleData : $femaleData;
         }

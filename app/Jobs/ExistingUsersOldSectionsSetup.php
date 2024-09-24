@@ -31,7 +31,6 @@ class ExistingUsersOldSectionsSetup implements ShouldQueue
         //
         $old_sections = json_decode(file_get_contents('https://www.hrfactoryapp.com/Home/GetUserSections'), true);
         //insert old sections to new table
-        // Log::info($old_sections);
         foreach ($old_sections['userSections'] as $old_section) {
             //insert old_section into UserSections
             $new_parent_sections = new UserSections();
@@ -75,8 +74,6 @@ class ExistingUsersOldSectionsSetup implements ShouldQueue
                 }
             }
             // else {
-            //     //log no subsctions
-            //     // Log::alert('No Subsction');
             // }
         }
     }

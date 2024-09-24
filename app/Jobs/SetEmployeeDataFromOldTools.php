@@ -47,9 +47,6 @@ class SetEmployeeDataFromOldTools implements ShouldQueue
     public function handle(): void
     {
         //
-        Log::info($this->client_old_id);
-        Log::info($this->use_dep);
-        Log::info($this->tool);
         $sector_looper = 0;
         $company_looper = 0;
         if ($this->tool == 1) {
@@ -57,7 +54,6 @@ class SetEmployeeDataFromOldTools implements ShouldQueue
             if ($this->use_dep == 0) {
                 //get data from https://3h.hrfactoryapp.com/getClientData/
                 $data = json_decode(file_get_contents('https://3h.hrfactoryapp.com/getClientData/' . $this->client_old_id . '/' . $this->use_dep), true);
-                // Log::info($data);
                 //get client details
                 $client_name = $data['ClientName'];
                 $client_phone = $data['ClientPhone'];
@@ -242,8 +238,6 @@ class SetEmployeeDataFromOldTools implements ShouldQueue
                         $answers = json_decode(curl_exec($ch));
                         //loop through all answers
                         foreach ($answers as $answer) {
-                            Log::info(json_decode($answer));
-                            Log::info($answer->SurveyId);
                             //get question
                             $question = $answer['question']['Question'];
                             //get question

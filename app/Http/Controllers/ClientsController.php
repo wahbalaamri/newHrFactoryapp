@@ -105,7 +105,6 @@ class ClientsController extends Controller
         } else {
             //check if logo_path has file
             if ($request->hasFile('logo_path')) {
-                Log::info("r54r45r4r");
                 $file = $request->file('logo_path');
                 $extension = $file->getClientOriginalExtension();
                 $filename = time() . '.' . $extension;
@@ -380,7 +379,6 @@ class ClientsController extends Controller
             return $surveysPrepration->SurveyResults($Client_id, $Service_type, $survey_id, $vtype, $vtype_id, true);
         } catch (\Exception $e) {
             Log::info($e->getMessage());
-            Log::info($e);
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -532,6 +530,5 @@ class ClientsController extends Controller
     {
         //get session data
         $data = session()->get('data');
-        Log::info($data);
     }
 }

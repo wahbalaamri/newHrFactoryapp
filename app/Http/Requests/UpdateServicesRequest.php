@@ -14,7 +14,6 @@ class UpdateServicesRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        Log::info($this->route('service'));
         return Auth::user()->can('update', Services::find($this->route('service')));
     }
 

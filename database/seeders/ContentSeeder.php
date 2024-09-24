@@ -21,7 +21,6 @@ class ContentSeeder extends Seeder
         //get content from Api
         $contents = json_decode(file_get_contents('https://www.hrfactoryapp.com/Home/shipData'), true);
         //insert content to database
-        // Log::info($contents);
         foreach ($contents['contents'] as  $content) {
             $new_content = new Content();
             $new_content->d_id = $content['Id'];

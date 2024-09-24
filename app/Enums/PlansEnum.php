@@ -46,7 +46,6 @@ enum PlansEnum: int
     }
     public static function getNameByVal($val)
     {
-        Log::info($val);
         return match ($val) {
             1 => self::WarmUp,
             2 => self::Startup,

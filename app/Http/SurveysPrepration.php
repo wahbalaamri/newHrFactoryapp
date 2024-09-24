@@ -29,18 +29,16 @@ class SurveysPrepration
     private $ids = [];
     function index($service_type)
     {
-        Log::info('1');
+
         try {
             //get all functions of the HR Diagnosis
             $functions = Functions::where('service_id', function ($querey) use ($service_type) {
                 $querey->select('id')->from('services')->where('service_type', $service_type)->first()->id;
             })->get();
-            Log::info('1ss');
             $data = [
                 'functions' => $functions,
                 'service_type' => $service_type,
             ];
-            Log::info($functions);
             return view('dashboard.ManageHrDiagnosis.index')->with($data);
         } catch (\Exception $e) {
             Log::info($e->getMessage());
@@ -1391,7 +1389,6 @@ class SurveysPrepration
                         $rid = $respondents->where('employee_id', $employee->id)->first()->id;
                         $emails->push(['email' => $employee->email, 'id' => $rid]);
                     }
-                    Log::info($emails);
                 }
                 if ($send_type == 'r') {
                     //get distinct answered_by as an array from survey_answers
@@ -1564,7 +1561,6 @@ class SurveysPrepration
             }
         } catch (\Exception $e) {
             Log::info($e->getMessage());
-            Log::info($e);
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -2485,7 +2481,6 @@ class SurveysPrepration
             return ['data_size' => 0];
         $planID = Surveys::where('id', $id)->first()->plans->service;
         $functions = Functions::where('service_id', $planID)->select(['id', 'title_ar', 'title'])->get();
-        Log::info($functions);
         $prioritiesRes = PrioritiesAnswers::where('survey_id', $id)->select(['answer_value', 'question_id', 'answered_by'])->get();
         // $avgxx = $SurveyResult->avg('answer_value');
         $overallResult = number_format(($_all_score / $scaleSize) * 100);
@@ -2595,8 +2590,6 @@ class SurveysPrepration
                 //check if employee group answer avg has value and assign flag
                 // if (!$emp_had_answers)
                 $emp_had_answers = isset($allans) ? true : false;
-                Log::info("EMP: $allans");
-                Log::info("emp_had_answers: $emp_had_answers");
                 $emp_practice_ans = $SurveyResult->where('question_id', '=', $functionPractice->questions->first()->id)->whereIn('answered_by', $employees_email);
                 // $emp_practice_ans_count = $SurveyResult->where('question_id', '=', $functionPractice->questions->first()->id)->whereIn('answered_by', $employees_email)->count();
                 $emp_practice_weight =  round((($allans) / $scaleSize), 2);
@@ -2645,7 +2638,6 @@ class SurveysPrepration
                 //     ->avg('answer_value');
                 if ($avg_factor <= 0)
                     return ['data_size' => 0];
-                Log::info("gggg");
                 $OverAllAv = ($the_three_avg) / $avg_factor;
                 $practiceWeight =  round((($OverAllAv) / $scaleSize), 2);
                 // $function_w += $practiceWeight;
@@ -3647,7 +3639,7 @@ class SurveysPrepration
             }
             return response()->json(['status' => true, 'message' => 'Candidates saved successfully'], 200);
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error($e->getMessage());
             return response()->json(['status' => false, 'message' => 'Error saving Candidates']);
         }
     }
@@ -4093,7 +4085,7 @@ class SurveysPrepration
                     ->make(true);
             }
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error($e->getMessage());
             return response()->json(['error' => 'Error getting questions'], 500);
         }
     }
@@ -4112,7 +4104,7 @@ class SurveysPrepration
             $functions = Functions::where('service_id', $service_id)->get()->append('translated_title');
             return response()->json(['functions' => $functions, 'stat' => true], 200);
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error($e->getMessage());
             return response()->json(['error' => 'Error getting functions', 'stat' => false], 500);
         }
     }
@@ -4124,7 +4116,7 @@ class SurveysPrepration
             $practices = FunctionPractices::where('function_id', $fid)->get()->append('translated_title');
             return response()->json(['practices' => $practices, 'stat' => true], 200);
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error($e->getMessage());
             return response()->json(['error' => 'Error getting practices', 'stat' => false], 500);
         }
     }
@@ -4207,7 +4199,7 @@ class SurveysPrepration
             }
             return response()->json(['message' => 'Questions saved successfully', 'stat' => true], 200);
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error($e->getMessage());
             return response()->json(['message' => 'Error saving Questions', 'stat' => false], 500);
         }
     }
@@ -4379,7 +4371,7 @@ class SurveysPrepration
             $client->save();
             return response()->json(['message' => 'Organization info saved successfully', 'stat' => true], 200);
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error($e->getMessage());
             return response()->json(['message' => 'Error saving Organization info', 'stat' => false], 500);
         }
     }
@@ -4400,7 +4392,7 @@ class SurveysPrepration
             //return back with success
             return redirect()->back()->with('message', 'IT WORKS!');
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error($e->getMessage());
             return response()->json(['message' => 'Error uploading Organization chart', 'stat' => false], 500);
         }
     }
@@ -4422,7 +4414,7 @@ class SurveysPrepration
             }
             return redirect()->back()->with('message', 'IT WORKS!');
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error($e->getMessage());
             return response()->json(['message' => 'Error uploading Organization chart', 'stat' => false], 500);
         }
     }
@@ -4489,7 +4481,7 @@ class SurveysPrepration
                 return redirect()->route('Leader360Review.index')->with('success', 'Function deleted successfully');
             }
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error($e->getMessage());
             return response()->json(['message' => 'Error copying Function', 'stat' => false], 500);
         }
     }
@@ -4772,7 +4764,7 @@ class SurveysPrepration
             dispatch($job);
             return response()->json(['message' => 'User assigned successfully', 'stat' => true], 200);
         } catch (\Exception $e) {
-            Log::error($e);
+            Log::error($e->getMessage());
             return response()->json(['message' => 'Error assigning user', 'stat' => false], 500);
         }
     }
@@ -4817,7 +4809,6 @@ class SurveysPrepration
                 $sub_data
             );
             $type = "Average Results";
-            Log::info($type);
         } else {
             $data = $gender == 'm' ? $maleData : $femaleData;
         }

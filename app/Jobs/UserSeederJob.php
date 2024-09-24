@@ -44,7 +44,6 @@ class UserSeederJob implements ShouldQueue
         //insert content to database
         foreach ($contents['users'] as  $user) {
             if ($user['ContactInformation'] == '97001455'){
-                // Log::info('Wahb is here');
             } else{
                 if (($user['IsDeleted'] != true && $user['IsDeleted'] == false)) {
                     if ($user['IsAdmin'] == 1) {

@@ -162,8 +162,6 @@ class DefaultMBController extends Controller
     public function storeSection(Request $request)
     {
         try {
-
-            Log::info($request->country);
             $IsHaveLineBefore = $request->IsHaveLineBefore == "true" ? true : false;
             $lang = app()->getLocale();
             //find max ordering
@@ -286,13 +284,6 @@ class DefaultMBController extends Controller
             $plan_type = Plans::where('id', $subscriptions->plan_id)->first()->plan_type;
             $sections = UserSections::where('user_id', $id)->whereNull('paren_id')->where('language', app()->getLocale())->get();
             $contents = [];
-            // if (count($sections) <= 0) {
-            //     //get focal point
-            //     $focal_point = FocalPoints::where('client_id', $id)->first();
-            //     //check if remote has for this user
-            //     $contents = json_decode(file_get_contents('https://www.hrfactoryapp.com/Home/UserSctions?email=' . $focal_point->email . '&lang=1'), true);
-            // }
-            Log::info("plan_type: " . $plan_type);
             $data = [
                 'sections' => $sections->sortBy('ordering'),
                 'contents' => $contents,
@@ -373,7 +364,6 @@ class DefaultMBController extends Controller
             return redirect()->route('manualBuilder.ClientSections', $id);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            Log::error($e);
             return response()->json(['message' => 'Something went wrong, please try again later', 'stat' => false], 500);
         }
     }
@@ -409,7 +399,6 @@ class DefaultMBController extends Controller
     public function clientSectionsstore(Request $request)
     {
         try {
-            Log::info($request->all());
             $IsHaveLineBefore = $request->IsHaveLineBefore == "true" ? true : false;
             $lang = app()->getLocale();
             //find max ordering

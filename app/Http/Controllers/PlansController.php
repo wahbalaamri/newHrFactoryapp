@@ -131,13 +131,6 @@ class PlansController extends Controller
             'total' => $total
         ];
         $planVlaue = PlansEnum::fromCase($plan);
-        //get enum case from value
-        // Log::info('value: ' . $planVlaue);
-        //get enum name from value
-        // Log::info( PlansEnum::getNameByVal($planVlaue)->name);
-        // Log::info('value: ' . PlansEnum::fromCase($plan));
-        // Log::info('value: ' . PlansEnum::getName($plan));
-        // Log::info('value By V: ' . PlansEnum::getName(PlansEnum::getNameByVal($planVlaue)));
         return view('plans.checkout')->with($data);
     }
     //thawani online payment

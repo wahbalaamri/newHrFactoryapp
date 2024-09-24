@@ -183,7 +183,6 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                 //added_by
                 $employee->added_by = $this->user_id;
                 $employee->save();
-                log::info($employee);
             } else {
 
                 //check if $Employee['super_senior_directorate'] != null

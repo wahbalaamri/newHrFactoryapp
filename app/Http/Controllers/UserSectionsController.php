@@ -91,13 +91,8 @@ class UserSectionsController extends Controller
         $users = file_get_contents(public_path('uploads/User.json'));
         $users = json_decode($users, true);
         //loop through clients
-        // foreach ($clients['rows'] as $client) {
-        //     Log::info($client);
-        // }
         //dd clients, sectors, companies, employees, FocalPoints, users
-        Log::info($clients['rows']);
         foreach ($clients['rows'] as $client) {
-            Log::info($client);
             $client_id = $client['id'];
             //find sector from $sectors with $client_id
             $sector = collect($sectors['rows'])->where('client_id', $client_id)->first();

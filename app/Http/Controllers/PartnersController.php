@@ -64,7 +64,6 @@ class PartnersController extends Controller
                     'url' => TempURL::getTempURL('partners.index', 5),
                     'countries' => Countries::all()->groupBy('IsArabCountry')->append('country_name'),
                 ];
-                Log::info("dddddss");
                 return view('dashboard.partners.index')->with($data);
             } else {
                 $temp = TempURL::getTempURL('partners.index', 5);
@@ -231,7 +230,6 @@ class PartnersController extends Controller
                     //get count of focalpoint for current partner
                     $focal_points_count = PartnerFocalPoint::where('partner_id', $decrypted_id)->count();
                 }
-                Log::info($user);
                 $user->name = $name;
                 $user->email = $request->focal_email;
                 $user->client_id = null;

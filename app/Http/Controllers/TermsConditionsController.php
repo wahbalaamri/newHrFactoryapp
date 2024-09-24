@@ -27,7 +27,6 @@ class TermsConditionsController extends Controller
         if ($type) {
             $where[] = ['for', $type];
         }
-        Log::info(json_encode($where));
         //get current user id
         $user_id = auth()->user()->id;
         //get current user type
@@ -241,6 +240,5 @@ class TermsConditionsController extends Controller
     }
     public function createTEST()
     {
-        Log::info("ggggg");
     }
 }

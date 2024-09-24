@@ -672,7 +672,6 @@ class HomeController extends Controller
             })->get();
             if ($function1->count() <= 0) {
                 //create function
-                Log::info($function);
                 $f = new Functions();
                 $f->title = $function['FunctionTitle'];
                 $f->title_ar = $function['FunctionTitleAr'];
@@ -717,7 +716,6 @@ class HomeController extends Controller
                     }
                 }
             } else {
-                Log::info($function);
                 //read practices from https://hrtools.hrfactoryapp.com/GetPractices/
                 $urlp = $service_type == 4 ? "https://diagnosis.hrfactoryapp.com/practice/getp/" . $function['id'] : "https://hrtools.hrfactoryapp.com/GetPractices/" . $function['id'];
                 $jsonp = file_get_contents($urlp);
@@ -770,7 +768,6 @@ class HomeController extends Controller
         $zip = new ZipArchive();
         if ($zip->open($zipFilePath, ZipArchive::CREATE) === TRUE) {
             foreach ($tables as $table) {
-                // Log::info($table->$tableKey);
                 $data = DB::table($table->$tableKey)->get();
                 $json = json_encode($data, JSON_PRETTY_PRINT);
                 $date = date('Y-m-d-H:i:s');
