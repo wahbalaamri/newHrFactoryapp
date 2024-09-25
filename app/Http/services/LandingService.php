@@ -44,7 +44,7 @@ class LandingService
     //get partner
     public function getPartner()
     {
-        return Partners::where('is_main', true)->where('id', function ($querey) {
+        return Partners::where('is_main', true)->whereIn('id', function ($querey) {
             $querey->select('partner_id')->from('partnerships')->where('country_id', $this->getCurrentCountry());
         })->first();
     }
