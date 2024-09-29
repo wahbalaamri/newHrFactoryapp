@@ -4,6 +4,9 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 
+use App\Models\CustomizedSurveyFunctions;
+use App\Models\CustomizedSurveyPractices;
+use App\Models\CustomizedSurveyQuestions;
 use App\Models\FunctionPractices;
 use App\Models\Functions;
 use App\Models\Plans;
@@ -12,6 +15,9 @@ use App\Models\ServiceApproaches;
 use App\Models\ServiceFeatures;
 use App\Models\Services;
 use App\Models\TermsConditions;
+use App\Policies\CustomizedFunctionsPolicy;
+use App\Policies\CustomizedPracticesPolicy;
+use App\Policies\CustomizedQuestionsPolicy;
 use App\Policies\FunctionPracticesPolicy;
 use App\Policies\FunctionsPolicy;
 use App\Policies\PlansPolicy;
@@ -38,7 +44,10 @@ class AuthServiceProvider extends ServiceProvider
         TermsConditions::class => TermsConditionsPolicy::class,
         Functions::class => FunctionsPolicy::class,
         FunctionPractices::class => FunctionPracticesPolicy::class,
-        PracticeQuestions::class => PracticeQuestionsPolicy::class
+        PracticeQuestions::class => PracticeQuestionsPolicy::class,
+        CustomizedSurveyFunctions::class => CustomizedFunctionsPolicy::class,
+        CustomizedSurveyPractices::class => CustomizedPracticesPolicy::class,
+        CustomizedSurveyQuestions::class => CustomizedQuestionsPolicy::class,
     ];
 
     /**

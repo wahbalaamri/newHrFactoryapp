@@ -41,6 +41,13 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                @if (count($errors) > 0)
+                                    @foreach ($errors->all() as $error)
+                                        <div class="alert alert-danger">{{ $error }}</div>
+                                    @endforeach
+                                @endif
+
+                                {{-- create new survey form --}}
                                 <form action="{{ route('clients.storeSurvey', [$id, $type, $survey]) }}" method="POST"
                                     enctype="multipart/form-data">
                                     @csrf

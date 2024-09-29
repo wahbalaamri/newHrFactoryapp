@@ -9,7 +9,7 @@ class CustomizedSurveyFunctions extends Model
 {
     use HasFactory;
     //belongs to Customized Survey
-    public function survey()
+    public function Customizedsurvey()
     {
         return $this->belongsTo(CustomizedSurvey::class,'survey');
     }
@@ -27,6 +27,11 @@ class CustomizedSurveyFunctions extends Model
     public function getTranslatedTitleAttribute()
     {
         return app()->isLocale('en') ? $this->title : $this->title_ . app()->getLocale();
+    }
+    //belongs to survey
+    public function survey()
+    {
+        return $this->belongsTo(Surveys::class,'survey');
     }
 
 }

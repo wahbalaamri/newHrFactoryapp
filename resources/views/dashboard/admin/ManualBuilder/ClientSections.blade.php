@@ -510,7 +510,7 @@
                 data: {
                     id: section_id,
                     title: section_title,
-                    content: section_content,
+                    section_content: section_content,
                     IsHaveLineBefore: show_in_new_page,
                     _token: "{{ csrf_token() }}"
                 },
@@ -541,7 +541,7 @@
                 data: {
                     parent: parent,
                     title: section_title,
-                    content: section_content,
+                    section_content: section_content,
                     IsHaveLineBefore: show_in_new_page,
                     country: "{{ $client->country }}",
                     _token: "{{ csrf_token() }}",

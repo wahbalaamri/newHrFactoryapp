@@ -6,6 +6,7 @@ use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ClientSubscriptionsController;
 use App\Http\Controllers\CouponsController;
 use App\Http\Controllers\CustomizedEmployeeEngagmentController;
+use App\Http\Controllers\CustomizedSurveyController;
 use App\Http\Controllers\DefaultMBController;
 use App\Http\Controllers\EmailContentsController;
 use App\Http\Controllers\FunctionPracticesController;
@@ -244,6 +245,42 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::delete('ManageHrDiagnosis/deleteQuestion/{id}', [ManageHrDiagnosisController::class, 'deleteQuestion'])->name('ManageHrDiagnosis.deleteQuestion');
     Route::put('ManageHrDiagnosis/updatePractice/{id}', [ManageHrDiagnosisController::class, 'updatePractice'])->name('ManageHrDiagnosis.updatePractice');
     Route::get('Client/SurveyStat/{id}/{cid}/{type?}/{entity_id?}', [ManageHrDiagnosisController::class, 'SurveyStat'])->name('ManageHrDiagnosis.SurveyStat');
+    /*==================================================================================================================
+      =                                                                                                                =
+      =                                                                                                                =
+      =                                                                                                                =
+      =                                        SERVICE ManageHrDiagnosis ROUTES END                                                =
+      =                                                                                                                =
+      =                                                                                                                =
+      =                                                                                                                =
+      ==================================================================================================================*/
+    /*==================================================================================================================
+      =                                                                                                                =
+      =                                                                                                                =
+      =                                                                                                                =
+      =                                        SERVICE CustomizedSurvey ROUTES START                                              =
+      =                                                                                                                =
+      =                                                                                                                =
+      =                                                                                                                =
+      ==================================================================================================================*/
+    Route::get('CustomizedSurvey/Functions/{cid}/{sid}', [CustomizedSurveyController::class, 'Functions'])->name('CustomizedSurvey.Functions');
+    Route::get('CustomizedSurvey/createFunction/{cid}/{sid}', [CustomizedSurveyController::class, 'createFunction'])->name('CustomizedSurvey.createFunction');
+    Route::post('CustomizedSurvey/storeFunction/{cid}/{sid}', [CustomizedSurveyController::class, 'storeFunction'])->name('CustomizedSurvey.storeFunction');
+    Route::get('CustomizedSurvey/showPractices/{id}', [CustomizedSurveyController::class, 'showPractices'])->name('CustomizedSurvey.showPractices');
+    Route::get('CustomizedSurvey/createPractice/{id}', [CustomizedSurveyController::class, 'createPractice'])->name('CustomizedSurvey.createPractice');
+    Route::post('CustomizedSurvey/storePractice/{id}', [CustomizedSurveyController::class, 'storePractice'])->name('CustomizedSurvey.storePractice');
+    Route::get('CustomizedSurvey/showQuestions/{id}', [CustomizedSurveyController::class, 'showQuestions'])->name('CustomizedSurvey.showQuestions');
+    Route::get('CustomizedSurvey/editPractice/{id}', [CustomizedSurveyController::class, 'editPractice'])->name('CustomizedSurvey.editPractice');
+    Route::delete('CustomizedSurvey/destroyPractice/{id}', [CustomizedSurveyController::class, 'destroyPractice'])->name('CustomizedSurvey.destroyPractice');
+    Route::get('CustomizedSurvey/editFunction/{id}', [CustomizedSurveyController::class, 'editFunction'])->name('CustomizedSurvey.editFunction');
+    Route::put('CustomizedSurvey/updateFunction/{id}', [CustomizedSurveyController::class, 'updateFunction'])->name('CustomizedSurvey.updateFunction');
+    Route::delete('CustomizedSurvey/destroyFunction/{id}', [CustomizedSurveyController::class, 'destroyFunction'])->name('CustomizedSurvey.destroyFunction');
+    Route::get('CustomizedSurvey/createQuestion/{id}', [CustomizedSurveyController::class, 'createQuestion'])->name('CustomizedSurvey.createQuestion');
+    Route::post('CustomizedSurvey/storeQuestion/{id}', [CustomizedSurveyController::class, 'storeQuestion'])->name('CustomizedSurvey.storeQuestion');
+    Route::get('CustomizedSurvey/editQuestion/{id}', [CustomizedSurveyController::class, 'editQuestion'])->name('CustomizedSurvey.editQuestion');
+    Route::put('CustomizedSurvey/updateQuestion/{id}', [CustomizedSurveyController::class, 'updateQuestion'])->name('CustomizedSurvey.updateQuestion');
+    Route::delete('CustomizedSurvey/deleteQuestion/{id}', [CustomizedSurveyController::class, 'deleteQuestion'])->name('CustomizedSurvey.deleteQuestion');
+    Route::put('CustomizedSurvey/updatePractice/{id}', [CustomizedSurveyController::class, 'updatePractice'])->name('CustomizedSurvey.updatePractice');
     /*==================================================================================================================
       =                                                                                                                =
       =                                                                                                                =

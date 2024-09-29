@@ -44,10 +44,27 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-lg-3 col-6">
+                                @if ($survey->customized)
+                                <div class="col-lg-3 col-md-4 col-sm-12">
+                                    <div class="small-box bg-warning">
+                                        <div class="inner" style="min-height: 123px">
+                                            <h3 style="font-size: 136%;">{{ __('Manage Statements') }}</h3>
+                                            <p class="w-75">{{ __('Manage Customized Statements') }}</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="far fa-file-alt"></i>
+                                        </div>
+                                        <a href="{{ route('CustomizedSurvey.Functions',[$id,$survey->id]) }}"
+                                            class="small-box-footer">
+                                            {{ __('Start') }}<i class="fas fa-arrow-circle-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                @endif
+                                <div class="col-lg-3 col-md-4 col-sm-12">
                                     <div class="small-box bg-info">
                                         <div class="inner" style="min-height: 123px">
-                                            <h3 style="font-size: 1.6rem">{{ __('Respondents') }}</h3>
+                                            <h3 style="font-size: 136%;">{{ __('Respondents') }}</h3>
                                             <p class="w-75">{{ __('Manage Survey Respondents') }}</p>
                                         </div>
                                         <div class="icon">
@@ -59,10 +76,10 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-6">
+                                <div class="col-lg-3 col-md-4 col-sm-12">
                                     <div class="small-box bg-warning">
                                         <div class="inner" style="min-height: 123px">
-                                            <h3 style="font-size: 1.6rem">{{ __('Survey Email') }}</h3>
+                                            <h3 style="font-size: 136%;">{{ __('Survey Email') }}</h3>
                                             <p class="w-75">{{ __('Setup Email For Survey') }}</p>
                                         </div>
                                         <div class="icon">
@@ -74,11 +91,11 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-6">
+                                <div class="col-lg-3 col-md-4 col-sm-12">
 
                                     <div class="small-box bg-success">
                                         <div class="inner" style="min-height: 123px">
-                                            <h3 style="font-size: 1.6rem">{{ __('Send Survey') }}</h3>
+                                            <h3 style="font-size: 136%;">{{ __('Send Survey') }}</h3>
                                             <p class="w-75">{{ __('You Can Setup Sending Survey') }}</p>
                                         </div>
                                         <div class="icon">
@@ -90,11 +107,11 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-6">
+                                <div class="col-lg-3 col-md-4 col-sm-12">
 
                                     <div class="small-box bg-danger">
                                         <div class="inner" style="min-height: 123px">
-                                            <h3 style="font-size: 1.6rem">{{ __('Send Reminders') }}</h3>
+                                            <h3 style="font-size: 136%;">{{ __('Send Reminders') }}</h3>
                                             <p class="w-75">{{ __('You Can Setup Sending Reminders') }}</p>
                                         </div>
                                         <div class="icon">
@@ -105,10 +122,10 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-6">
+                                <div class="col-lg-3 col-md-4 col-sm-12">
                                     <div class="small-box bg-success">
                                         <div class="inner" style="min-height: 123px">
-                                            <h3 style="font-size: 1.6rem">{{ __('Statistics') }}</h3>
+                                            <h3 style="font-size: 136%;">{{ __('Statistics') }}</h3>
                                             <p class="w-75">{{ __('Get Survey Ststistics') }}</p>
                                         </div>
                                         <div class="icon">
@@ -120,10 +137,10 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-6">
+                                <div class="col-lg-3 col-md-4 col-sm-12">
                                     <div class="small-box bg-info">
                                         <div class="inner" style="min-height: 123px">
-                                            <h3 style="font-size: 1.6rem">{{ __('Results') }}</h3>
+                                            <h3 style="font-size: 136%;">{{ __('Results') }}</h3>
                                             <p class="w-75">{{ __('Get Survey Results') }}</p>
                                         </div>
                                         <div class="icon">

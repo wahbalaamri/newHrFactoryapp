@@ -37,5 +37,10 @@ class Surveys extends Model
     {
         return $this->hasMany(Respondents::class, 'survey_id');
     }
+    //relationship with CustomizedSurveyFunctions
+    public function Customizedfunctions()
+    {
+        return $this->hasMany(CustomizedSurveyFunctions::class, 'survey');
+    }
 
 }

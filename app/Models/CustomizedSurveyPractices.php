@@ -11,7 +11,7 @@ class CustomizedSurveyPractices extends Model
     //hasmany Customized survey questions
     public function questions()
     {
-        return $this->hasMany(CustomizedSurveyQuestions::class);
+        return $this->hasMany(CustomizedSurveyQuestions::class,'practice_id');
     }
     //belongs to Customized function
     public function function()

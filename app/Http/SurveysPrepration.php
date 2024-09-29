@@ -534,15 +534,74 @@ class SurveysPrepration
             $survey->customized = $use_default_stat;
             $survey->save();
             //if $use_default_stat is true
-            if ($use_default_stat) {
+            if ($use_default_stat == true && $survey->Customizedfunctions->count() == 0) {
                 //get service id by service type
                 $service_id = Services::where('service_type', $service_type)->first()->id;
                 //copy functions of the current survey to customized survey function
                 $functions = Functions::where('service_id', $service_id)->get();
                 foreach ($functions as $function) {
                     $new_function = new CustomizedSurveyFunctions();
-                    $new_function->function_id = $function->id;
-                    $new_function->survey_id = $survey->id;
+                    $new_function->survey = $survey->id;
+                    $new_function->client = $user_id;
+                    $new_function->system_function = $function->id;
+                    $new_function->title = $function->title;
+                    $new_function->title_ar = $function->title_ar;
+                    $new_function->title_in = $function->title_in;
+                    $new_function->title_urdo = $function->title_urdo;
+                    $new_function->title_fr = $function->title_fr;
+                    $new_function->title_sp = $function->title_sp;
+                    $new_function->title_bngla = $function->title_bngla;
+                    $new_function->title_tr = $function->title_tr;
+                    $new_function->title_pr = $function->title_pr;
+                    $new_function->title_ru = $function->title_ru;
+                    $new_function->title_ch = $function->title_ch;
+                    $new_function->respondent = $function->respondent;
+                    $new_function->status = $function->status;
+                    $new_function->IsDefault = $function->IsDefault;
+                    $new_function->IsDriver = $function->IsDriver;
+                    $new_function->save();
+                    foreach($function->practices as $practice){
+                        $new_practice = new CustomizedSurveyPractices();
+                        $new_practice->function_id = $new_function->id;
+                        $new_practice->system_practice = $practice->id;
+                        $new_practice->title = $practice->title;
+                        $new_practice->title_ar = $practice->title_ar;
+                        $new_practice->title_in = $practice->title_in;
+                        $new_practice->title_urdo = $practice->title_urdo;
+                        $new_practice->title_fr = $practice->title_fr;
+                        $new_practice->title_sp = $practice->title_sp;
+                        $new_practice->title_bngla = $practice->title_bngla;
+                        $new_practice->title_tr = $practice->title_tr;
+                        $new_practice->title_pr = $practice->title_pr;
+                        $new_practice->title_ru = $practice->title_ru;
+                        $new_practice->title_ch = $practice->title_ch;
+                        $new_practice->description = $practice->description;
+                        $new_practice->description_ar = $practice->description_ar;
+                        $new_practice->status = $practice->status;
+                        $new_practice->save();
+                        foreach($practice->questions as $question){
+                            $new_question = new CustomizedSurveyQuestions();
+                            $new_question->practice_id = $new_practice->id;
+                            $new_question->system_question = $question->id;
+                            $new_question->question = $question->question;
+                            $new_question->question_ar = $question->question_ar;
+                            $new_question->question_in = $question->question_in;
+                            $new_question->question_urdo = $question->question_urdo;
+                            $new_question->question_fr = $question->question_fr;
+                            $new_question->question_sp = $question->question_sp;
+                            $new_question->question_bngla = $question->question_bngla;
+                            $new_question->question_tr = $question->question_tr;
+                            $new_question->question_pr = $question->question_pr;
+                            $new_question->question_ru = $question->question_ru;
+                            $new_question->question_ch = $question->question_ch;
+                            $new_question->respondent = $question->respondent;
+                            $new_question->description = $question->description;
+                            $new_question->description_ar = $question->description_ar;
+                            $new_question->status = $question->status;
+                            $new_question->IsENPS = $question->IsENPS;
+                            $new_question->save();
+                        }
+                    }
                 }
             }
             if ($by_admin) {
@@ -555,6 +614,7 @@ class SurveysPrepration
                     ->with('success', 'Survey created successfully');
             }
         } catch (\Exception $e) {
+            Log::info($e);
             return redirect()->back()->with('error', $e->getMessage());
         }
     }

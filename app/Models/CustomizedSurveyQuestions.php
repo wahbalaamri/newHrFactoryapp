@@ -12,7 +12,7 @@ class CustomizedSurveyQuestions extends Model
     //belong to practice
     public function practice()
     {
-        return $this->belongsTo(CustomizedSurveyPractices::class);
+        return $this->belongsTo(CustomizedSurveyPractices::class,'practice_id');
     }
     //hasmany Customized survey answers
     public function answers()

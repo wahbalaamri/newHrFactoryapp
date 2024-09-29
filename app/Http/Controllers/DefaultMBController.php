@@ -149,7 +149,7 @@ class DefaultMBController extends Controller
             $section = DefaultMB::find($request->id);
             //update title, content and IsHaveLineBefore
             $section->title = $request->title;
-            $section->content = $request->content;
+            $section->content = $request->section_content;
             $section->IsHaveLineBefore = $IsHaveLineBefore;
             $section->save();
             return response()->json(['message' => 'Section updated successfully', 'stat' => true]);
@@ -170,7 +170,7 @@ class DefaultMBController extends Controller
             $section = new DefaultMB();
             $section->paren_id = $request->parent;
             $section->title = $request->title;
-            $section->content = $request->content;
+            $section->content = $request->section_content;
             $section->IsHaveLineBefore = $IsHaveLineBefore;
             $section->country_id = $request->country;
             $section->plan_id = $request->plan;
@@ -386,7 +386,7 @@ class DefaultMBController extends Controller
             $section = UserSections::find($request->id);
             //update title, content and IsHaveLineBefore
             $section->title = $request->title;
-            $section->content = $request->content;
+            $section->content = $request->section_content;
             $section->IsHaveLineBefore = $IsHaveLineBefore;
             $section->save();
             return response()->json(['message' => 'Section updated successfully', 'stat' => true]);
@@ -408,7 +408,7 @@ class DefaultMBController extends Controller
             $section->paren_id = $request->parent;
             $section->user_id = $request->user_id;
             $section->title = $request->title;
-            $section->content = $request->content;
+            $section->content = $request->section_content;
             $section->IsHaveLineBefore = $IsHaveLineBefore;
             $section->country_id = $request->country;
             $section->language = $lang == 'en' ? 'en' : 'ar';
