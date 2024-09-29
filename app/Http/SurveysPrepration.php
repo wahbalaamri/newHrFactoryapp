@@ -543,7 +543,6 @@ class SurveysPrepration
                     $new_function = new CustomizedSurveyFunctions();
                     $new_function->function_id = $function->id;
                     $new_function->survey_id = $survey->id;
-
                 }
             }
             if ($by_admin) {
@@ -4580,7 +4579,7 @@ class SurveysPrepration
                         'employee' => count($employees),
                         'respondents' => count($respondents),
                         'answered' => $answered,
-                        'percentage' => ($answered / count($respondents)) * 100,
+                        'percentage' => count($respondents) == 0 ? 0 : (($answered / count($respondents)) * 100),
                         'type' => 'department'
                     ];
                     array_push($super_dir_stat, $entity_stat);
