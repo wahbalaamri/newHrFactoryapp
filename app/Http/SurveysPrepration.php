@@ -4686,7 +4686,7 @@ class SurveysPrepration
                 'sum_of_employees' => count($employees_),
                 'sum_of_respondents' => count($respondents_),
                 'sum_of_answered' => $answered_,
-                'total_percentage' => ($answered_ / count($respondents_)) * 100,
+                'total_percentage' => count($respondents_)==0?0:(($answered_ / count($respondents_)) * 100),
                 'client' => $client,
                 'type' => $survey->plans->service_->service_type
             ];
