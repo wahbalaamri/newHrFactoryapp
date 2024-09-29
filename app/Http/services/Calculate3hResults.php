@@ -544,12 +544,12 @@ class Calculate3hResults
             $sum_enps_unfavorable += $singl_data['enps_unfavorable'];
         }
         //get average of functions
-        $hand_favorable_score = $sum_hand_favorable_score / $data_size;
-        $head_favorable_score = $sum_head_favorable_score / $data_size;
-        $heart_favorable_score = $sum_heart_favorable_score / $data_size;
-        $out_come_favorable_val = $sum_out_come_favorable_val / $data_size;
-        $enps_favorable = $sum_enps_favorable / $data_size;
-        $enps_unfavorable = $sum_enps_unfavorable / $data_size;
+        $hand_favorable_score = $data_size == 0 ? 0 : $sum_hand_favorable_score / $data_size;
+        $head_favorable_score = $data_size == 0 ? 0 : $sum_head_favorable_score / $data_size;
+        $heart_favorable_score = $data_size == 0 ? 0 : $sum_heart_favorable_score / $data_size;
+        $out_come_favorable_val = $data_size == 0 ? 0 : $sum_out_come_favorable_val / $data_size;
+        $enps_favorable = $data_size == 0 ? 0 : $sum_enps_favorable / $data_size;
+        $enps_unfavorable = $data_size == 0 ? 0 : $sum_enps_unfavorable / $data_size;
         foreach ($functions as $function) {
             if ($function->IsDriver) {
                 $function_results = [
