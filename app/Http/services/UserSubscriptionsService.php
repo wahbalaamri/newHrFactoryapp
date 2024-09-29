@@ -36,7 +36,7 @@ class UserSubscriptionsService
         Log::info("plan");
         Log::info($plan);
         //if plan is not premium and it has at least one survey
-        if ($plan->plan_type!=1 && $plan->surveys->count() > 0) {
+        if ($plan->plan_type!=1 && $plan->surveys->where('client_id',$user_id)->count() > 0) {
             Log::info("premium");
             return false;
         }
