@@ -744,7 +744,7 @@ class SurveysPrepration
                 $department->name_ar = $request->name_ar;
                 //is hr
                 $department->is_hr = $is_hr;
-                $department->dep_level = 0;
+                $department->dep_level = 1;
                 $department->save();
                 //json response with status
                 return response()->json(['status' => true, 'message' => 'Department created successfully', 'department' => $department]);

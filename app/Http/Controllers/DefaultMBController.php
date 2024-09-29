@@ -35,12 +35,9 @@ class DefaultMBController extends Controller
             //get all terms
             //get all countries
             $countries = Countries::all()->groupBy('IsArabCountry');
-        } elseif ($user_type == 'partner') {
+        } elseif ($user_type == "partner") {
             //get all partnerships
-            $partnerships_countries = Partnerships::where('partner_id', auth()->user()->partner_id)
-                ->get()
-                ->pluck('country_id')
-                ->toArray();
+            $partnerships_countries = Partnerships::where('partner_id', auth()->user()->partner_id)->get()->pluck('country_id')->toArray();
             //get all terms where plan is null
             //get countries
             $countries = Countries::whereIn('id', $partnerships_countries)->get();
@@ -50,12 +47,7 @@ class DefaultMBController extends Controller
         }
         $sections = [];
         if ($plan != null) {
-            $sections = DefaultMB::where('country_id', $country)
-                ->where('plan_id', $plan)
-                ->whereNull('paren_id')
-                ->where('language', app()->isLocale('en') ? 'en' : 'ar')
-                ->orderBy('ordering')
-                ->get();
+            $sections = DefaultMB::where('country_id', $country)->where('plan_id', $plan)->whereNull('paren_id')->where('language', app()->isLocale('en') ? 'en' : 'ar')->orderBy('ordering')->get();
             if (count($sections) > 0) {
                 //get countries which has DefaultMB
                 $available_countries = Countries::whereHas('defaultMB', function ($query) {
@@ -70,18 +62,12 @@ class DefaultMBController extends Controller
         //get defualt country
         $default_country = Countries::where('name', 'Oman')->first();
         if (count($plans) > 0) {
-            if (count($sections) == 0 && $plan == null) {
+            if (count($sections) == 0 && $plan == null)
                 return redirect()->route('manualBuilder.index', [$default_country->id, $plans[0]->id]);
-            }
         }
         if (count($plans) > 0 && count($sections) == 0) {
             //get unique plans id of current country sections
-            $exist_plans_id = DefaultMB::where('country_id', $country)
-                ->where('language', app()->isLocale('en') ? 'en' : 'ar')
-                ->whereNotNull('plan_id')
-                ->groupBy('plan_id')
-                ->pluck('plan_id')
-                ->toArray();
+            $exist_plans_id = DefaultMB::where('country_id', $country)->where('language', app()->isLocale('en') ? 'en' : 'ar')->whereNotNull('plan_id')->groupBy('plan_id')->pluck('plan_id')->toArray();
         }
         $data = [
             'sections' => $sections,
@@ -157,7 +143,7 @@ class DefaultMBController extends Controller
     public function updateSection(Request $request)
     {
         try {
-            $IsHaveLineBefore = $request->IsHaveLineBefore == 'true' ? true : false;
+            $IsHaveLineBefore = $request->IsHaveLineBefore == "true" ? true : false;
             $lang = app()->getLocale();
             //find section by id
             $section = DefaultMB::find($request->id);
@@ -176,13 +162,10 @@ class DefaultMBController extends Controller
     public function storeSection(Request $request)
     {
         try {
-            $IsHaveLineBefore = $request->IsHaveLineBefore == 'true' ? true : false;
+            $IsHaveLineBefore = $request->IsHaveLineBefore == "true" ? true : false;
             $lang = app()->getLocale();
             //find max ordering
-            $maxOrdering = DefaultMB::where('country_id', $request->country)
-                ->where('paren_id', $request->parent)
-                ->where('language', $lang == 'en' ? 'en' : 'ar')
-                ->max('ordering');
+            $maxOrdering = DefaultMB::where('country_id', $request->country)->where('paren_id', $request->parent)->where('language', $lang == 'en' ? 'en' : 'ar')->max('ordering');
             //create new section
             $section = new DefaultMB();
             $section->paren_id = $request->parent;
@@ -211,10 +194,7 @@ class DefaultMBController extends Controller
             $default_country = Countries::where('name', 'Oman')->first();
             $default_counrty = $default_country->id;
             //get all section for default country
-            $sections = DefaultMB::where('country_id', $default_counrty)
-                ->where('plan_id', $request->new_plan)
-                ->whereNull('paren_id')
-                ->get();
+            $sections = DefaultMB::where('country_id', $default_counrty)->where('plan_id', $request->new_plan)->whereNull('paren_id')->get();
             $new_country = $request->new_country;
             //add all section to new country
             foreach ($sections as $section) {
@@ -263,7 +243,7 @@ class DefaultMBController extends Controller
     {
         try {
             $section = DefaultMB::find($request->id);
-            $section->IsActive = $request->IsActive == 'true' ? true : false;
+            $section->IsActive = $request->IsActive == "true" ? true : false;
             $section->save();
             return response()->json(['message' => 'Section updated successfully', 'stat' => true]);
         } catch (\Exception $e) {
@@ -276,7 +256,7 @@ class DefaultMBController extends Controller
     {
         try {
             $section = DefaultMB::find($request->id);
-            if ($request->type == 'p' && count($section->children) > 0 && $section) {
+            if ($request->type == "p" && (count($section->children) > 0) && $section) {
                 foreach ($section->children as $child) {
                     $child->delete();
                 }
@@ -295,11 +275,11 @@ class DefaultMBController extends Controller
             //get service of manaul builder
             $service = Services::where('service_type', 1)->first();
             //get ids plans of manual builder
-            $plans = Plans::where('service', $service->id)
-                ->pluck('id')
-                ->toArray();
+            $plans = Plans::where('service', $service->id)->pluck('id')->toArray();
             //get active user subscriptions
-            $subscriptions = ClientSubscriptions::where('client_id', $id)->whereIn('plan_id', $plans)->where('is_active', true)->first();
+            $subscriptions = ClientSubscriptions::where('client_id', $id)
+                ->whereIn('plan_id', $plans)
+                ->where('is_active', true)->first();
             //get type of plan
             $plan_type = Plans::where('id', $subscriptions->plan_id)->first()->plan_type;
             $sections = UserSections::where('user_id', $id)->whereNull('paren_id')->where('language', app()->getLocale())->get();
@@ -309,7 +289,7 @@ class DefaultMBController extends Controller
                 'contents' => $contents,
                 'id' => $id,
                 'client' => Clients::find($id),
-                'plan_type' => $plan_type,
+                'plan_type' => $plan_type
             ];
             return view('dashboard.admin.ManualBuilder.ClientSections')->with($data);
         } catch (\Exception $e) {
@@ -343,12 +323,9 @@ class DefaultMBController extends Controller
             $sections = count($sections) > 0 ? $sections : DefaultMB::where('country_id', 155)->where('plan_id', $subscribed_plan)->whereNull('paren_id')->get();
             foreach ($sections as $section) {
                 //check if the section already there
-                $new_section = UserSections::where('default_MB_id', $section->id)
-                    ->where('user_id', $id)
-                    ->first();
-                if (!$new_section) {
+                $new_section = UserSections::where('default_MB_id', $section->id)->where('user_id', $id)->first();
+                if (!$new_section)
                     $new_section = new UserSections();
-                }
                 $new_section->paren_id = $section->paren_id;
                 $new_section->title = $section->title;
                 $new_section->content = $section->content;
@@ -403,7 +380,7 @@ class DefaultMBController extends Controller
     public function clientSectionsupdate(Request $request)
     {
         try {
-            $IsHaveLineBefore = $request->IsHaveLineBefore == 'true' ? true : false;
+            $IsHaveLineBefore = $request->IsHaveLineBefore == "true" ? true : false;
             $lang = app()->getLocale();
             //find section by id
             $section = UserSections::find($request->id);
@@ -422,13 +399,10 @@ class DefaultMBController extends Controller
     public function clientSectionsstore(Request $request)
     {
         try {
-            $IsHaveLineBefore = $request->IsHaveLineBefore == 'true' ? true : false;
+            $IsHaveLineBefore = $request->IsHaveLineBefore == "true" ? true : false;
             $lang = app()->getLocale();
             //find max ordering
-            $maxOrdering = UserSections::where('country_id', $request->country)
-                ->where('paren_id', $request->parent)
-                ->where('language', $lang == 'en' ? 'en' : 'ar')
-                ->max('ordering');
+            $maxOrdering = UserSections::where('country_id', $request->country)->where('paren_id', $request->parent)->where('language', $lang == 'en' ? 'en' : 'ar')->max('ordering');
             //create new section
             $section = new UserSections();
             $section->paren_id = $request->parent;
@@ -455,7 +429,7 @@ class DefaultMBController extends Controller
     {
         try {
             $section = UserSections::find($request->id);
-            $section->IsActive = $request->IsActive == 'true' ? true : false;
+            $section->IsActive = $request->IsActive == "true" ? true : false;
             $section->save();
             return response()->json(['message' => 'Section updated successfully', 'stat' => true]);
         } catch (\Exception $e) {
@@ -468,7 +442,7 @@ class DefaultMBController extends Controller
     {
         try {
             $section = UserSections::find($request->id);
-            if ($request->type == 'p' && count($section->children) > 0 && $section) {
+            if ($request->type == "p" && (count($section->children) > 0) && $section) {
                 foreach ($section->children as $child) {
                     $child->delete();
                 }
@@ -492,6 +466,8 @@ class DefaultMBController extends Controller
             $date = date('Y-m-d');
             $image = null;
             if ($client->logo_path != null) {
+
+
                 $url = public_path('uploads/companies/logos/' . $client->logo_path);
                 $imageContents = file_get_contents($url);
 
@@ -510,25 +486,10 @@ class DefaultMBController extends Controller
                 'client' => $client,
                 //date now
                 'date' => $date,
-                'image' => $image,
+                'image' => $image
             ];
             //load view
             // return view('dashboard.admin.ManualBuilder.manualBuilderTemplate')->with($data);
-            $html_content =
-                ' <!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>Arabic PDF</title><style>@font-face {font-family: "Amiri";src: url("https://hrfactoryapp.com/fonts/Amiri-Bold.ttf");} body { font-family: "Amiri", sans-serif;direction: rtl;text-align: right;}</style></head><body>';
-            $html_content .= '<div class="invoice p-3 mb-3"><div><div class="row"><div class="col-12"><h4><i class="fas fa-globe"></i>' . __('HR Policy') . '<small class="float-right"></small></h4></div></div><div class="row invoice-info text-center mt-5 pt-5"><div class="col-12 invoice-col"><figure class="figure"><img src="' . $image . '" class="figure-img img-fluid rounded" alt="..."><figcaption class="figure-caption text-center">' . $client->client_name . ' ' .  __('Logo') . '</figcaption></figure><address class="text-center"><strong>{{ $client->client_name }}</strong><br>' . __('Electronic HR Policy') . '<br>' . __('Printed Specially For') . ' ' . $client->client_name . '<br>' . __('Printed on ') . ' ' . $date . '<br></address></div></div></div>';
-            $isTableofContent = false;
-            $isNextofTableofContent = false;
-            foreach ($sections as $section) {
-                if ($section->title == 'Table of Content') {
-                    $isTableofContent = true;
-                }
-                elseif ($section->title != 'Table of Content' && $isTableofContent) {
-                    $isNextofTableofContent = true;
-                    $isTableofContent = false;
-                }
-            }
-            //load view
             $pdf = PDF::loadView('dashboard.admin.ManualBuilder.manualBuilderTemplate', compact('sections', 'client', 'date', 'image'));
             $pdf->setPaper('a4', 'portrait');
             $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);

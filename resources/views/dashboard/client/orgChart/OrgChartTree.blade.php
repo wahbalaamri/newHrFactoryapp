@@ -21,7 +21,7 @@
                                                     @if($department->subDepartments->count()>0)
 
                                                 <details>
-                                                    <summary><span class="m-1 p-1 bg-success"> {{ $department->name_en }} <i class="fa fa-user-plus"></i>
+                                                    <summary><span class="m-1 p-1 bg-success"> {{ 'c-'. $department->dep_level .' '. $department->name_en }} <i class="fa fa-user-plus"></i>
                                                         <sub class="text-wihte" style="font-size: 0.6rem;">{{ __('Right Click To Add') }}</sub>
                                                     </span></summary>
                                                     @include('dashboard.client.orgChart.subDepartments',['subDepartments'=>$department->subDepartments])
@@ -33,7 +33,9 @@
                                                 @endif
                                             </li>
                                             @endforeach
-                                            @if($client->use_sections)
+                                            @if($client->use_departments && $department->dep_level <4 )
+                                            <li><a href="javascript:void(0)" onclick="ShowAdd('{{ $client->id }}','{{ $department->id }}','sub-dep')" class="btn btn-sm btn-info">{{ __('Add Sub-Department') }}</a></li>
+                                            @elseif($client->use_sections && $department->dep_level <5)
                                             <li><a href="javascript:void(0)" onclick="ShowAdd('{{ $client->id }}','{{ $department->id }}','sub-dep')" class="btn btn-sm btn-info">{{ __('Add Sub-Department') }}</a></li>
                                             @endif
                                         </ul>
@@ -46,9 +48,9 @@
                                 <li>
                                     <div class="row">
                                         <div class="col-6 text-center"><a href="javascript:void(0)" onclick="ShowAdd('{{ $client->id }}','{{ $sector->id }}','comp')"  class="btn btn-sm btn-success">{{ __('Add Company') }}</a></div>
-                                        @if($company->departments->count()==0 && $client->use_departments && $sector->companies->count()>0)
-                                        <div class="col-6 text-center"><a href="javascript:void(0)" onclick="ShowAdd('{{ $client->id }}','{{ $company->id }}','dep')" class="btn btn-sm btn-warning">{{ __('Add Department') }}</a></div>
-                                        @endif
+                                        @if( ($client->use_departments ))
+                                            <div class="col-6 text-center"><a href="javascript:void(0)" onclick="ShowAdd('{{ $client->id }}','{{ $company->id }}','dep')" class="btn btn-sm btn-warning">{{ __('Add Department') }}</a></div>
+                                            @endif
                                     </div>
                                 </li>
                             </ul>
