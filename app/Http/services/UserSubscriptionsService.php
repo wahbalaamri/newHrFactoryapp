@@ -29,11 +29,13 @@ class UserSubscriptionsService
         //get plan
         $plan = Plans::find($plan_id);
         //if plan is not premium and it has at least one survey
-        if ($plan->plan_type!=1 && $plan->surveys->where('client_id',$user_id)->count() > 0) {
+        if ($plan->plan_type != 1 && $plan->surveys->where('client_id', $user_id)->count() > 0) {
+            if ($plan->plan_type == 5 && $plan->surveys->where('client_id', $user_id)->count() > 3)
+                return true;
             return false;
         }
         //if plan is premium and it has one survey is active
-        if ($plan->plan_type==1 && $plan->surveys->where('is_active', true)->count() > 0) {
+        if ($plan->plan_type == 1 && $plan->surveys->where('is_active', true)->count() > 0) {
             return false;
         }
         return true;
@@ -54,17 +56,18 @@ class UserSubscriptionsService
             $subscription->save();
         }
     }
-    public function canViewService($user_role, $client_id, $service_type):bool{
-        if($user_role=='admin'){
+    public function canViewService($user_role, $client_id, $service_type): bool
+    {
+        if ($user_role == 'admin') {
             return true;
         }
         //get service
         $service = Services::where('service_type', $service_type)->first();
-        if($service){
-            if($service->public_availability){
+        if ($service) {
+            if ($service->public_availability) {
                 return true;
             }
-            if($service->service_client==$client_id){
+            if ($service->service_client == $client_id) {
                 return true;
             }
         }
