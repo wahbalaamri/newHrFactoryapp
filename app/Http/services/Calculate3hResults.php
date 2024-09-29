@@ -557,7 +557,7 @@ class Calculate3hResults
                     'function_title' => $function->translated_title,
                     'Nuetral_score' => floatval(
                         number_format(
-                            collect($driver_functions)
+                            $data_size == 0 ? 0 : collect($driver_functions)
                                 ->where('function', $function->id)
                                 ->sum('Nuetral_score') / $data_size,
                             2,
@@ -565,7 +565,7 @@ class Calculate3hResults
                     ),
                     'Favorable_score' => floatval(
                         number_format(
-                            collect($driver_functions)
+                            $data_size == 0 ? 0 : collect($driver_functions)
                                 ->where('function', $function->id)
                                 ->sum('Favorable_score') / $data_size,
                             2,
@@ -573,7 +573,7 @@ class Calculate3hResults
                     ),
                     'UnFavorable_score' => floatval(
                         number_format(
-                            collect($driver_functions)
+                            $data_size == 0 ? 0 : collect($driver_functions)
                                 ->where('function', $function->id)
                                 ->sum('UnFavorable_score') / $data_size,
                             2,
@@ -582,7 +582,7 @@ class Calculate3hResults
                     //get count of Favorable answers
                     'Favorable_count' => floatval(
                         number_format(
-                            collect($driver_functions)
+                            $data_size == 0 ? 0 : collect($driver_functions)
                                 ->where('function', $function->id)
                                 ->sum('Favorable_count') / $data_size,
                             2,
@@ -591,7 +591,7 @@ class Calculate3hResults
                     //get count of UnFavorable answers
                     'UnFavorable_count' => floatval(
                         number_format(
-                            collect($driver_functions)
+                            $data_size == 0 ? 0 : collect($driver_functions)
                                 ->where('function', $function->id)
                                 ->sum('UnFavorable_count') / $data_size,
                             2,
@@ -600,7 +600,7 @@ class Calculate3hResults
                     //get count of Nuetral answers
                     'Nuetral_count' => floatval(
                         number_format(
-                            collect($driver_functions)
+                            $data_size == 0 ? 0 : collect($driver_functions)
                                 ->where('function', $function->id)
                                 ->sum('Nuetral_count') / $data_size,
                             2,
@@ -615,21 +615,21 @@ class Calculate3hResults
                         'practice_title' => App()->getLocale() == 'en' ? $practice->title : $practice->title_ar,
                         'Nuetral_score' => floatval(
                             number_format(
-                                collect($practices)
+                                $data_size == 0 ? 0 : collect($practices)
                                     ->where('practice_id', $practice->id)
                                     ->sum('Nuetral_score') / $data_size,
                             ),
                         ),
                         'Favorable_score' => floatval(
                             number_format(
-                                collect($practices)
+                                $data_size == 0 ? 0 : collect($practices)
                                     ->where('practice_id', $practice->id)
                                     ->sum('Favorable_score') / $data_size,
                             ),
                         ),
                         'UnFavorable_score' => floatval(
                             number_format(
-                                collect($practices)
+                                $data_size == 0 ? 0 : collect($practices)
                                     ->where('practice_id', $practice->id)
                                     ->sum('UnFavorable_score') / $data_size,
                             ),
@@ -637,7 +637,7 @@ class Calculate3hResults
                         //get count of Favorable answers
                         'Favorable_count' => floatval(
                             number_format(
-                                collect($practices)
+                                $data_size == 0 ? 0 : collect($practices)
                                     ->where('practice_id', $practice->id)
                                     ->sum('Favorable_count') / $data_size,
                             ),
@@ -645,7 +645,7 @@ class Calculate3hResults
                         //get count of UnFavorable answers
                         'UnFavorable_count' => floatval(
                             number_format(
-                                collect($practices)
+                                $data_size == 0 ? 0 : collect($practices)
                                     ->where('practice_id', $practice->id)
                                     ->sum('UnFavorable_count') / $data_size,
                             ),
@@ -653,7 +653,7 @@ class Calculate3hResults
                         //get count of Nuetral answers
                         'Nuetral_count' => floatval(
                             number_format(
-                                collect($practices)
+                                $data_size == 0 ? 0 : collect($practices)
                                     ->where('practice_id', $practice->id)
                                     ->sum('Nuetral_count') / $data_size,
                             ),
@@ -666,7 +666,7 @@ class Calculate3hResults
                     if ($practice->questions->first()->IsENPS) {
                         $Favorable = floatval(
                             number_format(
-                                collect($ENPS_data_array)
+                                $data_size == 0 ? 0 : collect($ENPS_data_array)
                                     ->where('practice_id', $practice->id)
                                     ->sum('Favorable_score') / $data_size,
                                 2,
@@ -674,7 +674,7 @@ class Calculate3hResults
                         );
                         $UnFavorable = floatval(
                             number_format(
-                                collect($ENPS_data_array)
+                                $data_size == 0 ? 0 : collect($ENPS_data_array)
                                     ->where('practice_id', $practice->id)
                                     ->sum('UnFavorable_score') / $data_size,
                                 2,
@@ -686,7 +686,7 @@ class Calculate3hResults
                             'practice_title' => App()->getLocale() == 'en' ? $practice->title : $practice->title_ar,
                             'Nuetral_score' => floatval(
                                 number_format(
-                                    collect($ENPS_data_array)
+                                    $data_size == 0 ? 0 : collect($ENPS_data_array)
                                         ->where('practice_id', $practice->id)
                                         ->sum('Nuetral_score') / $data_size,
                                     2,
@@ -695,7 +695,7 @@ class Calculate3hResults
                             //get count of Favorable answers
                             'Favorable_count' => floatval(
                                 number_format(
-                                    collect($ENPS_data_array)
+                                    $data_size == 0 ? 0 : collect($ENPS_data_array)
                                         ->where('practice_id', $practice->id)
                                         ->sum('Favorable_count') / $data_size,
                                     2,
@@ -704,7 +704,7 @@ class Calculate3hResults
                             //get count of UnFavorable answers
                             'UnFavorable_count' => floatval(
                                 number_format(
-                                    collect($ENPS_data_array)
+                                    $data_size == 0 ? 0 : collect($ENPS_data_array)
                                         ->where('practice_id', $practice->id)
                                         ->sum('UnFavorable_count') / $data_size,
                                     2,
@@ -713,7 +713,7 @@ class Calculate3hResults
                             //get count of Nuetral answers
                             'Nuetral_count' => floatval(
                                 number_format(
-                                    collect($ENPS_data_array)
+                                    $data_size == 0 ? 0 : collect($ENPS_data_array)
                                         ->where('practice_id', $practice->id)
                                         ->sum('Nuetral_count') / $data_size,
                                     2,
@@ -727,7 +727,7 @@ class Calculate3hResults
                 }
                 $out_come_favorable = floatval(
                     number_format(
-                        collect($outcome_functions)
+                        $data_size == 0 ? 0 : collect($outcome_functions)
                             ->where('function', $function->id)
                             ->sum('Favorable_score') / $data_size,
                         2,
@@ -735,7 +735,7 @@ class Calculate3hResults
                 );
                 $out_come_unfavorable = floatval(
                     number_format(
-                        collect($outcome_functions)
+                        $data_size == 0 ? 0 : collect($outcome_functions)
                             ->where('function', $function->id)
                             ->sum('UnFavorable_score') / $data_size,
                         2,
@@ -747,7 +747,7 @@ class Calculate3hResults
                     'function_title' => $function->translated_title,
                     'Nuetral_score' => floatval(
                         number_format(
-                            collect($outcome_functions)
+                            $data_size == 0 ? 0 : collect($outcome_functions)
                                 ->where('function', $function->id)
                                 ->sum('Nuetral_score') / $data_size,
                             2,
@@ -758,7 +758,7 @@ class Calculate3hResults
                     //get count of Favorable answers
                     'Favorable_count' => floatval(
                         number_format(
-                            collect($outcome_functions)
+                            $data_size == 0 ? 0 : collect($outcome_functions)
                                 ->where('function', $function->id)
                                 ->sum('Favorable_count') / $data_size,
                             2,
@@ -767,7 +767,7 @@ class Calculate3hResults
                     //get count of UnFavorable answers
                     'UnFavorable_count' => floatval(
                         number_format(
-                            collect($outcome_functions)
+                            $data_size == 0 ? 0 : collect($outcome_functions)
                                 ->where('function', $function->id)
                                 ->sum('UnFavorable_count') / $data_size,
                             2,
@@ -776,7 +776,7 @@ class Calculate3hResults
                     //get count of Nuetral answers
                     'Nuetral_count' => floatval(
                         number_format(
-                            collect($outcome_functions)
+                            $data_size == 0 ? 0 : collect($outcome_functions)
                                 ->where('function', $function->id)
                                 ->sum('Nuetral_count') / $data_size,
                             2,
