@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 
 <head>
     <meta charset="UTF-8">
@@ -124,6 +124,11 @@
             --bs-form-valid-border-color: #198754;
             --bs-form-invalid-color: #dc3545;
             --bs-form-invalid-border-color: #dc3545
+        }
+
+        @font-face {
+            font-family: 'Amiri';
+            src: url('https://hrfactoryapp.com/fonts/Amiri-Bold.ttf') format('truetype');
         }
 
         body {
@@ -759,69 +764,74 @@
             </div>
         </div>
         @php
-            $isTableofContent = false;
-            $isNextofTableofContent = false;
+        $isTableofContent = false;
+        $isNextofTableofContent = false;
         @endphp
         @foreach ($sections as $section)
-            {{-- check if title has Table of content --}}
-            @if ($section->title == 'Table of Content')
-                @php
-                    $isTableofContent = true;
-                @endphp
-            @elseif($section->title != 'Table of Content' && $isTableofContent)
-                @php
-                    $isNextofTableofContent = true;
-                    $isTableofContent = false;
-                @endphp
-            @else
-                @php
-                    $isNextofTableofContent = false;
-                    $isTableofContent = false;
-                @endphp
-            @endif
-            <div @if ($section->IsHaveLineBefore || $loop->first || $isTableofContent || $isNextofTableofContent) style="page-break-before:always" @endif>
-                <div class="row">
-                    <div class="col-12">
-                        <h4>
-                            <i class="fas fa-globe"></i>{{ $section->title }}
-                            <small class="float-right"></small>
-                        </h4>
-                    </div>
-
+        {{-- check if title has Table of content --}}
+        @if ($section->title == 'Table of Content')
+        @php
+        $isTableofContent = true;
+        @endphp
+        @elseif($section->title != 'Table of Content' && $isTableofContent)
+        @php
+        $isNextofTableofContent = true;
+        $isTableofContent = false;
+        @endphp
+        @else
+        @php
+        $isNextofTableofContent = false;
+        $isTableofContent = false;
+        @endphp
+        @endif
+        <div @if ($section->IsHaveLineBefore || $loop->first || $isTableofContent || $isNextofTableofContent)
+            style="page-break-before:always" @endif>
+            <div class="row">
+                <div class="col-12">
+                    <h4 @if (isArabic($section->title ))style=" text-align: right !important; direction: rtl !important;
+                        " @endif>
+                        <i class="fas fa-globe"></i>{{ $section->title }}
+                        <small class="float-right"></small>
+                    </h4>
                 </div>
 
-                <div class="row invoice-info text-center">
-                    <div class="col-12">
-                        {!! $section->content !!}
-
-                    </div>
-
-
-                </div>
             </div>
-            @if (count($section->children) > 0)
-                @foreach ($section->children->where('IsActive', true) as $child)
-                    <div @if ($child->IsHaveLineBefore) style="page-break-before:always" @endif>
-                        <div class="row">
-                            <div class="col-12">
-                                <h4>
-                                    <i class="fas fa-globe"></i>{{ $child->title }}
-                                    <small class="float-right"></small>
-                                </h4>
-                            </div>
 
-                        </div>
+            <div class="row invoice-info text-center">
 
-                        <div class="row invoice-info text-center">
-                            <div class="col-12">
-                                {!! $child->content !!}
-                            </div>
+                <div class="col-12" @if (isArabic($section->content ))style=" text-align: right; direction: rtl; font-family: DejaVu Sans, sans-serif !important;" @endif
+                    dir="{{ isArabic($section->content )?'rtl':'ltr' }}">
+                    {!! $section->content !!}
+
+                </div>
 
 
-                        </div>
-                    </div>
-                @endforeach
-            @endif
+
+            </div>
+        </div>
+        @if (count($section->children) > 0)
+        @foreach ($section->children->where('IsActive', true) as $child)
+        <div @if ($child->IsHaveLineBefore) style="page-break-before:always" @endif>
+            <div class="row">
+                <div class="col-12">
+                    <h4>
+                        <i class="fas fa-globe"></i>{{ $child->title }}
+                        <small class="float-right"></small>
+                    </h4>
+                </div>
+
+            </div>
+
+            <div class="row invoice-info text-center">
+                <div class="col-12" @if (isArabic($child->content ))style=" text-align: right; direction: rtl;" @endif>
+                    {!! $child->content !!}
+                </div>
+
+
+            </div>
+        </div>
+        @endforeach
+        @endif
         @endforeach
     </div>
 </body>

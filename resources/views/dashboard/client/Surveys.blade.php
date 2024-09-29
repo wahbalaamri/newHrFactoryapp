@@ -53,7 +53,7 @@
                                         <div class="table-responsive">
                                             <table id="surveysDataTable" class="table table table-bordered data-table">
                                                 <thead>
-                                                    <tr>
+                                                    <tr class="text-center">
                                                         <th scope="">#</th>
                                                         <th scope="">{{ __('Survey Name') }}</th>
                                                         <th scope="">{{ __('Service') }}</th>
@@ -61,15 +61,14 @@
                                                         <th scope="">{{ __('Survey Status') }}</th>
                                                         <th scope="">{{ __('Survey Date') }}</th>
                                                         <th scope="">{{ __('Start') }}</th>
-                                                        <th colspan="3" scope="">
-                                                            {{ __('Survey
-                                                                                                                    Actions') }}
+                                                        <th scope="">
+                                                            {{ __('Survey Actions') }}
                                                         </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($client_survyes as $survey)
-                                                        <tr {{-- role="button"
+                                                        <tr class="text-center" {{-- role="button"
                                                     onclick="window.location.replace('{{ route('clients.surveyDetails',[$id,$type,$survey->id])}}');"
                                                     --}}>
                                                             <td>{{ $loop->iteration }}</td>
@@ -101,20 +100,10 @@
                                                             <td><a href="{{ route('clients.surveyDetails', [$id, $type, $survey->id]) }}"
                                                                     class="btn btn-info btn-sm m-1"><i
                                                                         class="fa fa-eye"></i></a></td>
-                                                            <td><a href="{{ route('clients.editSurvey', [$id, $type, $survey->id]) }}"
-                                                                    class="edit btn btn-primary btn-sm m-1"><i
-                                                                        class="fa fa-edit"></i></a></td>
-
                                                             <td>
-                                                                <form
-                                                                    action="{{ route('clients.destroySurvey', [$id, $type, $survey->id]) }}"
-                                                                    method="POST" class="delete_form"
-                                                                    style="display:inline">
-                                                                    <input type="hidden" name="_method"
-                                                                        value="DELETE">@csrf<button type="submit"
-                                                                        class="btn btn-danger btn-sm m-1"><i
-                                                                            class="fa fa-trash"></i></button>
-                                                                </form>
+                                                                <a href="{{ route('clients.editSurvey', [$id, $type, $survey->id]) }}"
+                                                                    class="edit btn btn-primary btn-sm m-1"><i
+                                                                        class="fa fa-edit"></i></a>
                                                             </td>
                                                         </tr>
                                                     @endforeach

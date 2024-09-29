@@ -70,7 +70,7 @@
                                                 <th>{{__('Company Phone')}}</th>
                                                 <th>{{__('Country')}}</th>
                                                 <th>{{__('Status')}}</th>
-                                                <th>{{__('Subscription')}}</th>
+                                                <th>{{__('Dashboard')}}</th>
                                                 <th>{{__('Created At')}}</th>
                                                 <th colspan="3">{{__('Actions')}}</th>
                                             </tr>
@@ -111,7 +111,7 @@
                                                     <a href="{{ route('clients.manage', $client->id) }}"
                                                         class="btn btn-info btn-sm">
                                                         <i class="fas fa-eye"></i>
-                                                        {{ __('Client subscriptions') }}
+                                                        {{ __('Client Dashboard') }}
                                                     </a>
                                                 </td>
                                                 <td>

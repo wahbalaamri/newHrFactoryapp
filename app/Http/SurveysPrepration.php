@@ -513,6 +513,7 @@ class SurveysPrepration
             'client' => $client,
             'plans' => $plans,
             'survey' => $survey,
+            'survey_object' => Surveys::find($survey),
             'client_subscription' => $client_subscription,
         ];
         return view('dashboard.client.editSurvey')->with($data);
@@ -520,6 +521,8 @@ class SurveysPrepration
     function CreateOrUpdateSurvey(Request $request, $user_id, $service_type, $by_admin = false, $survey = null)
     {
         try {
+            //GET use_default_stat
+            $use_default_stat = $request->use_default_stat == null ? true : false;
             if ($survey == null) {
                 $survey = new Surveys();
             }
@@ -528,7 +531,21 @@ class SurveysPrepration
             $survey->survey_title = $request->survey_title;
             $survey->survey_des = $request->survey_des;
             $survey->survey_stat = $request->survey_stat != null;
+            $survey->customized = $use_default_stat;
             $survey->save();
+            //if $use_default_stat is true
+            if ($use_default_stat) {
+                //get service id by service type
+                $service_id = Services::where('service_type', $service_type)->first()->id;
+                //copy functions of the current survey to customized survey function
+                $functions = Functions::where('service_id', $service_id)->get();
+                foreach ($functions as $function) {
+                    $new_function = new CustomizedSurveyFunctions();
+                    $new_function->function_id = $function->id;
+                    $new_function->survey_id = $survey->id;
+
+                }
+            }
             if ($by_admin) {
                 return redirect()
                     ->route('clients.ShowSurveys', [$user_id, $service_type])
@@ -1290,7 +1307,7 @@ class SurveysPrepration
             //get service
             $service = Services::find($plan->service);
             //get all plans of the service
-            $service_plan=$service->plans->pluck('id')->toArray();
+            $service_plan = $service->plans->pluck('id')->toArray();
             //check if plan is active
             if (ClientSubscriptions::where('client_id', $id)->whereIn('plan_id', $service_plan)->where('is_active', true)->exists()) {
                 return response()->json(['status' => false, 'message' => 'This client already have an active subscription of this service.']);

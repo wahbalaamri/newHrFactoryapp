@@ -33,6 +33,32 @@
     <link rel="stylesheet" href="{{ asset('dashboard/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('dashboard/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/CircularProgress.css') }}">
+    <style>
+        .fade-in {
+            opacity: 0;
+            /* Start hidden */
+            animation: fadeIn 2s forwards;
+            /* Fade in over 2 seconds */
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                /* End fully visible */
+            }
+        }
+        .fade-out {
+            opacity: 1;
+            /* Start fully visible */
+            animation: fadeOut 2s forwards;
+            /* Fade out over 2 seconds */
+        }
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                /* End fully hidden */
+            }
+        }
+    </style>
     @stack('styles')
 </head>
 
@@ -209,8 +235,7 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="{{ asset('images/noimage.png') }}" class="img-circle elevation-2"
-                            alt="User Image">
+                        <img src="{{ asset('images/noimage.png') }}" class="img-circle elevation-2" alt="User Image">
                     </div>
                     <div class="info">
                         <a href="#" class="d-block">{{ Auth()->user()->name }}</a>

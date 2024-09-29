@@ -6,6 +6,7 @@ use App\Models\ClientSubscriptions;
 use App\Models\Plans;
 use App\Models\Services;
 use App\Models\Surveys;
+use Illuminate\Support\Facades\Log;
 
 class UserSubscriptionsService
 {
@@ -15,24 +16,33 @@ class UserSubscriptionsService
     {
         //get service plans
         $plans = Services::find($service_id)->plans->pluck('id')->toArray();
+        Log::info("plans");
+        Log::info($plans);
         //check if user has active plan
         $subscription = ClientSubscriptions::where('client_id', $user_id)
             ->whereIn('plan_id', $plans)
             ->where('is_active', true)
             ->first();
         if (!$subscription) {
+        Log::info("no subscription");
             return false;
         }
         //get plan_id
         $plan_id = $subscription->plan_id;
+        Log::info("plan id");
+        Log::info($plan_id);
         //get plan
         $plan = Plans::find($plan_id);
+        Log::info("plan");
+        Log::info($plan);
         //if plan is not premium and it has at least one survey
         if ($plan->plan_type!=1 && $plan->surveys->count() > 0) {
+            Log::info("premium");
             return false;
         }
         //if plan is premium and it has one survey is active
-        if ($plan->is_premium==1 && $plan->surveys->where('is_active', true)->count() > 0) {
+        if ($plan->plan_type==1 && $plan->surveys->where('is_active', true)->count() > 0) {
+            Log::info("premium0000");
             return false;
         }
         return true;
