@@ -28,14 +28,15 @@ class UserSubscriptionsService
         $plan_id = $subscription->plan_id;
         //get plan
         $plan = Plans::find($plan_id);
+        if ($plan->plan_type == 5 && $plan->surveys->where('client_id', $user_id)->count() >= 3)
+            return false;
         //if plan is not premium and it has at least one survey
-        if ($plan->plan_type != 1 && $plan->surveys->where('client_id', $user_id)->count() > 0) {
-            if ($plan->plan_type == 5 && $plan->surveys->where('client_id', $user_id)->count() > 3)
-                return true;
+        if (($plan->plan_type != 1 || $plan->plan_type != 5) && $plan->surveys->where('client_id', $user_id)->count() > 0) {
+
             return false;
         }
         //if plan is premium and it has one survey is active
-        if ($plan->plan_type == 1 && $plan->surveys->where('is_active', true)->count() > 0) {
+        if (($plan->plan_type == 1 || $plan->plan_type == 5) && $plan->surveys->where('is_active', true)->where('client_id', $user_id)->count() > 0) {
             return false;
         }
         return true;
