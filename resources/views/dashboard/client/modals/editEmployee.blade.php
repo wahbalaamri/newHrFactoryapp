@@ -1,7 +1,7 @@
 {{-- add or edit Employee Modal --}}
 <div class="modal fade" id="EmployeeModal" tabindex="-1" role="dialog" aria-labelledby="EmployeeModal"
     aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <form id="EmployeeForm">
                 <div class="modal-header">
@@ -19,7 +19,7 @@
                                 placeholder="{{__('Client Name')}}" value="{{ $client->name }}" disabled>
                         </div>
                         {{-- Select Sector --}}
-                        <div class="form-group col-md-5 col-sm-10">
+                        <div class="form-group col-md-4 col-sm-5 col-xs-10">
                             <label for="sector">{{__('Sector')}}</label>
                             <select class="form-control" id="sector" name="sector" required>
                                 <option value="">{{__('Select Sector')}}</option>
@@ -29,23 +29,44 @@
                             </select>
                         </div>
                         {{-- Select Company --}}
-                        <div class="form-group col-md-5 col-sm-10">
+                        <div class="form-group col-md-4 col-sm-5 col-xs-10">
                             <label for="company">{{__('Company')}}</label>
                             <select class="form-control" id="company" name="company" required>
                                 <option value="">{{__('Select Company')}}</option>
                             </select>
                         </div>
-                        {{-- Select Department --}}
                         @if($client->use_departments)
-                        <div class="form-group col-md-5 col-sm-10">
+                        {{-- Select Super directorate --}}
+                        <div class="form-group col-md-4 col-sm-5 col-xs-10">
+                            <label for="superdirectorate">{{__('Super Directorate')}}</label>
+                            <select class="form-control" id="superdirectorate" name="superdirectorate" required>
+                                <option value="">{{__('Select Super directorate')}}</option>
+                            </select>
+                        </div>
+                        {{-- Select Directorate --}}
+                        <div class="form-group col-md-4 col-sm-5 col-xs-10">
+                            <label for="directorate">{{__('Directorate')}}</label>
+                            <select class="form-control" id="directorate" name="directorate" required>
+                                <option value="">{{__('Select directorate')}}</option>
+                            </select>
+                        </div>
+                        {{-- Select Division --}}
+                        <div class="form-group col-md-4 col-sm-5 col-xs-10">
+                            <label for="division">{{__('Division')}}</label>
+                            <select class="form-control" id="division" name="division" required>
+                                <option value="">{{__('Select division')}}</option>
+                            </select>
+                        </div>
+                        {{-- Select Department --}}
+                        <div class="form-group col-md-4 col-sm-5 col-xs-10">
                             <label for="department">{{__('Department')}}</label>
                             <select class="form-control" id="department" name="department" required>
-                                <option value="">{{__('Select Department')}}</option>
+                                <option value="">{{__('Select department')}}</option>
                             </select>
                         </div>
                         @endif
                         @if($client->use_sections)
-                        <div class="form-group col-md-5 col-sm-10">
+                        <div class="form-group col-md-4 col-sm-5 col-xs-10">
                             <label for="section">{{__('Sections')}}</label>
                             <select class="form-control" id="section" name="section" required>
                                 <option value="">{{__('Select Section')}}</option>
@@ -53,25 +74,25 @@
                         </div>
                         @endif
                         {{-- Employee Name --}}
-                        <div class="form-group col-md-5 col-sm-10">
+                        <div class="form-group col-md-4 col-sm-5 col-xs-10">
                             <label for="name">{{__('Employee Name')}}</label>
                             <input type="text" class="form-control" id="name" name="name" placeholder="{{__('Employee Name')}}"
                                 required>
                         </div>
                         {{-- Employee Email --}}
-                        <div class="form-group col-md-5 col-sm-10">
+                        <div class="form-group col-md-4 col-sm-5 col-xs-10">
                             <label for="email">{{__('Employee Email')}}</label>
                             <input type="email" class="form-control" id="email" name="email" placeholder="{{__('Employee Email')}}"
                                 required>
                         </div>
                         {{-- Employee Phone --}}
-                        <div class="form-group col-md-5 col-sm-10">
+                        <div class="form-group col-md-4 col-sm-5 col-xs-10">
                             <label for="mobile">{{__('Employee Phone')}}</label>
                             <input type="text" class="form-control" id="mobile" name="mobile" placeholder="{{__('Employee Phone')}}"
                                 required>
                         </div>
                         {{-- switch Employee Type --}}
-                        <div class="form-group col-md-5 col-sm-10">
+                        <div class="form-group col-md-4 col-sm-5 col-xs-10">
                             <label for="type">{{__('Employee Type')}}</label>
                             <select class="form-control" id="type" name="type" required>
                                 <option value="">{{__('Select Employee Type')}}</option>
@@ -80,7 +101,7 @@
                             </select>
                         </div>
                         {{-- position --}}
-                        <div class="form-group col-md-5 col-sm-10">
+                        <div class="form-group col-md-4 col-sm-5 col-xs-10">
                             <label for="position">{{__('Position')}}</label>
                             <input type="text" class="form-control" id="position" name="position" placeholder="{{__('Position')}}"
                                 required>

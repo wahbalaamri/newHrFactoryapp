@@ -321,6 +321,11 @@ class ClientsController extends Controller
     {
         return $surveysPrepration->orgChart($request, $id, true);
     }
+    //deleteDep function
+    public function deleteDep(Request $request, SurveysPrepration $surveysPrepration, $id)
+    {
+        return $surveysPrepration->deleteDep($request, $id, true);
+    }
     //Employees function
     public function Employees(Request $request, SurveysPrepration $surveysPrepration, $id)
     {

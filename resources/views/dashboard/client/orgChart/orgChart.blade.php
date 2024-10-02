@@ -1,147 +1,150 @@
 {{-- extends --}}
 @extends('dashboard.layouts.main')
 @section('styles')
-{{-- css file --}}
-<link rel="stylesheet" href="{{ asset('assets/css/treeView.css') }}">
+    {{-- css file --}}
+    <link rel="stylesheet" href="{{ asset('assets/css/treeView.css') }}">
 @endsection
 {{-- content --}}
 {{-- show client details --}}
 @section('content')
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0">{{ __('Org-Chart') }}</h1>
-                </div><!-- /.col -->
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Dashboard </li>
-                    </ol>
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">{{ __('Org-Chart') }}</h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Dashboard </li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                {{-- create funcy card to display surveys --}}
-                <div class="col-12 mt-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ __('Manage Your Org-Chart') }}</h3>
-                            {{-- tool --}}
-                            <div class="card-tools">
-                                {{-- back --}}
-                                <a href="{{ route('clients.manage', $id) }}"
-                                    class="btn btn-sm btn-primary {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{
-                                    __('Back') }}</a>
-                                {{-- create new survey --}}
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    {{-- create funcy card to display surveys --}}
+                    <div class="col-12 mt-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">{{ __('Manage Your Org-Chart') }}</h3>
+                                {{-- tool --}}
+                                <div class="card-tools">
+                                    {{-- back --}}
+                                    <a href="{{ route('clients.manage', $id) }}"
+                                        class="btn btn-sm btn-primary {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{ __('Back') }}</a>
+                                    {{-- create new survey --}}
+                                </div>
                             </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="accordion" id="accordionExample">
-                                <div class="card">
-                                    <div class="card-header" id="headingOne">
-                                        <h2 class="mb-0">
-                                            <button class="btn btn-link btn-block text-left" type="button"
-                                                data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
-                                                aria-controls="collapseOne">
-                                                {{ __('Set you organaization info') }}
-                                            </button>
-                                        </h2>
-                                    </div>
+                            <div class="card-body">
+                                <div class="accordion" id="accordionExample">
+                                    <div class="card">
+                                        <div class="card-header" id="headingOne">
+                                            <h2 class="mb-0">
+                                                <button class="btn btn-link btn-block text-left" type="button"
+                                                    data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                                    aria-controls="collapseOne">
+                                                    {{ __('Set you organaization info') }}
+                                                </button>
+                                            </h2>
+                                        </div>
 
-                                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
-                                        data-parent="#accordionExample">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="form-group col-md-6 col-sm-12">
-                                                    <label for="phone">{{ __('Do you have multiple sectors?') }}</label>
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="checkbox" role="switch"
-                                                            id="multiple_sectors" name="multiple_sectors"
-                                                            @checked($client->multiple_sectors)>
-                                                        <label class="form-check-label" for="multiple_sectors">
-                                                            @if($client->multiple_sectors)
-                                                            {{ __('Yes, We have multiple sectors') }}
-                                                            @else
-                                                            {{ __('No, Only one sector') }}
-                                                            @endif
-                                                        </label>
+                                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                            data-parent="#accordionExample">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="form-group col-md-6 col-sm-12">
+                                                        <label
+                                                            for="phone">{{ __('Do you have multiple sectors?') }}</label>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" role="switch"
+                                                                id="multiple_sectors" name="multiple_sectors"
+                                                                @checked($client->multiple_sectors)>
+                                                            <label class="form-check-label" for="multiple_sectors">
+                                                                @if ($client->multiple_sectors)
+                                                                    {{ __('Yes, We have multiple sectors') }}
+                                                                @else
+                                                                    {{ __('No, Only one sector') }}
+                                                                @endif
+                                                            </label>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="form-group col-md-6 col-sm-12">
-                                                    <label for="phone">{{ __('Do you have multiple companies?')
-                                                        }}</label>
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="checkbox" role="switch"
-                                                            id="multiple_companies" name="multiple_companies"
-                                                            @checked($client->multiple_company)>
-                                                        <label class="form-check-label" for="multiple_companies">{{
-                                                            __('No,
-                                                            Only one company') }}</label>
-                                                    </div>
+                                                    <div class="form-group col-md-6 col-sm-12">
+                                                        <label
+                                                            for="phone">{{ __('Do you have multiple companies?') }}</label>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" role="switch"
+                                                                id="multiple_companies" name="multiple_companies"
+                                                                @checked($client->multiple_company)>
+                                                            <label class="form-check-label"
+                                                                for="multiple_companies">{{ __('No,
+                                                                                                                                                                                                                                                            Only one company') }}</label>
+                                                        </div>
 
-                                                </div>
-                                                {{-- use departments --}}
-                                                <div class="form-group col-md-6 col-sm-12">
-                                                    <label for="phone">{{ __('Would like to make your departments appearing in the system?') }}</label>
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="checkbox" role="switch"
-                                                            id="use_departments" name="use_departments"
-                                                            @checked($client->use_departments)>
-                                                        <label class="form-check-label" for="use_departments">
-                                                            @if($client->use_departments)
-                                                            {{ __('Yes, We like to use department') }}
-                                                            @else
-                                                            {{ __('No, just stop on Company level') }}
-                                                            @endif
-                                                        </label>
-                                                        <small class="blockquote-footer">
-                                                            @if($client->use_departments)
-                                                            {{ __('This will allow you to view report per department (Depends on your subscription plan).') }}
-                                                            @else
-                                                            {{ __('By unChecking you will not be able to view report by department') }}
-                                                            @endif
-                                                          </small>
                                                     </div>
-                                                </div>
-                                                {{-- use sections --}}
-                                                <div class="form-group col-md-6 col-sm-12">
-                                                    <label for="phone">{{ __('Would like to make your sections appearing in the system?') }}</label>
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="checkbox" role="switch"
-                                                        id="use_sections" name="use_sections"
-                                                        @checked($client->use_sections)>
-                                                    <label class="form-check-label" for="use_sections">
-                                                        @if($client->use_sections)
-                                                        {{ __('Yes, We like to use sections') }}
-                                                        @else
-                                                        {{ __('No, just stop on Department level') }}
-                                                        @endif
-                                                    </label>
-                                                    <small class="blockquote-footer">
-                                                        @if($client->use_sections)
-                                                        {{ __('This will allow you to view reports per section (Depends on your subscription plan).') }}
-                                                        @else
-                                                        {{ __('By unChecking you will not be able to view reports by section') }}
-                                                        @endif
-                                                      </small>
-                                                </div>
-                                            </div>
+                                                    {{-- use departments --}}
+                                                    <div class="form-group col-md-6 col-sm-12">
+                                                        <label
+                                                            for="phone">{{ __('Would like to make your departments appearing in the system?') }}</label>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" role="switch"
+                                                                id="use_departments" name="use_departments"
+                                                                @checked($client->use_departments)>
+                                                            <label class="form-check-label" for="use_departments">
+                                                                @if ($client->use_departments)
+                                                                    {{ __('Yes, We like to use department') }}
+                                                                @else
+                                                                    {{ __('No, just stop on Company level') }}
+                                                                @endif
+                                                            </label>
+                                                            <small class="blockquote-footer">
+                                                                @if ($client->use_departments)
+                                                                    {{ __('This will allow you to view report per department (Depends on your subscription plan).') }}
+                                                                @else
+                                                                    {{ __('By unChecking you will not be able to view report by department') }}
+                                                                @endif
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                    {{-- use sections --}}
+                                                    <div class="form-group col-md-6 col-sm-12">
+                                                        <label
+                                                            for="phone">{{ __('Would like to make your sections appearing in the system?') }}</label>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" role="switch"
+                                                                id="use_sections" name="use_sections"
+                                                                @checked($client->use_sections)>
+                                                            <label class="form-check-label" for="use_sections">
+                                                                @if ($client->use_sections)
+                                                                    {{ __('Yes, We like to use sections') }}
+                                                                @else
+                                                                    {{ __('No, just stop on Department level') }}
+                                                                @endif
+                                                            </label>
+                                                            <small class="blockquote-footer">
+                                                                @if ($client->use_sections)
+                                                                    {{ __('This will allow you to view reports per section (Depends on your subscription plan).') }}
+                                                                @else
+                                                                    {{ __('By unChecking you will not be able to view reports by section') }}
+                                                                @endif
+                                                            </small>
+                                                        </div>
+                                                    </div>
                                                     {{-- submit --}}
                                                     <div class="form-group col-sm-12">
                                                         <a href="javascript:void(0)" onclick="saveOrgInfo()"
-                                                            @class([ 'btn btn-outline-success btn-sm' , 'float-right'=>
-                                                            app()->isLocale('en'),
-                                                            'float-left' => app()->isLocale('ar'),
+                                                            @class([
+                                                                'btn btn-outline-success btn-sm',
+                                                                'float-right' => app()->isLocale('en'),
+                                                                'float-left' => app()->isLocale('ar'),
                                                             ])>{{ __('Save') }}</a>
                                                     </div>
                                                 </div>
@@ -152,8 +155,8 @@
                                         <div class="card-header" id="headingTwo">
                                             <h2 class="mb-0">
                                                 <button class="btn btn-link btn-block text-left" type="button"
-                                                    data-toggle="collapse" data-target="#collapseTwo"
-                                                    aria-expanded="true" aria-controls="collapseTwo">
+                                                    data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
+                                                    aria-controls="collapseTwo">
                                                     {{ __('Upload Excel Sheet') }}
                                                 </button>
                                             </h2>
@@ -168,12 +171,12 @@
                                                     @csrf
                                                     <div class="form-group col-md-6 col-sm-12">
                                                         <label for="excel">{{ __('Upload Excel Sheet') }}</label>
-                                                        <input type="file" name="excel" class="form-control" required>
+                                                        <input type="file" name="excel" class="form-control"
+                                                            required>
                                                     </div>
                                                     <div class="form-group col-sm-12">
                                                         <button type="submit"
-                                                            class="btn btn-outline-success btn-sm {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{
-                                                            __('Upload') }}</button>
+                                                            class="btn btn-outline-success btn-sm {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{ __('Upload') }}</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -194,7 +197,7 @@
                                             data-parent="#accordionExample">
                                             <div class="card-body">
                                                 @include('dashboard.client.orgChart.OrgChartTree', [
-                                                'client' => $client,
+                                                    'client' => $client,
                                                 ])
                                             </div>
                                         </div>
@@ -222,18 +225,18 @@
                     </div>
                 </div>
             </div>
-    </section>
-</div>
-{{-- -modal to create new sector --}}
-@include('dashboard.client.modals.addSector')
-@include('dashboard.client.modals.AddOrAssignAccting')
-{{-- -modal to create new company --}}
+        </section>
+    </div>
+    {{-- -modal to create new sector --}}
+    @include('dashboard.client.modals.addSector')
+    @include('dashboard.client.modals.AddOrAssignAccting')
+    {{-- -modal to create new company --}}
 @endsection
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-{{-- js file --}}
-<script>
-    $("[name='is_hr']").bootstrapSwitch();
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- js file --}}
+    <script>
+        $("[name='is_hr']").bootstrapSwitch();
         $("#multiple_sectors").bootstrapSwitch();
         $("#multiple_companies").bootstrapSwitch();
         $(".form-check-input").bootstrapSwitch();
@@ -392,16 +395,22 @@
             form = button.parentElement.parentElement;
             type = form.type.value;
             PostedData = [null];
+
             if (type == 'sector') {
                 //get sector_id
                 sector_id = form.sector_id.value;
-                if (sector_id == 'other' && (form.name_en.value == '' || form.name_ar.value == '')) {
-                    alert('Please enter sector name');
-                    return;
-
+                if (sector_id == 'other') {
+                    if (!form.name_en.value) {
+                        toastr.error('Please enter The Name in English');
+                        return;
+                    }
+                    if (!form.name_ar.value) {
+                        toastr.error('Please enter The Name in Arabic');
+                        return;
+                    }
                 }
                 if (sector_id == '') {
-                    alert('Please select sector');
+                    toastr.error('Please Select Sector');
                     return;
                 }
                 //build data
@@ -413,6 +422,14 @@
                 is_hr = null;
                 dep_id = form.dep_id.value;
             } else if (type == 'comp') {
+                if (!form.name_en.value) {
+                    toastr.error('Please enter The Name in English');
+                    return;
+                }
+                if (!form.name_ar.value) {
+                    toastr.error('Please enter The Name in Arabic');
+                    return;
+                }
                 //get sector_id
                 sector_id = form.sector_id.value;
                 client_id = form.client_id.value;
@@ -424,6 +441,14 @@
                 dep_id = form.dep_id.value;
 
             } else if (type == 'dep') {
+                if (!form.name_en.value) {
+                    toastr.error('Please enter The Name in English');
+                    return;
+                }
+                if (!form.name_ar.value) {
+                    toastr.error('Please enter The Name in Arabic');
+                    return;
+                }
                 //get company_id
                 company_id = form.company_id.value;
                 //build data
@@ -435,6 +460,14 @@
                 is_hr = form.is_hr.checked;
                 dep_id = form.dep_id.value;
             } else if (type == 'sub-dep') {
+                if (!form.name_en.value) {
+                    toastr.error('Please enter The Name in English');
+                    return;
+                }
+                if (!form.name_ar.value) {
+                    toastr.error('Please enter The Name in Arabic');
+                    return;
+                }
                 //get department_id
                 department_id = form.department_id.value;
                 //build data
@@ -576,6 +609,53 @@
                     }
                 });
             }
+            //on DeleteDep
+            DeleteDep = (id) => {
+                //confirm deleting
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        //setup url
+                        url = "{{ route('clients.deleteDep', ':id') }}";
+                        url = url.replace(':id', id);
+                        //delete
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: {
+                                //token
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(data) {
+                                //sweet  alert
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Done',
+                                    text: data.message,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                //reload page
+                                setTimeout(() => {
+                                    //reload yajra table
+                                    $('#Departments-data').DataTable().ajax
+                                        .reload();
+                                }, 1500);
+                            },
+                            error: function(data) {
+                                console.log(data);
+                            }
+                        });
+                    }
+                })
+            }
         });
         //on multiple_companies bootstrapswitch event
         $('#multiple_companies').on('switchChange.bootstrapSwitch', function(event, state) {
@@ -594,6 +674,10 @@
             if (state) {
                 //change multiple_sectors label with for
                 $("[for='multiple_sectors']").text("{{ __('Yes, We have multiple sectors') }}");
+                //change multiple_companies state
+                $("#multiple_companies").bootstrapSwitch('state', true);
+                //change multiple_companies label with for
+                $("[for='multiple_companies']").text("{{ __('Yes, We have multiple companies') }}");
             } else {
                 $("[for='multiple_sectors']").text("{{ __('No, Only one sector') }}");
             }
@@ -605,10 +689,13 @@
                 //change use_departments label with for
                 $("[for='use_departments']").text("{{ __('Yes, We like to use department') }}");
                 //change next nearest blockquote-footer
-                $("[for='use_departments']").siblings('.blockquote-footer').text("{{ __('This will allow you to view report per department (Depends on your subscription plan).') }}");
+                $("[for='use_departments']").siblings('.blockquote-footer').text(
+                    "{{ __('This will allow you to view report per department (Depends on your subscription plan).') }}"
+                );
             } else {
                 $("[for='use_departments']").text("{{ __('No, just stop on Company level') }}");
-                $("[for='use_departments']").siblings('.blockquote-footer').text("{{ __('By unChecking you will not be able to view report by department') }}");
+                $("[for='use_departments']").siblings('.blockquote-footer').text(
+                    "{{ __('By unChecking you will not be able to view report by department') }}");
             }
         });
         //on use_sections bootstrapswitch event
@@ -618,21 +705,24 @@
                 //change use_sections label with for
                 $("[for='use_sections']").text("{{ __('Yes, We like to use sections') }}");
                 //change blockquote-footer
-                $("[for='use_sections']").siblings('.blockquote-footer').text("{{ __('This will allow you to view reports per section (Depends on your subscription plan).') }}");
+                $("[for='use_sections']").siblings('.blockquote-footer').text(
+                    "{{ __('This will allow you to view reports per section (Depends on your subscription plan).') }}"
+                );
             } else {
                 $("[for='use_sections']").text("{{ __('No, just stop on Department level') }}");
-                $("[for='use_sections']").siblings('.blockquote-footer').text("{{ __('By unChecking you will not be able to view reports by section') }}");
+                $("[for='use_sections']").siblings('.blockquote-footer').text(
+                    "{{ __('By unChecking you will not be able to view reports by section') }}");
             }
         });
         //saveOrgInfo function
         saveOrgInfo = () => {
             //get data
-            multiple_sectors =$("#multiple_sectors").bootstrapSwitch('state')?1:0;
-            multiple_companies =$("#multiple_companies").bootstrapSwitch('state')?1:0;
+            multiple_sectors = $("#multiple_sectors").bootstrapSwitch('state') ? 1 : 0;
+            multiple_companies = $("#multiple_companies").bootstrapSwitch('state') ? 1 : 0;
             //use_departments
-            use_departments =$("#use_departments").bootstrapSwitch('state')?1:0;
+            use_departments = $("#use_departments").bootstrapSwitch('state') ? 1 : 0;
             //use_sections
-            use_sections =$("#use_sections").bootstrapSwitch('state')?1:0;
+            use_sections = $("#use_sections").bootstrapSwitch('state') ? 1 : 0;
             //setup url
             url = "{{ route('clients.saveOrgInfo', ':id') }}";
             url = url.replace(':id', "{{ $id }}");
@@ -662,8 +752,7 @@
                         setTimeout(() => {
                             location.reload();
                         }, 1500);
-                    }
-                    else{
+                    } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -678,5 +767,5 @@
                 }
             });
         }
-</script>
+    </script>
 @endsection

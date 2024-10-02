@@ -87,9 +87,9 @@
                                     </div>
                                     {{-- select for client Region --}}
                                     <div class="form-group col-md-6 col-sm-12">
-                                        <label for="region">{{ __('Select Region') }}</label>
+                                        <label for="region">{{ __('Select Super Directorate') }}</label>
                                         <select name="region" id="region" class="form-control" @disabled($send_type=='i')>
-                                            <option value="">{{ __('Select Region') }}</option>
+                                            <option value="">{{ __('Select Directorate') }}</option>
                                         </select>
                                         @error('region')
                                         <span class="text-danger">{{ $message }}</span>
@@ -97,9 +97,9 @@
                                     </div>
                                     {{-- select for client branch --}}
                                     <div class="form-group col-md-6 col-sm-12">
-                                        <label for="branch">{{ __('Select Branch') }}</label>
+                                        <label for="branch">{{ __('Select Directorate') }}</label>
                                         <select name="branch" id="branch" class="form-control" @disabled($send_type=='i')>
-                                            <option value="">{{ __('Select Branch') }}</option>
+                                            <option value="">{{ __('Select Directorate') }}</option>
                                         </select>
                                         @error('branch')
                                         <span class="text-danger">{{ $message }}</span>
@@ -207,7 +207,8 @@
                                         @enderror
                                     </div>
                                     <div class="form-group col-sm-12">
-                                        <button type="submit" class="btn btn-primary">{{ __('Create') }}</button>
+                                        <button type="submit" @class(['btn btn-primary btn-sm', 'float-right' => app()->isLocale('en'),
+                                            'float-left' => app()->isLocale('ar')])>{{ __('Send') }}</button>
                                     </div>
                                 </div>
                             </form>

@@ -1,6 +1,6 @@
 {{-- PartnershipsModal --}}
 <div class="modal fade" id="PartnershipsModal" tabindex="-1" role="dialog" aria-labelledby="partnershipsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
         <div class="modal-content">
             {{-- Modal Header --}}
             <div class="modal-header">

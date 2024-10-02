@@ -560,7 +560,7 @@ class SurveysPrepration
                     $new_function->IsDefault = $function->IsDefault;
                     $new_function->IsDriver = $function->IsDriver;
                     $new_function->save();
-                    foreach($function->practices as $practice){
+                    foreach ($function->practices as $practice) {
                         $new_practice = new CustomizedSurveyPractices();
                         $new_practice->function_id = $new_function->id;
                         $new_practice->system_practice = $practice->id;
@@ -579,7 +579,7 @@ class SurveysPrepration
                         $new_practice->description_ar = $practice->description_ar;
                         $new_practice->status = $practice->status;
                         $new_practice->save();
-                        foreach($practice->questions as $question){
+                        foreach ($practice->questions as $question) {
                             $new_question = new CustomizedSurveyQuestions();
                             $new_question->practice_id = $new_practice->id;
                             $new_question->system_question = $question->id;
@@ -796,6 +796,9 @@ class SurveysPrepration
                 if ($request->is_hr == 1 || $request->is_hr == true || $request->is_hr == 'true' || $request->is_hr == '1' || $request->is_hr == 'on' || $request->is_hr == 'yes' || $request->is_hr == 'checked' || $request->is_hr == 'selected' || $request->is_hr != false || $request->is_hr != 'false') {
                     $is_hr = true;
                 }
+                if ($request->is_hr == false || $request->is_hr == 'false') {
+                    $is_hr = false;
+                }
                 //create new department
                 $department = new Departments();
                 $department->company_id = $request->_id;
@@ -951,7 +954,7 @@ class SurveysPrepration
                 ->addIndexColumn()
                 ->addColumn('action', function ($department) {
                     $action = '<div class="row"><div class="col-md-6 col-sm-12 text-center"><a href="javascript:void(0);" onclick="EditDep(\'' . $department->id . '\',\'' . $department->parent_id . '\',\'' . $department->company->client_id . '\',\'sub-dep\')" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a></div>';
-                    $action .= '<div class="col-md-6 col-sm-12 text-center"><a href="javascript:void(0);" onclick="EditDep(\'' . $department->id . '\')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a></div></div>';
+                    $action .= '<div class="col-md-6 col-sm-12 text-center"><a href="javascript:void(0);" onclick="DeleteDep(\'' . $department->id . '\')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a></div></div>';
                     return $action;
                 })
                 ->addColumn('super_department', function ($department) {
@@ -976,6 +979,18 @@ class SurveysPrepration
                 ->make(true);
         }
         return view('dashboard.client.orgChart.orgChart')->with($data);
+    }
+    //deleteDep function
+    function deleteDep(Request $request, $id, $by_admin = false)
+    {
+        try {
+            $department = Departments::find($id);
+            $department->delete();
+            return redirect()->back()->with('success', 'Department deleted successfully');
+        } catch (\Exception $e) {
+            Log::info($e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
     // Employees function
     function Employees(Request $request, $id, $by_admin = false)
@@ -1035,12 +1050,34 @@ class SurveysPrepration
         return Companies::where('sector_id', $id)->get()->append('name');
     }
     //departments function
-    function departments(Request $request, $id, $type, $by_admin = false)
+    function departments(Request $request, $id, $type , $by_admin = false)
     {
+
         if ($type == 'r')
             return Departments::where('company_id', $id)->where('dep_level', 1)->get()->append('name');
-        else
+        elseif ($type == 'ed') {
+            //find department
+            $department = Departments::find($id);
+            //if department is not null
+            if ($department != null) {
+                if ($department->parent_id) { //return json
+                    Log::info($department);
+                    Log::info(Departments::where('parent_id', $department->parent_id)->get()->append('name'));
+                    return response()->json(['departments' => Departments::where('parent_id', $department->parent_id)->get()->append('name'), 'status' => true]);
+                }
+                else
+                {
+                    return response()->json([
+                        'departments' => Departments::where('company_id', $department->company_id)->where('dep_level', 1)->get()->append('name'),
+                         'status' => true]);
+                }
+            } else {
+                //return json response
+                return response()->json(['data' => [], 'status' => false]);
+            }
+        } else {
             return Departments::where('parent_id', $id)->get()->append('name');
+        }
     }
     //sections function
     function sections(Request $request, $id, $by_admin = false)
@@ -1073,11 +1110,7 @@ class SurveysPrepration
             //check if client use department
             if ($client->use_departments) {
                 //check if client use section
-                if ($client->use_sections) {
-                    $employee->dep_id = $request->section;
-                } else {
-                    $employee->dep_id = $request->department;
-                }
+                $employee->dep_id = $request->department;
             } else {
                 $employee->dep_id = null;
             }
@@ -4746,7 +4779,7 @@ class SurveysPrepration
                 'sum_of_employees' => count($employees_),
                 'sum_of_respondents' => count($respondents_),
                 'sum_of_answered' => $answered_,
-                'total_percentage' => count($respondents_)==0?0:(($answered_ / count($respondents_)) * 100),
+                'total_percentage' => count($respondents_) == 0 ? 0 : (($answered_ / count($respondents_)) * 100),
                 'client' => $client,
                 'type' => $survey->plans->service_->service_type
             ];

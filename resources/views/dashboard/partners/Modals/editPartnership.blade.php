@@ -1,7 +1,7 @@
 {{-- editPartnership --}}
 <div class="modal fade" id="editPartnership" tabindex="-1" role="dialog" aria-labelledby="editPartnershipLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             {{-- Modal Header --}}
             <div class="modal-header">
@@ -12,16 +12,16 @@
                 </button>
             </div>
             {{-- modal-body --}}
-            <div class="modal-body">
-                <form action="" method="post" id="partnership-form">
+            <form action="" method="post" id="partnership-form">
+                <div class="modal-body">
                     @csrf
                     <div class="row">
                         {{-- hidden id --}}
-                        <input type="hidden" name="id" id="partnership-id">
+                        <input type="hidden" name="partnership_id" id="partnership_id">
                         {{-- select country --}}
                         <div class="form-group col-md-6 col-sm-12">
                             <label for="">{{ __('Country') }}</label>
-                            <select class="form-control" name="country" id="country">
+                            <select class="form-control" name="country" id="country_ps">
                                 <option value="">{{ __('Select') }}</option>
                                 <optgroup label="{{ __('Arab Country') }}">
                                     @foreach ($countries[1] as $country)
@@ -34,6 +34,22 @@
                                     @endforeach
                                 </optgroup>
                             </select>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="service">{{ __('Services Domian') }}</label>
+                            {{-- checkbox input --}}
+
+                            <div class="row">
+                                @foreach ( $services as $services)
+                                <div class="form-check col-md-4 col-sm-12">
+                                    <input class="form-check-input" type="checkbox" name="s-{{ $services->id }}"
+                                        id="s-{{ $services->id }}" value="{{ $services->name }}">
+                                    <label class="form-check-label" for="s-{{ $services->id }}">
+                                        {{ $services->service_name }}
+                                    </label>
+                                </div>
+                                @endforeach
+                            </div>
                         </div>
                         {{-- start date --}}
                         <div class="form-group col-md-6 col-sm-12">
@@ -57,22 +73,28 @@
                             <input type="checkbox" name="status" id="Partnershipstatus" checked data-bootstrap-switch
                                 data-off-color="danger" data-on-color="success">
                         </div>
+
+                    </div>
+
+                </div>
+                {{-- modal-footer --}}
+                <div class="modal-footer">
+                    <div class="row w-100">
+                        <div class="form-group col-md-6 col-sm-12">
+                        {{-- back to PartnershipsModal --}}
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="$('#editPartnership').modal('hide')"
+                            data-toggle="modal" data-target="#PartnershipsModal">{{ __('Back') }}</button>
+                        </div>
+                        {{-- save button --}}
                         {{-- submit --}}
-                        <div class="form-group col-sm-12">
+                        <div class="form-group col-md-6 col-sm-12">
                             <a href="javascript:void(0)" id="SavePartnerShip"
                                 class="btn btn-primary btn-sm {{ app()->isLocale('ar')? 'float-left':'float-right' }}">{{
                                 __('Save') }}</a>
                         </div>
                     </div>
-                </form>
-            </div>
-            {{-- modal-footer --}}
-            <div class="modal-footer">
-                {{-- back to PartnershipsModal --}}
-                <button type="button" class="btn btn-secondary" onclick="$('#editPartnership').modal('hide')"
-                    data-toggle="modal" data-target="#PartnershipsModal">{{ __('Back') }}</button>
-                {{-- save button --}}
-            </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

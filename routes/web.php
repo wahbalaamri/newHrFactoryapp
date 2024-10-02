@@ -418,6 +418,7 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::get('clients/CustomizedsurveyRespondents/{id}/{type}/{survey}', [ClientsController::class, 'CustomizedsurveyRespondents'])->name('clients.CustomizedsurveyRespondents');
     Route::get('clients/orgChart/{id}', [ClientsController::class, 'orgChart'])->name('clients.orgChart');
     Route::post('clients/saveOrgInfo/{id}', [ClientsController::class, 'saveOrgInfo'])->name('clients.saveOrgInfo');
+    Route::post('clients/deleteDep/{id}', [ClientsController::class, 'deleteDep'])->name('clients.deleteDep');
     Route::post('clients/uploadOrgChartExcel/{id}', [ClientsController::class, 'uploadOrgChartExcel'])->name('clients.uploadOrgChartExcel');
     Route::post('clients/uploadEmployeeExcel/{id}', [ClientsController::class, 'uploadEmployeeExcel'])->name('clients.uploadEmployeeExcel');
     Route::get('clients/Employees/{id}', [ClientsController::class, 'Employees'])->name('clients.Employees');

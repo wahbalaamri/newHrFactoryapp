@@ -9,6 +9,7 @@ use App\Http\Requests\UpdatePartnersRequest;
 use App\Models\Countries;
 use App\Models\PartnerFocalPoint;
 use App\Models\Partnerships;
+use App\Models\Services;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -63,6 +64,7 @@ class PartnersController extends Controller
                 $data = [
                     'url' => TempURL::getTempURL('partners.index', 5),
                     'countries' => Countries::all()->groupBy('IsArabCountry')->append('country_name'),
+                    'services' => Services::where('public_availability', true)->get(),
                 ];
                 return view('dashboard.partners.index')->with($data);
             } else {
@@ -203,16 +205,16 @@ class PartnersController extends Controller
     {
         $decrypted_id = $this->decrypt_data($id);
         try {
-            $email="";
-            $name=$request->focal_name;
+            $email = "";
+            $name = $request->focal_name;
             if (TempURL::getIsValidUrl($request)) {
-                if ($request->focal_id)
-                   { $focal_point = PartnerFocalPoint::find($request->focal_id);
-                    $email=$focal_point->email;}
-                else
+                if ($request->focal_id) {
+                    $focal_point = PartnerFocalPoint::find($request->focal_id);
+                    $email = $focal_point->email;
+                } else
                     $focal_point = new PartnerFocalPoint();
                 $focal_point->partner_id = $decrypted_id;
-                $focal_point->name =$name;
+                $focal_point->name = $name;
                 $focal_point->name_ar = $request->focal_name_ar;
                 $focal_point->phone = $request->focal_phone;
                 $focal_point->email = $request->focal_email;
@@ -225,7 +227,7 @@ class PartnersController extends Controller
                     $user = User::where('email', $email)->first();
                     $focal_points_count = PartnerFocalPoint::where('partner_id', $decrypted_id)->count();
                 }
-                if ($user==null) {
+                if ($user == null) {
                     $user = new User();
                     //get count of focalpoint for current partner
                     $focal_points_count = PartnerFocalPoint::where('partner_id', $decrypted_id)->count();
@@ -311,7 +313,18 @@ class PartnersController extends Controller
     {
         $decrypted_id = $this->decrypt_data($id);
         try {
+            Log::info($request->all());
             if (TempURL::getIsValidUrl($request)) {
+                //get all inputs start with s-
+                $services = array_filter($request->all(), function ($key) {
+                    return strpos($key, 's-') === 0;
+                }, ARRAY_FILTER_USE_KEY);
+                //get the kes of services
+                // $keys = array_keys($services);
+                //remove the s- from the keys
+                // $keys = array_map(function ($key) {
+                //     return substr($key, 2);
+                // }, $keys);
                 if ($request->partnership_id)
                     $partnership = Partnerships::find($request->partnership_id);
                 else
@@ -322,7 +335,10 @@ class PartnersController extends Controller
                 $partnership->end_date = $request->end_date;
                 $partnership->is_exclusive = $request->exclusivity ? true : false;
                 $partnership->is_active = $request->status ? true : false;
+                //save services as json array
+                $partnership->services = json_encode($services);
                 $partnership->save();
+                Log::info($partnership);
                 $pratnerShips = Partnerships::where('partner_id', $decrypted_id)->get();
 
                 $data = [

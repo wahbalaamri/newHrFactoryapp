@@ -1,115 +1,114 @@
 {{-- extends --}}
 @extends('dashboard.layouts.main')
 @section('styles')
-    {{-- css file --}}
-    <link rel="stylesheet" href="{{ asset('assets/css/treeView.css') }}">
+{{-- css file --}}
+<link rel="stylesheet" href="{{ asset('assets/css/treeView.css') }}">
 @endsection
 {{-- content --}}
 {{-- show client details --}}
 @section('content')
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">{{ $client->name }} {{ __('Employees') }}</h1>
-                    </div><!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Dashboard </li>
-                        </ol>
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
-        </div>
-        <!-- /.content-header -->
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ $client->name }} {{ __('Employees') }}</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Dashboard </li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
 
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    {{-- create funcy card to display surveys --}}
-                    <div class="col-12 mt-3">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">{{ __('Manage Your Employees') }}</h3>
-                                {{-- tool --}}
-                                <div class="card-tools">
-                                    {{-- back --}}
-                                    <a href="{{ route('clients.manage', $id) }}"
-                                        class="btn btn-sm btn-tool {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">
-                                        <i class="fas fa-arrow-left"></i>
-                                    </a>
-                                    {{-- create new Employee --}}
-                                    <a href="javascript:void(0);" id="addEmployee" data-toggle="modal"
-                                        data-target="#EmployeeModal"
-                                        class="btn btn-sm btn-tool {{ App()->getLocale() == 'ar' ? 'float-end' : 'float-start' }}">
-                                        <i class="fas fa-plus"></i>
-                                    </a>
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                {{-- create funcy card to display surveys --}}
+                <div class="col-12 mt-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ __('Manage Your Employees') }}</h3>
+                            {{-- tool --}}
+                            <div class="card-tools">
+                                {{-- back --}}
+                                <a href="{{ route('clients.manage', $id) }}"
+                                    class="btn btn-sm btn-tool {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">
+                                    <i class="fas fa-arrow-left"></i>
+                                </a>
+                                {{-- create new Employee --}}
+                                <a href="javascript:void(0);" id="addEmployee" data-toggle="modal"
+                                    onclick="addEmployee()" data-target="#EmployeeModal"
+                                    class="btn btn-sm btn-tool {{ App()->getLocale() == 'ar' ? 'float-end' : 'float-start' }}">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {{-- card --}}
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">{{ __('Upload Your Employees Data') }}</h3>
+                                </div>
+                                <div class="card-body">
+                                    {{-- form to upload excel sheet --}}
+                                    <form action="{{ route('clients.uploadEmployeeExcel', $id) }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="form-group col-md-6 col-sm-12">
+                                            <label for="excel">{{ __('Upload Excel Sheet') }}</label>
+                                            <input type="file" name="excel" class="form-control" required>
+                                        </div>
+                                        <div class="form-group col-sm-12">
+                                            <button type="submit"
+                                                class="btn btn-outline-success btn-sm {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{
+                                                __('Upload') }}</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                {{-- card --}}
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h3 class="card-title">{{ __('Upload Your Employees Data') }}</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        {{-- form to upload excel sheet --}}
-                                        <form action="{{ route('clients.uploadEmployeeExcel', $id) }}" method="POST"
-                                            enctype="multipart/form-data">
-                                            @csrf
-                                            <div class="form-group col-md-6 col-sm-12">
-                                                <label for="excel">{{ __('Upload Excel Sheet') }}</label>
-                                                <input type="file" name="excel" class="form-control" required>
-                                            </div>
-                                            <div class="form-group col-sm-12">
-                                                <button type="submit"
-                                                    class="btn btn-outline-success btn-sm {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{ __('Upload') }}</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="table-responsive">
-                                    <table id="Employee-data"
-                                        class="table table-hover table-striped table-bordered text-center text-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>{{ __('Employee Name') }}</th>
-                                                <th>{{ __('Email') }}</th>
-                                                <th>{{ __('Phone') }}</th>
-                                                <th>{{ __('Employee Type') }}</th>
-                                                {{-- <th>{{__('Department')}}</th>
+                            <div class="table-responsive">
+                                <table id="Employee-data"
+                                    class="table table-hover table-striped table-bordered text-center text-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>{{ __('Employee Name') }}</th>
+                                            <th>{{ __('Email') }}</th>
+                                            <th>{{ __('Phone') }}</th>
+                                            <th>{{ __('Employee Type') }}</th>
+                                            {{-- <th>{{__('Department')}}</th>
                                             <th>{{__('Company')}}</th>
                                             <th>{{__('Sector')}}</th>
                                             <th>{{__('HR Manager?')}}</th>
                                             <th>{{__('Is Active')}}</th>
                                             <th>{{__('Actions')}}</th> --}}
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
+                                        </tr>
+                                    </thead>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </div>
-    {{-- include editEmployee Modal --}}
-    @include('dashboard.client.modals.editEmployee')
-    <!-- /.content-wrapper -->
+        </div>
+    </section>
+</div>
+{{-- include editEmployee Modal --}}
+@include('dashboard.client.modals.editEmployee')
+<!-- /.content-wrapper -->
 @endsection
 @section('scripts')
-    <script>
-        isUsingDepartment = "{{ $client->use_departments }}" == 1
+<script>
+    isUsingDepartment = "{{ $client->use_departments }}" == 1
         isUsingSections = "{{ $client->use_sections }}" == 1
-        console.log(isUsingDepartment);
-        console.log(isUsingSections);
         $(document).ready(function() {
             url = "{{ route('clients.Employees', ':d') }}";
             url = url.replace(':d', "{{ $id }}");
@@ -184,9 +183,9 @@
                     div += '</tr><tr><td>'
                     div += data['department'] + '</td><td>' + data['company'] + '</td><td>'
                     div += data['sector'] + '</td><td>' + data['hr'] + '</td><td>'
-                    div += data['active'] + '</td><td>' + data['action']+'</td>'
-                    if(isAdmin)
-                    div+='<td>'+data['assign']+'</td>'
+                    div += data['active'] + '</td><td>' + data['action'] + '</td>'
+                    if (isAdmin)
+                        div += '<td>' + data['assign'] + '</td>'
                     div += '</tr></table></div>'
                     // Open this row
                     row.child(div).show('slow');
@@ -202,8 +201,27 @@
             $('#company').on('change', function() {
                 var company_id = $(this).val();
                 if (isUsingDepartment)
-                    getdepartments(company_id);
+                    getdepartments(company_id, 'r');
             });
+            //on superdirectorate selected
+            $('#superdirectorate').on('change', function() {
+                var dep_id = $(this).val();
+                if (isUsingDepartment)
+                    getdepartments(dep_id, 's');
+            })
+            //on directorate selected
+            $('#directorate').on('change', function() {
+                var dep_id = $(this).val();
+                if (isUsingDepartment)
+                    getdepartments(dep_id, 'd');
+            })
+            //on division selected
+            $('#division').on('change', function() {
+                var division = $(this).val();
+                if (isUsingDepartment)
+                    getdepartments(division, 'di');
+            })
+            //on department selected
             $('#department').on('change', function() {
                 var department = $(this).val();
                 if (isUsingSections)
@@ -251,7 +269,15 @@
                 }
                 //department
                 if (isUsingDepartment) {
-                    var department = $('#department').val();
+                    department = null;
+                    var department = $('#superdirectorate').val() ? $('#superdirectorate').val() :
+                        department;
+                    var department = $('#directorate').val() ? $('#directorate').val() : department;
+                    var department = $('#division').val() ? $('#division').val() : department;
+                    var department = $('#department').val() ? $('#department').val() : department;
+                    if (isUsingSections) {
+                        var department = $('#section').val() ? $('#section').val() : department;
+                    }
                     //check if department has value
                     if (!department) {
                         //toaster
@@ -260,18 +286,6 @@
                     }
                 } else {
                     var department = null;
-                }
-                //section
-                if (isUsingSections) {
-                    var section = $('#section').val();
-                    //check if section has value
-                    if (!section) {
-                        //toaster
-                        toastr.error('Please Select Section');
-                        return;
-                    }
-                } else {
-                    var section = null;
                 }
                 //company
                 var company = $('#company').val();
@@ -306,7 +320,6 @@
                         type: type,
                         position: position,
                         department: department,
-                        section: section,
                         company: company,
                         sector: sector,
                         client_id: client_id,
@@ -335,6 +348,7 @@
                 $('#EmployeeModal').modal('show');
             });
             editEmp = (id) => {
+                $("#EmployeeModalLabel").text('Edit Employee');
                 url = "{{ route('clients.getEmployee', ';d') }}";
                 url = url.replace(';d', id);
                 $.ajax({
@@ -343,12 +357,13 @@
                     success: function(data) {
                         getCompanies(data.employee.sector_id);
                         //after 1 sec
-                        getdepartments(data.employee.comp_id);
+                        // getdepartments(data.employee.comp_id, 'r');
+                        getEmployeeDep(data.employee.dep_id);
                         setTimeout(function() {
                             $('#name').val(data.employee.name);
                             $('#email').val(data.employee.email);
                             $('#mobile').val(data.employee.mobile);
-                            $('#type').val(data.employee.type);
+                            $('#type').val(data.employee.employee_type);
                             $('#position').val(data.employee.position);
                             //select department dropdown
                             $('#department').val(data.employee.dep_id);
@@ -363,20 +378,148 @@
                     }
                 });
             }
-            getdepartments = (id) => {
-                url = "{{ route('client.departments', [':d', 'r']) }}";
+            addEmployee = () => {
+                $("#EmployeeModalLabel").text('Add Employee');
+                $('#name').val('');
+                $('#email').val('');
+                $('#mobile').val('');
+                $('#type').val('');
+                $('#position').val('');
+                $('#department').val('');
+                $('#company').val('');
+                $('#sector').val('');
+                $('#SaveEmployee').data('Empid', '');
+            }
+            getdepartments = (id, type) => {
+                url = "{{ route('client.departments', [':d', ':t']) }}";
                 url = url.replace(':d', id);
+                url = url.replace(':t', type);
                 if (id) {
                     $.ajax({
                         url: url,
                         type: "GET",
                         success: function(data) {
-                            $('#department').empty();
-                            $('#department').append('<option value="">Select Department</option>');
-                            $.each(data, function(index, department) {
-                                $('#department').append('<option value="' + department.id +
-                                    '">' + department.name + '</option>');
-                            });
+                            if (type == 'r') {
+                                $('#superdirectorate').empty();
+                                $('#superdirectorate').append(
+                                    '<option value="">Select Super directorate</option>');
+                                $('#directorate').empty();
+                                $('#directorate').append(
+                                    '<option value="">Select Directorate</option>');
+                                $('#division').empty();
+                                $('#division').append('<option value="">Select Division</option>');
+                                $('#department').empty();
+                                $('#department').append(
+                                    '<option value="">Select Department</option>');
+                                $('#section').empty();
+                                $('#section').append('<option value="">Select Section</option>');
+                                $.each(data, function(index, department) {
+                                    if (department.dep_level == 1) {
+                                        $('#superdirectorate').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                    if (department.dep_level == 2) {
+                                        $('#directorate').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                    if (department.dep_level == 3) {
+                                        $('#division').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                    if (department.dep_level == 4) {
+                                        $('#department').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                    if (department.dep_level == 5) {
+                                        $('#section').append('<option value="' + department
+                                            .id + '">' + department.name + '</option>');
+                                    }
+                                });
+                            }
+                            if (type == 's') {
+                                $('#directorate').empty();
+                                $('#directorate').append(
+                                    '<option value="">Select Directorate</option>');
+                                $('#division').empty();
+                                $('#division').append('<option value="">Select Division</option>');
+                                $('#department').empty();
+                                $('#department').append(
+                                    '<option value="">Select Department</option>');
+                                $('#section').empty();
+                                $('#section').append('<option value="">Select Section</option>');
+                                $.each(data, function(index, department) {
+                                    if (department.dep_level == 2) {
+                                        $('#directorate').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                    if (department.dep_level == 3) {
+                                        $('#division').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                    if (department.dep_level == 4) {
+                                        $('#department').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                    if (department.dep_level == 5) {
+                                        $('#section').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                });
+                            }
+                            if (type == 'd') {
+                                $('#division').empty();
+                                $('#division').append('<option value="">Select Division</option>');
+                                $('#department').empty();
+                                $('#department').append(
+                                    '<option value="">Select Department</option>');
+                                $('#section').empty();
+                                $('#section').append('<option value="">Select Section</option>');
+                                $.each(data, function(index, department) {
+
+                                    if (department.dep_level == 3) {
+                                        $('#division').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                    if (department.dep_level == 4) {
+                                        $('#department').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                    if (department.dep_level == 5) {
+                                        $('#section').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                });
+                            }
+                            if (type == 'di') {
+                                $('#department').empty();
+                                $('#department').append(
+                                    '<option value="">Select Department</option>');
+                                $('#section').empty();
+                                $('#section').append('<option value="">Select Section</option>');
+                                $.each(data, function(index, department) {
+                                    if (department.dep_level == 4) {
+                                        $('#department').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                    if (department.dep_level == 5) {
+                                        $('#section').append('<option value="' +
+                                            department.id +
+                                            '">' + department.name + '</option>');
+                                    }
+                                });
+                            }
                         },
                         error: function(error) {
                             console.log(error);
@@ -406,8 +549,9 @@
                 }
             }
             getSections = (id) => {
-                url = "{{ route('client.sections', ':d') }}";
+                url = "{{ route('client.departments', [':d', ':t']) }}";
                 url = url.replace(':d', id);
+                url = url.replace(':t', 'd');
                 if (id) {
                     $.ajax({
                         url: url,
@@ -416,8 +560,8 @@
                             $('#section').empty();
                             $('#section').append('<option value="">Select Section</option>');
                             $.each(data, function(index, section) {
-                                $('#section').append('<option value="' + section.id +
-                                    '">' + section.name + '</option>');
+                                $('#section').append('<option value="' + section.id + '">' +
+                                    section.name + '</option>');
                             });
                         },
                         error: function(error) {
@@ -428,14 +572,13 @@
             }
             //assignUser click
             assignUser = (id) => {
-                url = "{{ route('clients.AssignAsUser', [':d',':c']) }}";
+                url = "{{ route('clients.AssignAsUser', [':d', ':c']) }}";
                 url = url.replace(':d', id);
                 url = url.replace(':c', "{{ $client->id }}");
                 $.ajax({
                     url: url,
                     type: "GET",
                     success: function(data) {
-                        console.log(data);
                         $('#Employee-data').DataTable().ajax.reload();
                     },
                     error: function(error) {
@@ -444,5 +587,106 @@
                 });
             }
         });
-    </script>
+
+        function getEmployeeDep(id) {
+            if (id == null) {
+                console.log('no id');
+                return;
+            }
+            url = "{{ route('client.departments', [':d', ':t']) }}";
+            url = url.replace(':d', id);
+            url = url.replace(':t', 'ed');
+            var next_id = null
+            if (id) {
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    success: function(data) {
+                        if (data.status) {
+                            var dep_level = null;
+                            $.each(data.departments, function(index, department) {
+                                // department.id ==id
+                                if (department.id == id) {
+                                    next_id = department.parent_id
+                                }
+                                if (dep_level == null || dep_level != department.dep_level) {
+                                    dep_level = department.dep_level;
+                                    if (dep_level == 1) {
+                                        //setup superdirectorate
+                                        $('#superdirectorate').empty();
+                                        $('#superdirectorate').append(
+                                            '<option value="">Select Super directorate</option>');
+                                    }
+                                    if (dep_level == 2) {
+                                        //setup directorate
+                                        $('#directorate').empty();
+                                        $('#directorate').append(
+                                            '<option value="">Select Directorate</option>');
+                                    }
+                                    if (dep_level == 3) {
+                                        //setup division
+                                        $('#division').empty();
+                                        $('#division').append(
+                                            '<option value="">Select Division</option>');
+                                    }
+                                    if (dep_level == 4) {
+                                        //setup department
+                                        $('#department').empty();
+                                        $('#department').append(
+                                            '<option value="">Select Department</option>');
+                                    }
+                                    if (dep_level == 5) {
+                                        //setup Section
+                                        $('#section').empty();
+                                        $('#section').append(
+                                            '<option value="">Select section</option>');
+                                    }
+                                }
+                                if (dep_level == 1) {
+                                    selected = department.id == id ? "selected" : "";
+                                    //setup superdirectorate
+                                    $('#superdirectorate').append('<option value="' + department.id +
+                                        '" ' + selected + '>' +
+                                        department.name + '</option>');
+                                }
+                                if (dep_level == 2) {
+                                    //setup directorate
+                                    selected = department.id == id ? "selected" : "";
+                                    $('#directorate').append('<option value="' +
+                                        department.id +
+                                        '"'+selected+'>' + department.name + '</option>');
+                                }
+                                if (dep_level == 3) {
+                                    //setup division
+                                    selected = department.id == id ? "selected" : "";
+                                    $('#division').append('<option value="' +
+                                        department.id +
+                                        '"'+selected+'>' + department.name + '</option>');
+                                }
+                                if (dep_level == 4) {
+                                    //setup department
+                                    selected = department.id == id ? "selected" : "";
+                                    $('#department').append('<option value="' + department.id + '" '+selected+'>' + department
+                                        .name + '</option>');
+                                }
+                                if (dep_level == 5) {
+                                    //setup Section
+                                    selected = department.id == id ? "selected" : "";
+                                    $('#section').append('<option value="' +
+                                        department.id +
+                                        '"' + selected + '>' + department.name + '</option>');
+                                }
+                            });
+                            if (next_id != null) {
+                                getEmployeeDep(next_id);
+                            }
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        }
+</script>
 @endsection

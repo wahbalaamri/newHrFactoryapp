@@ -86,6 +86,7 @@
                                                         data-off-color="danger" data-on-color="success"
                                                         @checked($survey_object ? $survey_object->status : true)>
                                                 </div>
+                                                @if ($type != 4)
                                                 {{-- switch use default statmants --}}
                                                 <div class="form-group col-md-5 col-sm-12">
                                                     <div class="row">
@@ -119,6 +120,7 @@
                                                     @endif --}}
                                                     </small>
                                                 </div>
+                                                @endif
                                                 {{-- textarea survey description --}}
                                                 <div class="form-group col-sm-6">
                                                     <label for="survey_des">{{ __('Survey Description') }}</label>
