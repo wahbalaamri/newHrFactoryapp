@@ -464,6 +464,7 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::resource('partners', PartnersController::class);
     Route::post('partners/edit', [PartnersController::class, 'SavePartner'])->name('partner.edit');
     Route::get('partners/FocalPoints/{id}', [PartnersController::class, 'FocalPoints'])->name('partner.FocalPoints');
+    // Route::get('partners/CountriesDomain/{id}', [PartnersController::class, 'CountriesDomain'])->name('partner.CountriesDomain');
     Route::post('partners/SaveFocalPoint/{id}', [PartnersController::class, 'SaveFocalPoint'])->name('partner.SaveFocalPoint');
     Route::get('partners/Partnerships/{id}', [PartnersController::class, 'Partnerships'])->name('partner.Partnerships');
     Route::post('partners/SavePartnership/{id}', [PartnersController::class, 'SavePartnership'])->name('partner.SavePartnership');

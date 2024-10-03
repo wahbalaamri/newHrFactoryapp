@@ -42,6 +42,7 @@ function hideModal(id) {
 function SaveFocalPoint(btn) {
     //find data-url from btn
     var url = $(btn).data('url');
+    console.log(url);
     //ajax call
     $.ajax({
         url: url,

@@ -214,11 +214,17 @@ class PartnersController extends Controller
                 if ($request->focal_id) {
                     $focal_point = PartnerFocalPoint::find($request->focal_id);
                     $email = $focal_point->email;
-                } else
+                } else { //check email already exists
+                    $user = User::where('email', $request->focal_email)->first();
+                    if ($user)
+                        return response()->json(['msg' => 'Email already exists', 'stat' => false]);
+
                     $focal_point = new PartnerFocalPoint();
+                }
                 $focal_point->partner_id = $decrypted_id;
                 $focal_point->name = $name;
                 $focal_point->name_ar = $request->focal_name_ar;
+                $focal_point->country = $request->focal_country;
                 $focal_point->phone = $request->focal_phone;
                 $focal_point->Email = $request->focal_email;
                 $focal_point->position = $request->focal_position;

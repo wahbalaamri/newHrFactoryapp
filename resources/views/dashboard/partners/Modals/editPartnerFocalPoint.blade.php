@@ -28,6 +28,23 @@
                             <input type="text" class="form-control" id="focal_name_ar" name="focal_name_ar"
                                 placeholder="{{ __('Name in Arabic') }}">
                         </div>
+                        {{-- select countries --}}
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="focal_country">{{ __('Country') }}</label>
+                            <select name="focal_country" id="focal_country" class="form-control">
+                                <option value="">{{ __('Select Country') }}</option>
+                                <optgroup label="{{ __('Arab Countries') }}">
+                                    @foreach ($countries[1] as $country)
+                                    <option value="{{ $country->id }}">{{ $country->name }}</option>
+                                    @endforeach
+                                </optgroup>
+                                <optgroup label="{{ __('Other Countries') }}">
+                                    @foreach ($countries[0] as $country)
+                                    <option value="{{ $country->id }}">{{ $country->name }}</option>
+                                    @endforeach
+                                </optgroup>
+                            </select>
+                        </div>
                         {{-- focal point email --}}
                         <div class="form-group col-md-6 col-sm-12">
                             <label for="focal_email">{{ __('Email') }}</label>
@@ -53,8 +70,10 @@
                         </div>
                         {{-- submit --}}
                         <div class="form-group col-sm-12">
-                            <a href="javascript:void(0)" id="SaveFocalPointbtn" onclick="SaveFocalPoint(this)" @class(['btn btn-success btn-sm', 'float-right' => app()->isLocale('en'), 'float-left' => app()->isLocale('ar')])>
-                            {{ __('Save') }}
+                            <a href="javascript:void(0)" id="SaveFocalPointbtn" onclick="SaveFocalPoint(this)"
+                                @class(['btn btn-success btn-sm', 'float-right'=> app()->isLocale('en'), 'float-left' =>
+                                app()->isLocale('ar')])>
+                                {{ __('Save') }}
                             </a>
                         </div>
                     </div>
