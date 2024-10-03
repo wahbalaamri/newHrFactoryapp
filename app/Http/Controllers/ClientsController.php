@@ -44,8 +44,15 @@ class ClientsController extends Controller
             $partner_id = PartnerFocalPoint::where('Email', Auth()->user()->email)->first()->partner_id;
             //get countries id in partnerships
             $Countries_id = Partnerships::where('partner_id', $partner_id)->pluck('country_id')->toArray();
+            //get partner
+            $partner = Partners::find($partner_id);
+            if ($partner->is_main) {
+                $clients = Clients::whereIn('country', $Countries_id)->get();
+            } else {
+                $clients = Clients::where('partner', $partner_id)->whereIn('country', $Countries_id)->get();
+            }
             //get all clients in the countries
-            $clients = Clients::whereIn('country', $Countries_id)->get();
+
         } else {
             $clients = Clients::all();
         }
