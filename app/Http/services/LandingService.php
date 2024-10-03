@@ -5,7 +5,9 @@ namespace App\Http\services;
 use App\Models\Clients;
 use App\Models\ClientSubscriptions;
 use App\Models\Countries;
+use App\Models\PartnerFocalPoint;
 use App\Models\Partners;
+use App\Models\Partnerships;
 use App\Models\Services;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -93,5 +95,22 @@ class LandingService
     function generateRandomPassword()
     {
         return Str::password(8, true, true, false, false);
+    }
+
+    function HasService($email, $service_type): bool
+    {
+        //get the focal point
+        $focal_point = PartnerFocalPoint::where('Email', $email)->first();
+        $service = Services::where('service_type', $service_type)->first();
+        //partnerships
+        $service = 's-' . $service->id;
+        $partnership_services = json_decode(Partnerships::where('partner_id', $focal_point->partner_id)
+            ->where('country_id', $focal_point->country)
+            ->where('is_active', true)
+            ->first()->services,true);
+        //check if service exists
+        $keys=array_keys($partnership_services);
+        return in_array($service, $keys);
+
     }
 }

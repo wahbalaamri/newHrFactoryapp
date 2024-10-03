@@ -1363,16 +1363,15 @@ class SurveysPrepration
             if ($partnership) {
                 //get services as json and then convert it to an array
 
-                $services = json_decode($partnership->services,true);
+                $services = json_decode($partnership->services, true);
                 $keys = array_keys($services);
                 // remove s- from keys
                 $keys = array_map(function ($key) {
                     return substr($key, 2);
                 }, $keys);
                 $all_services = Services::whereIn('id', $keys)->get();
-            }
-            else{
-                $all_services=[];
+            } else {
+                $all_services = [];
             }
         }
         $data = [
@@ -2577,7 +2576,7 @@ class SurveysPrepration
     function company_results($Client_id, $Service_type, $id, $type, $type_id = null)
     {
         // $surveyEmails = Emails::where([['survey_id', $id], ['comp_id', $type_id]])->select(['id', 'EmployeeType'])->get();
-        $surveyEmails = Respondents::select('respondents.id as id', 'employees.employee_type as EmployeeType')
+        $surveyEmails = Respondents::select('respondents.id as id', 'employees.employee_type as employee_type', 'employees.dep_id as Dep_id')
             ->join('employees', 'respondents.employee_id', '=', 'employees.id')
             ->where('employees.comp_id', $type_id)
             ->where('respondents.survey_id', $id)
@@ -3688,17 +3687,14 @@ class SurveysPrepration
     }
     function newFunc($surveyEmails, $leaders_email, $hr_teames_email, $employees_email)
     {
-        foreach ($surveyEmails as $surveyEmail) {
-            if ($surveyEmail->EmployeeType == 1) {
-                array_push($leaders_email, $surveyEmail->id);
-            }
-            if ($surveyEmail->EmployeeType == 2) {
-                array_push($hr_teames_email, $surveyEmail->id);
-            }
-            if ($surveyEmail->EmployeeType == 3) {
-                array_push($employees_email, $surveyEmail->id);
-            }
-        }
+        // pluck Dep_id
+        $deps = $surveyEmails->pluck('Dep_id')->toArray();
+        //get hr departments
+        $hr_deps = Departments::whereIn('id', $deps)->where('is_hr', 1)->pluck('id')->toArray();
+        //get hr team
+        $hr_teames_email = $surveyEmails->whereIn('Dep_id', $hr_deps)->pluck('id')->toArray();
+        $leaders_email=$surveyEmails->whereNotIn('id', $hr_teames_email)->where('employee_type',1)->pluck('id')->toArray();
+        $employees_email=$surveyEmails->whereNotIn('id', $hr_teames_email)->where('employee_type',2)->pluck('id')->toArray();
         return [$leaders_email, $hr_teames_email, $employees_email];
     }
     //saveSurveyCandidates function

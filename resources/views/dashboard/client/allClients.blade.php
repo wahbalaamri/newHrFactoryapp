@@ -145,7 +145,7 @@
                                             @endforeach
                                             @else
                                             <tr>
-                                                <td colspan="9" class="text-center">{{__('No Clients Found')}}</td>
+                                                <td colspan="11" class="text-center">{{__('No Clients Found')}}</td>
                                             </tr>
                                             @endif
                                         </tbody>

@@ -319,19 +319,35 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('ManageHrDiagnosis.index') }}" class="nav-link">
+                            @php
+                            $active = Auth()->user()->isAdmin ? true:
+                            App\Http\Facades\Landing::HasService(auth()->user()->email,'4');
+                            @endphp
+                            <a href="{{$active? route('ManageHrDiagnosis.index'):'#' }}" class="nav-link">
                                 <i class="nav-icon fas fa-user-md"></i>
                                 <p>
-                                    {{ __('Manager Hr Diagnosis') }}
+                                    {{ __('Manage Hr Diagnosis') }}
+                                    @if (!$active)
+                                        {{-- lock icon --}}
+                                        <i class="right fas fa-lock"></i>
+                                    @endif
                                     {{-- <span class="right badge badge-danger">New</span> --}}
                                 </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('Leader360Review.index') }}" class="nav-link">
+                            @php
+                            $active = Auth()->user()->isAdmin ? true:
+                            App\Http\Facades\Landing::HasService(auth()->user()->email,'5');
+                            @endphp
+                            <a href="{{ $active? route('Leader360Review.index'):'#' }}" class="nav-link">
                                 <i class="nav-icon fas fa-compress-arrows-alt"></i>
                                 <p>
                                     {{ __('360 Review') }}
+                                    @if (!$active)
+                                        {{-- lock icon --}}
+                                        <i class="right fas fa-lock"></i>
+                                    @endif
                                     {{-- <span class="right badge badge-danger">New</span> --}}
                                 </p>
                             </a>

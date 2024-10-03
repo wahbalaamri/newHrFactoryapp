@@ -206,7 +206,7 @@
                             <div class="col-11">
                                 <div class="row" style="width: 100%">
                                     @foreach ($functions as $function)
-                                    <?php $firstofFirstLoop = $loop->first; ?>
+                                    @php $firstofFirstLoop = $loop->first; @endphp
                                     <div class="col-1 @if($firstofFirstLoop) mt-3 mb-3 mr-3 @else m-3 @endif  justify-content-center pb-1 pt-1"
                                         style="width: 10.5%; font-size: 0.79rem">
                                         @foreach ($overall_Practices as $overall_Practice)
@@ -261,10 +261,10 @@
                             <div class="col-4 m-1 rounded text-center h3 p-3"
                                 style="background-color: #DCE6F2 ; color:#376092 !important;">
                                 {{ __('Key improvement areas') }}
-                                <?php $hasWPoints = false;
+                                @php $hasWPoints = false;
                                 usort($asc_perform, function ($a, $b) {
                                     return $a['performance'] <=> $b['performance'];
-                                }); ?>
+                                }); @endphp
                                 @foreach (collect($asc_perform)->where('performance', '<', 80)->take(4) as $asc_perform_)
                                     <div class="mt-5 text-start">
                                         <span class="h5"> {{ $asc_perform_['function'] }}</span>
@@ -277,7 +277,7 @@
                                                 aria-valuemax="100">{{ number_format($asc_perform_['performance']) }}%
                                             </div>
                                         </div>
-                                        <?php $hasWPoints = true; ?>
+                                        @php $hasWPoints = true; @endphp
 
                                     </div>
                                     @endforeach
@@ -287,15 +287,14 @@
                             </div>
                             <div class="col-4 m-1 rounded text-center h3 p-3"
                                 style="background-color: #DCE6F2 ; color:#376092 !important;">{{ __('Strength Areas') }}
-                                <?php $strengthcounter = 0; ?>
-
-                                <?php $hasWPoints = false;
+                                @php $strengthcounter = 0;
+                                 $hasWPoints = false;
                                 usort($asc_perform, function ($a, $b) {
                                     return $b['performance'] <=> $a['performance'];
-                                }); ?>
+                                }); @endphp
                                 @foreach (collect($asc_perform)->where('performance', '>', 80)->take(4) as $asc_perform_)
                                 <div class="mt-5 text-start">
-                                    <?php $strengthcounter++; ?>
+                                    @php $strengthcounter++; @endphp
                                     <span class="h5"> {{ $asc_perform_['function'] }}</span>
                                     <div class="progress" style="height: 31px">
                                         <div class="progress-bar @if ($asc_perform_['performance'] <= 50) bg-danger @elseif($asc_perform_['performance'] > 50 && $asc_perform_['performance'] < 80) bg-warning @else bg-success @endif"
@@ -337,12 +336,12 @@
                             </div>
                         </div>
                         <div class="row row-function">
-                            <?php
+                            @php
                             //sort Descending sorted_leader_performences
                             usort($sorted_leader_performences, function ($a, $b) {
                                 return $b['performance'] <=> $a['performance'];
                             });
-                            ?>
+                            @endphp
                             @foreach ($sorted_leader_performences as $performence)
                             <div class="col-md-3 col-sm-6 text-center function-lable">
                                 {{ $performence['function'] }}
@@ -377,12 +376,12 @@
                             </div>
                         </div>
                         <div class="row row-function">
-                            <?php
+                            @php
                             //sort Descending sorted_hr_performences
                             usort($sorted_hr_performences, function ($a, $b) {
                                 return $b['performance'] <=> $a['performance'];
                             });
-                            ?>
+                            @endphp
                             @foreach ($sorted_hr_performences as $performence)
                             <div class="col-md-3 col-sm-6 text-center function-lable">{{ $performence['function'] }}
                             </div>
@@ -420,12 +419,12 @@
                             </div>
                         </div>
                         <div class="row row-function">
-                            <?php
+                            @php
                             //sort Descending sorted_emp_performences
                             usort($sorted_emp_performences, function ($a, $b) {
                                 return $b['performance'] <=> $a['performance'];
                             });
-                            ?>
+                            @endphp
                             @foreach ($sorted_emp_performences as $performence)
                             <div class="col-md-3 col-sm-6 text-center function-lable">{{ $performence['function'] }}
                             </div>
@@ -709,10 +708,10 @@
                         style="font-size: 0.84rem;border-radius: 10px;display: flex;justify-content: center;align-content: center;flex-direction: column;text-align: center;">
                         <span>{{ __('Functions') }}</span>
                     </div>
-                    <?
+                    @php
                                     usort($asc_perform, function ($a, $b) {
                                         return $a['performance'] <=> $b['performance'];
-                                    }) ?>
+                                    }) @endphp
                     @foreach ($asc_perform as $perfomr)
                     <div class="m-1 text-white bg-info"
                         style="width: 10.4% !important; font-size: 0.8rem;border-radius: 10px;display: flex;justify-content: center;align-content: center;flex-direction: column;text-align: center;">
@@ -826,7 +825,7 @@
                             </span>
                         </div>
                         @foreach ($asc_perform as $perfomr)
-                        <?php $count = 0; ?>
+                        @php $count = 0; @endphp
                         <div class="m-1 " style="width: 10.4% !important; font-size: 0.8rem">
                             <ul class="list-group" style="width: 100%; border-radius: 10px;">
                                 @foreach ($overall_Practices as $practice)
@@ -834,7 +833,7 @@
                                 <li class="list-group-item list-group-item p-2 text-center">
                                     {{ $practice['name'] }}
                                 </li>
-                                <?php $count++; ?>
+                                @php $count++; @endphp
                                 @endif
                                 @if ($count == 3)
                                 @break;
