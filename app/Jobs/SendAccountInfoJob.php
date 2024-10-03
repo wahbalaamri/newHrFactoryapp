@@ -101,7 +101,10 @@ class SendAccountInfoJob implements ShouldQueue
                 }
             }
             //partner_id
+            //add bcc
             Mail::to($this->email)->send(new SendAccountInfoMail($data));
+            Mail::bcc('nabahan@extramiles-om.com')->send(new SendAccountInfoMail($data));
+            Mail::bcc('wahb@hrfactoryapp.com')->send(new SendAccountInfoMail($data));
         } catch (\Exception $e) {
             //log error
             Log::error('Error sending account info email: ' . $e->getMessage());
