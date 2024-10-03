@@ -14,7 +14,7 @@ use App\Models\PlansPrices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use App\Models\{Clients, ClientSubscriptions, Functions, Services, FunctionPractices, Industry, Plans, PracticeQuestions, Sectors, Surveys, Companies, CustomizedSurvey, CustomizedSurveyAnswers, CustomizedSurveyQuestions, CustomizedSurveyRaters, CustomizedSurveyRespondents, Departments, EmailContents, Employees, PrioritiesAnswers, Respondents, SurveyAnswers, Raters, User};
+use App\Models\{Clients, ClientSubscriptions, Functions, Services, FunctionPractices, Industry, Plans, PracticeQuestions, Sectors, Surveys, Companies, CustomizedSurvey, CustomizedSurveyAnswers, CustomizedSurveyQuestions, CustomizedSurveyRaters, CustomizedSurveyRespondents, Departments, EmailContents, Employees, Partners, Partnerships, PrioritiesAnswers, Respondents, SurveyAnswers, Raters, User};
 use Carbon\Carbon;
 use Str;
 use Yajra\DataTables\Facades\DataTables;
@@ -1126,7 +1126,7 @@ class SurveysPrepration
             $employee->employee_type = $request->type;
             $employee->position = $request->position;
 
-            $employee->is_hr_manager = ($is_hr_dep && $request->type==1);
+            $employee->is_hr_manager = ($is_hr_dep && $request->type == 1);
 
             $employee->added_by = 0;
             //save employee
@@ -1346,9 +1346,39 @@ class SurveysPrepration
     function viewSubscriptions($id, $by_admin = false)
     {
         $client = Clients::find($id);
+        //get service
+        $all_services = Services::all();
+        if (Auth()->user()->user_type == "partner") {
+            $partner_id = Auth()->user()->partner_id;
+            //get today date
+            $today = date('Y-m-d');
+            //get partnership
+            $partnership = Partnerships::select('services')
+                ->where('country_id', $client->country)
+                ->where('partner_id', $partner_id)
+                ->where('is_active', true)
+                ->whereDate('start_date', '<=', $today)
+                ->whereDate('end_date', '>=', $today)
+                ->first();
+            if ($partnership) {
+                //get services as json and then convert it to an array
+
+                $services = json_decode($partnership->services,true);
+                $keys = array_keys($services);
+                // remove s- from keys
+                $keys = array_map(function ($key) {
+                    return substr($key, 2);
+                }, $keys);
+                $all_services = Services::whereIn('id', $keys)->get();
+            }
+            else{
+                $all_services=[];
+            }
+        }
         $data = [
             'id' => $id,
             'client' => $client,
+            'services' => $all_services
         ];
         //if request is ajax
         if (request()->ajax()) {

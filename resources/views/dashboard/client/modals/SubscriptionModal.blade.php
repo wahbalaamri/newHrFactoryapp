@@ -18,7 +18,10 @@
                             <label for="service">{{ __('Service') }}</label>
                             <select class="form-control" name="service" id="service">
                                 <option value="">{{ __('Select Service Type') }}</option>
-                                <option value="1">{{ __('Manual Builder') }}</option>
+                                @foreach ($services as $service)
+                                <option value="{{ $service->service_type }}">{{ $service->service_name }}</option>
+                                @endforeach
+                                {{-- <option value="1">{{ __('Manual Builder') }}</option>
                                 <option value="2">{{ __('Files') }}</option>
                                 <option value="3">{{ __('Employee Engagment') }}</option>
                                 <option value="4">{{ __('HR Diagnosis') }}</option>
@@ -27,7 +30,7 @@
                                 <option value="7">{{ __('Customized surveys') }}</option>
                                 <option value="8">{{ __('Chat-bot') }}</option>
                                 <option value="9">{{ __('Calculator') }}</option>
-                                <option value="10">{{ __('Customized Employee Engagment') }}</option>
+                                <option value="10">{{ __('Customized Employee Engagment') }}</option> --}}
                             </select>
                         </div>
                         <div class="form-group col-md-10">

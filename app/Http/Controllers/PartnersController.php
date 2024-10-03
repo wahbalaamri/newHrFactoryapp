@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Facades\Landing;
 use App\Http\Facades\TempURL;
 use App\Models\Partners;
 use App\Http\Requests\StorePartnersRequest;
 use App\Http\Requests\UpdatePartnersRequest;
+use App\Jobs\SendAccountInfoJob;
 use App\Models\Countries;
 use App\Models\PartnerFocalPoint;
 use App\Models\Partnerships;
@@ -207,6 +209,7 @@ class PartnersController extends Controller
         try {
             $email = "";
             $name = $request->focal_name;
+            $auto_pass = Landing::generateRandomPassword();
             if (TempURL::getIsValidUrl($request)) {
                 if ($request->focal_id) {
                     $focal_point = PartnerFocalPoint::find($request->focal_id);
@@ -217,7 +220,7 @@ class PartnersController extends Controller
                 $focal_point->name = $name;
                 $focal_point->name_ar = $request->focal_name_ar;
                 $focal_point->phone = $request->focal_phone;
-                $focal_point->email = $request->focal_email;
+                $focal_point->Email = $request->focal_email;
                 $focal_point->position = $request->focal_position;
                 $focal_point->is_active = $request->focal_status ? true : false;
                 $focal_point->save();
@@ -235,7 +238,7 @@ class PartnersController extends Controller
                 $user->name = $name;
                 $user->email = $request->focal_email;
                 $user->client_id = null;
-                // $user->partner_id = $decrypted_id;
+                $user->partner_id = $decrypted_id;
                 $user->sector_id = null;
                 $user->comp_id = null;
                 $user->dep_id = null;
@@ -243,13 +246,19 @@ class PartnersController extends Controller
                 $user->emp_id = null;
                 if ($request->focal_id == null) {
                     $user->is_main = $focal_points_count > 0 ? false : true;
-                    $user->password = bcrypt('123456');
+                    $user->password = bcrypt($auto_pass);
                 }
                 $user->isAdmin = false;
                 $user->lang = 1;
                 $user->hide_my_result = false;
                 $user->is_active = $request->focal_status ? true : false;
                 $user->save();
+                if ($request->focal_id == null) {
+                    $email = $user->email;
+                    $password = $auto_pass;
+                    $job = (new SendAccountInfoJob($email, $password))->delay(now()->addSeconds(2));
+                    dispatch($job);
+                }
                 $data = [
                     'stat' => true,
                     'msg' => "Data is successfully saved",

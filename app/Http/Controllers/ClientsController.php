@@ -113,6 +113,9 @@ class ClientsController extends Controller
                 $filename = null;
             }
             $request_hasPass = $request->has('password');
+            $notify_client = true;
+            if (!$request_hasPass)
+                $notify_client = $request->notify_client_cred == "on" ? true : false;
             $password = $request_hasPass ? $request->password : Landing::generateRandomPassword();
             $country_id = Landing::getCurrentCountry();
             //find the country from countries table
@@ -190,7 +193,7 @@ class ClientsController extends Controller
             //
             //redirect to login page with success message
             // (new SendSurvey($emails, $data))->delay(now()->addSeconds(2));
-            if (!$request_hasPass) {
+            if (!$request_hasPass && $notify_client) {
                 $job = (new SendAccountInfoJob($request->focal_email, $password))->delay(now()->addSeconds(2));
                 dispatch($job);
                 //redirect to route name('clients.index')

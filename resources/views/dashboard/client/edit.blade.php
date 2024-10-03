@@ -40,8 +40,7 @@
                             </div>
                         </div>
                         <div class="card-body p-0">
-                            <form action="{{ route('clients.store') }}" method="post"
-                                enctype="multipart/form-data">
+                            <form action="{{ route('clients.store') }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 <div class="bs-stepper linear">
                                     <div class="bs-stepper-header" role="tablist">
@@ -200,22 +199,20 @@
                                                     <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                @if ($terms)
-                                                <div class="form-group col-md-6 col-sm-12">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            id="terms_condtions_box">
-                                                        <label class="form-check-label" for="terms_condtions_box">
-                                                            {{ __('I viewed and I agree to') }} <a
-                                                                href="javascript:void(0)"
-                                                                data-target="#terms_conditions_modal"
-                                                                data-toggle="modal">{{ 'terms & conditions' }}</a>
-                                                        </label>
-                                                    </div>
+                                                {{-- switch use default statmants --}}
+                                                <div class="form-group col-md-5 col-sm-12">
+                                                    <label for="notify_client_cred">{{ __('Use Default
+                                                        Statements') }}
+                                                    </label>
+                                                    <br>
+                                                    <input type="checkbox" name="notify_client_cred" checked
+                                                        data-bootstrap-switch data-off-color="danger"
+                                                        data-on-color="success">
+                                                    <small class="blockquote-footer">
+                                                        {{ __('By checking system will send account credentials to the focal point of the client.')
+                                                        }}
+                                                    </small>
                                                 </div>
-                                                @endif
                                             </div>
                                             <div class="pt-2 pb-4">
                                                 <a href="javascript:void(0)" @class(['btn btn-primary
@@ -223,8 +220,8 @@
                                                     app()->isLocale('ar')])
                                                     onclick="stepper.previous()">{{ __('Previous') }}</a>
                                                 <button type="submit" @class(['btn btn-primary btn-sm', 'float-right'=>
-                                                    app()->isLocale('en'), 'float-left' => app()->isLocale('ar')])
-                                                    @disabled($terms !=null)>{{ __('Submit') }}</button>
+                                                    app()->isLocale('en'), 'float-left' => app()->isLocale('ar')])>{{
+                                                    __('Submit') }}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -260,20 +257,18 @@
 @section('scripts')
 <script src="{{ asset('dashboard/plugins/bs-stepper/js/bs-stepper.min.js') }}"></script>
 <script>
+    $("[name='notify_client_cred']").bootstrapSwitch();
     document.addEventListener('DOMContentLoaded', function() {
             window.stepper = new Stepper(document.querySelector('.bs-stepper'))
         })
-
-        //on terms_condtions_box change
-        const terms_condtions_box = document.getElementById('terms_condtions_box');
-        terms_condtions_box.addEventListener('change', function() {
-            if (this.checked) {
-                //enable submit button
-                document.querySelector('button[type="submit"]').removeAttribute('disabled');
+        //on notify_client_cred change
+        $("[name='notify_client_cred']").on('switchChange.bootstrapSwitch', function(event, state) {
+            if (state) {
+                //blockquote-footer
+                $('.blockquote-footer').text('{{ __('By checking system will send account credentials to the focal point of the client.') }}');
             } else {
-                //disable submit button
-                document.querySelector('button[type="submit"]').setAttribute('disabled', 'disabled');
+                $('.blockquote-footer').text('{{ __('By unchecking system will not send account credentials.') }}');
             }
-        });
+        })
 </script>
 @endsection
