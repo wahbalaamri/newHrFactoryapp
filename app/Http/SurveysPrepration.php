@@ -1050,7 +1050,7 @@ class SurveysPrepration
         return Companies::where('sector_id', $id)->get()->append('name');
     }
     //departments function
-    function departments(Request $request, $id, $type , $by_admin = false)
+    function departments(Request $request, $id, $type, $by_admin = false)
     {
 
         if ($type == 'r')
@@ -1064,12 +1064,11 @@ class SurveysPrepration
                     Log::info($department);
                     Log::info(Departments::where('parent_id', $department->parent_id)->get()->append('name'));
                     return response()->json(['departments' => Departments::where('parent_id', $department->parent_id)->get()->append('name'), 'status' => true]);
-                }
-                else
-                {
+                } else {
                     return response()->json([
                         'departments' => Departments::where('company_id', $department->company_id)->where('dep_level', 1)->get()->append('name'),
-                         'status' => true]);
+                        'status' => true
+                    ]);
                 }
             } else {
                 //return json response
@@ -1088,6 +1087,13 @@ class SurveysPrepration
     function storeEmployee(Request $request, $by_admin = false)
     {
         try {
+            $is_hr_dep = false;
+            //if $request->department not null
+            if ($request->department) {
+                //get dep
+                $dep = Departments::find($request->department);
+                $is_hr_dep = $dep->is_hr;
+            }
             //create new employee
             if ($request->id == null) {
                 $employee = new Employees();
@@ -1119,15 +1125,9 @@ class SurveysPrepration
             $employee->mobile = $request->mobile;
             $employee->employee_type = $request->type;
             $employee->position = $request->position;
-            if ($client->use_department) {
-                if ($department->is_hr && $request->type == 1) {
-                    $employee->is_hr_manager = true;
-                } else {
-                    $employee->is_hr_manager = false;
-                }
-            } else {
-                $employee->is_hr_manager = false;
-            }
+
+            $employee->is_hr_manager = ($is_hr_dep && $request->type==1);
+
             $employee->added_by = 0;
             //save employee
             $employee->save();
