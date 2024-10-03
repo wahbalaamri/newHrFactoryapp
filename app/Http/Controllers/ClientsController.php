@@ -49,7 +49,7 @@ class ClientsController extends Controller
             if ($partner->is_main) {
                 $clients = Clients::whereIn('country', $Countries_id)->get();
             } else {
-                $clients = Clients::where('partner', $partner_id)->whereIn('country', $Countries_id)->get();
+                $clients = Clients::where('partner_id', $partner_id)->whereIn('country', $Countries_id)->get();
             }
             //get all clients in the countries
 
