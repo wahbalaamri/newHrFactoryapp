@@ -682,8 +682,8 @@
             <div class="card-body">
                 <div class="row">
                     <div class="d-flex justify-content-center">
-                        <div class="chart-container w-50">
-                            <canvas id="myChart" width="400" height="400"></canvas>
+                        <div id="linechart_material" class="text-left">
+
                         </div>
                     </div>
                 </div>
@@ -932,93 +932,68 @@
 @section('scripts')
 {{-- <script src="{{ asset('assets/js/libs/jszip.min.js') }}"></script>
 <script src="{{ asset('assets/js/dist/pptxgen.min.js') }}"></script> --}}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js">
 </script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.esm.js">
-</script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.js"></script>
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    Labels = @json($function_Lables);
+  Labels = @json($function_Lables);
     Leaders = @json($leaders_perform_onlyz);
     hr = @json($hr_perform_onlyz);
+    //===============================
+    //create new array with labels, Leaders, and hr
+    //===============================
 
-    const ctx = document.getElementById('myChart');
-    //get max of hr
-    var max = 0;
-    var max_hr = hr.reduce(function(prev, current) {
-        return (prev > current) ? prev : current
-    })
-    //get max of leaders
-    var max_leaders = Leaders.reduce(function(prev, current) {
-        return (prev > current) ? prev : current
-    })
-    max = max_hr > max_leaders ? max_hr : max_leaders;
-    max = (100 - max) > 10 ? parseInt(max) + 5 : 100;
-    const myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: Labels,
-            datasets: [{
-                    label: "{{ __('Leadership responses') }}",
-                    data: Leaders,
-                    backgroundColor: [
-                        'rgba(0, 74, 159, 1)' //,
-                        // 'rgba(54, 162, 235, 0.2)',
-                        // 'rgba(255, 206, 86, 0.2)',
-                        // 'rgba(75, 192, 192, 0.2)',
-                        // 'rgba(153, 102, 255, 0.2)',
-                        // 'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(0, 74, 159, 1)' //,
-                        // 'rgba(54, 162, 235, 1)',
-                        // 'rgba(255, 206, 86, 1)',
-                        // 'rgba(75, 192, 192, 1)',
-                        // 'rgba(153, 102, 255, 1)',
-                        // 'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                },
-                {
-                    label: "{{ __('HR responses') }}",
-                    data: hr,
-                    backgroundColor: [
-                        // 'rgba(255, 99, 132, 0.2)',
-                        // 'rgba(54, 162, 235, 0.2)',
-                        // 'rgba(255, 206, 86, 0.2)',
-                        // 'rgba(75, 192, 192, 0.2)',
-                        // 'rgba(153, 102, 255, 0.2)',
-                        'rgba(0, 153, 204,1)'
-                    ],
-                    borderColor: [
-                        // 'rgba(255, 99, 132, 1)',
-                        // 'rgba(54, 162, 235, 1)',
-                        // 'rgba(255, 206, 86, 1)',
-                        // 'rgba(75, 192, 192, 1)',
-                        // 'rgba(153, 102, 255, 1)',
-                        'rgba(0, 159, 204, 1)'
-                    ],
-                    borderWidth: 1
-                },
-            ]
+    google.charts.load('current', {'packages':['line']});
+      google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var my_data=[];
+    for (var i = 0; i < Labels.length; i++) {
+        //get id from labels
+        var fid = Labels[i]['id'];
+        //find id in Leaders
+        var leader = Leaders.find(item => item.id === fid);;
+        //find id in hr
+        var hr_ = hr.find(item => item.id === fid);
+        //create an array with labels, Leaders, and hr
+        var item=[];
+        item.push(Labels[i]['title']);
+        item.push(Number( leader.performance));
+        item.push(Number( hr_.performance));
+        my_data.push(item);
+    }
+      var data = new google.visualization.DataTable();
+      data.addColumn('string',  "Functions");
+      data.addColumn('number', 'Leaders');
+      data.addColumn('number', 'HR Team');
+
+      data.addRows([
+        my_data[0],
+        my_data[1],
+        my_data[2],
+        my_data[3],
+        my_data[4],
+        my_data[5],
+        my_data[6],
+        my_data[7],
+      ]);
+
+      var options = {
+        chart: {
+          title: 'Leadership view VS HR team view',
+          legend: { position: 'bottom' }
         },
-        options: {
-            scales: {
-                y: {
-                    suggestedMin: 0,
-                    suggestedMax: max,
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Score'
-                    }
-                }
-            }
-        }
-    });
+        width: 1000,
+        height: 500
+      };
+
+      var chart = new google.charts.Line(document.getElementById('linechart_material'));
+
+      chart.draw(data, google.charts.Line.convertOptions(options));
+    }
+    //===============================
     $("#DownloadAll").click(function() {
         window.setTimeout(function() {
             // do whatever you want to do
@@ -1104,5 +1079,6 @@
         click(link);
         document.body.removeChild(link);
     }
+
 </script>
 @endsection

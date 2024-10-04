@@ -2643,7 +2643,7 @@ class SurveysPrepration
         $emp_practices = array();
         $function_Lables = array();
         foreach ($functions as $function) {
-            $function_Lables[] = $function->translated_title;
+            $function_Lables[] = ['title' => $function->translated_title, 'id' => $function->id];
             $total = 0;
             $leaders_total = 0;
             $hr_total = 0;
@@ -2896,10 +2896,10 @@ class SurveysPrepration
         $count_z = 0;
         foreach ($functions as $function) {
             if ($leader_performences_[$count_z]['function_id'] == $function->id) {
-                array_push($leaders_perform_onlyz, $leader_performences_[$count_z]['performance']);
+                array_push($leaders_perform_onlyz, ['performance' => $leader_performences_[$count_z]['performance'], 'id' => $function->id]);
             }
             if ($hr_performences_[$count_z]['function_id'] == $function->id) {
-                array_push($hr_perform_onlyz, $hr_performences_[$count_z++]['performance']);
+                array_push($hr_perform_onlyz, ['performance' => $hr_performences_[$count_z++]['performance'], 'id' => $function->id]);
             }
         }
         $desc_perfom = $performences_;
@@ -3018,7 +3018,7 @@ class SurveysPrepration
         $hr_practices = [];
         $emp_practices = [];
         foreach ($functions as $function) {
-            $function_Lables[] = $function->translated_title;
+            $function_Lables[] = ['title' => $function->translated_title, 'id' => $function->id];
             $priority = [
                 "priority" => number_format((collect($priorities_data)->where('function_id', $function->id)->sum('priority')) / count($sector_data), 2),
                 "function" => $function->translated_title,
@@ -3069,7 +3069,7 @@ class SurveysPrepration
                 // "performance" => $hr_performance
             ];
             array_push($sorted_hr_performences, $hr_performence_);
-            array_push($hr_perform_onlyz, $hr_performance);
+            array_push($hr_perform_onlyz, ['performance' => $hr_performance, 'id' => $function->id]);
             $L_performance = number_format((collect($sorted_leader_performences_data)->where('function_id', $function->id)->sum('performance')) / count($sector_data));
             $leader_performence_ = [
                 "function" => $function->translated_title,
@@ -3079,7 +3079,7 @@ class SurveysPrepration
                 // "performance" => $L_performance
             ];
             array_push($sorted_leader_performences, $leader_performence_);
-            array_push($leaders_perform_onlyz, $L_performance);
+            array_push($leaders_perform_onlyz, ['performance' => $L_performance, 'id' => $function->id]);
         }
         $asc_perform = $performences_;
         usort($asc_perform, function ($a, $b) {
@@ -3206,7 +3206,7 @@ class SurveysPrepration
         $hr_practices = [];
         $emp_practices = [];
         foreach ($functions as $function) {
-            $function_Lables[] = $function->translated_title;
+            $function_Lables[] = ['title' => $function->translated_title, 'id' => $function->id];
             $priority = [
                 "priority" => count($sector_data) == 0 ? 0 : number_format((collect($priorities_data)->where('function_id', $function->id)->sum('priority')) / count($sector_data), 2),
                 "function" => $function->translated_title,
@@ -3282,7 +3282,7 @@ class SurveysPrepration
                 "applicable" => count($sorted_hr_performences_data) == 0 ? false : (collect($sorted_hr_performences_data)->where('function_id', $function->id)->first()['applicable'] == 1 ? true : false)
             ];
             array_push($sorted_hr_performences, $hr_performence_);
-            array_push($hr_perform_onlyz, $hr_performance);
+            array_push($hr_perform_onlyz,['performance' => $hr_performance, 'id' => $function->id] );
             $L_performance = count($sector_data) == 0 ? 0 : number_format((collect($sorted_leader_performences_data)->where('function_id', $function->id)->sum('performance')) / count($sector_data), 2);
             $leader_performence_ = [
                 "function" => $function->translated_title,
@@ -3292,7 +3292,7 @@ class SurveysPrepration
                 "applicable" => count($sorted_leader_performences_data) == 0 ? false : (collect($sorted_leader_performences_data)->where('function_id', $function->id)->first()['applicable'] == 1 ? true : false)
             ];
             array_push($sorted_leader_performences, $leader_performence_);
-            array_push($leaders_perform_onlyz, $L_performance);
+            array_push($leaders_perform_onlyz, ['performance' => $L_performance, 'id' => $function->id]);
         }
         $asc_perform = $performences_;
         usort($asc_perform, function ($a, $b) {
@@ -3693,8 +3693,8 @@ class SurveysPrepration
         $hr_deps = Departments::whereIn('id', $deps)->where('is_hr', 1)->pluck('id')->toArray();
         //get hr team
         $hr_teames_email = $surveyEmails->whereIn('Dep_id', $hr_deps)->pluck('id')->toArray();
-        $leaders_email=$surveyEmails->whereNotIn('id', $hr_teames_email)->where('employee_type',1)->pluck('id')->toArray();
-        $employees_email=$surveyEmails->whereNotIn('id', $hr_teames_email)->where('employee_type',2)->pluck('id')->toArray();
+        $leaders_email = $surveyEmails->whereNotIn('id', $hr_teames_email)->where('employee_type', 1)->pluck('id')->toArray();
+        $employees_email = $surveyEmails->whereNotIn('id', $hr_teames_email)->where('employee_type', 2)->pluck('id')->toArray();
         return [$leaders_email, $hr_teames_email, $employees_email];
     }
     //saveSurveyCandidates function
