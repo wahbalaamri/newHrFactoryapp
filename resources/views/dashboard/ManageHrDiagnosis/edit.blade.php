@@ -204,7 +204,7 @@
                                                 @endif>{{ __('Public') }}</option>
                                         </select>
                                         {{-- add hint --}}
-                                        <small class="form-text text-muted">{{ __('This will determine who can answer the priority question') }}</small>
+                                        <small class="form-text text-muted">{{ __('This will be used to determine who can answer the priority question') }}</small>
                                         {{-- validation --}}
                                         @error('respondent')
                                         <span class="text-danger">{{ $message }}</span>
