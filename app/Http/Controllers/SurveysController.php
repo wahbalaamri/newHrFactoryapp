@@ -6,6 +6,7 @@ use App\Models\Surveys;
 use App\Http\Requests\StoreSurveysRequest;
 use App\Http\Requests\UpdateSurveysRequest;
 use App\Models\ClientSubscriptions;
+use App\Models\CustomizedSurveyFunctions;
 use App\Models\Employees;
 use App\Models\Functions;
 use App\Models\PrioritiesAnswers;
@@ -108,6 +109,9 @@ class SurveysController extends Controller
             //create empty array
             $open_end_q = array();
             $functions = Functions::where('service_id', $service_id)->get();
+            if ($survey->customized)
+                $functions = CustomizedSurveyFunctions::where('survey', $survey->id)
+                    ->where('client', $survey->client_id)->get();
             $data = [
                 'functions' => $functions,
                 'type' => $respondent->survey_type,
