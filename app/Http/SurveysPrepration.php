@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use App\Exports\HRDiagnosisPrioritiesAnswersExport;
+use App\Exports\HRDiagnosisSurveyAnswersExport;
 use App\Exports\SurveyAnswersExport;
 use App\Http\Facades\Calculate3hResultsFacade;
 use App\Http\Facades\Landing;
@@ -522,7 +524,9 @@ class SurveysPrepration
     {
         try {
             //GET use_default_stat
-            $use_default_stat = $request->use_default_stat == null ? true : false;
+            $use_default_stat = false;
+            if ($service_type != 4)
+                $use_default_stat = $request->use_default_stat == null ? true : false;
             if ($survey == null) {
                 $survey = new Surveys();
             }
@@ -3282,7 +3286,7 @@ class SurveysPrepration
                 "applicable" => count($sorted_hr_performences_data) == 0 ? false : (collect($sorted_hr_performences_data)->where('function_id', $function->id)->first()['applicable'] == 1 ? true : false)
             ];
             array_push($sorted_hr_performences, $hr_performence_);
-            array_push($hr_perform_onlyz,['performance' => $hr_performance, 'id' => $function->id] );
+            array_push($hr_perform_onlyz, ['performance' => $hr_performance, 'id' => $function->id]);
             $L_performance = count($sector_data) == 0 ? 0 : number_format((collect($sorted_leader_performences_data)->where('function_id', $function->id)->sum('performance')) / count($sector_data), 2);
             $leader_performence_ = [
                 "function" => $function->translated_title,
@@ -5409,9 +5413,17 @@ class SurveysPrepration
         return $data;
     }
     //DownloadSurveyResults function
-    function DownloadSurveyResults($survey_id, $type, $type_id = null, $admin = null)
+    function DownloadSurveyResults($survey_id, $service_type, $type, $type_id = null, $admin = null)
     {
         //export result
-        return Excel::download(new SurveyAnswersExport($survey_id, $type, $type_id = null), 'survey_results.xlsx');
+        if ($service_type == 3 || $service_type == 10)
+            return Excel::download(new SurveyAnswersExport($survey_id, $type, $type_id = null), 'survey_results.xlsx');
+        if ($service_type == 4)
+            return Excel::download(new HRDiagnosisSurveyAnswersExport($survey_id, $type, $type_id = null), 'survey_results.xlsx');
+    }
+    //DownloadPriorities function
+    function DownloadPriorities($survey_id, $type, $type_id = null)
+    {
+        return Excel::download(new HRDiagnosisPrioritiesAnswersExport($survey_id, $type, $type_id = null), 'survey_priorities.xlsx');
     }
 }

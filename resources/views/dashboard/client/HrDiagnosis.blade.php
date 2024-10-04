@@ -909,14 +909,14 @@
                         </div>
                         <div class="col-4 p-3 ">
 
-                            <a href="#{{-- {{ route('surveys.DownloadSurvey',[$id,$type,$type_id]) }} --}}"
+                            <a href="{{ route('clients.DownloadSurveyResults',[$id,4,$type]) }}"
                                 class="btn btn-success mt-3" style="border-radius: 10px;
     -webkit-box-shadow: 5px 5px 20px 5px #ababab;
     box-shadow: 5px 5px 20px 5px #ababab;">{{ __('Download Survey Responses') }}</a>
                         </div>
                         <div class="col-4 p-3 ">
 
-                            <a href="#{{-- {{ route('surveys.DownloadPriorities',[$id,$type,$type_id]) }} --}}"
+                            <a href="{{ route('clients.DownloadPriorities',[$id,$type]) }}"
                                 class="btn btn-success mt-3" style="border-radius: 10px;
     -webkit-box-shadow: 5px 5px 20px 5px #ababab;
     box-shadow: 5px 5px 20px 5px #ababab;">{{ __('Download Priorities Answers') }}</a>
@@ -983,9 +983,8 @@
       var options = {
         chart: {
           title: 'Leadership view VS HR team view',
-          legend: { position: 'bottom' }
         },
-        width: 1000,
+        width: 900,
         height: 500
       };
 

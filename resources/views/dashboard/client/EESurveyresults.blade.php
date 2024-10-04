@@ -415,7 +415,7 @@
                             <div class="row text-start">
                                 <div class="col-4 p-3 ">
 
-                                    <a href="{{ route('clients.DownloadSurveyResults', [$id, 'all']) }}"
+                                    <a href="{{ route('clients.DownloadSurveyResults', [$id,$Service_type, 'all']) }}"
                                         class="btn btn-success mt-3" style="border-radius: 10px;
             -webkit-box-shadow: 5px 5px 20px 5px #ababab;
             box-shadow: 5px 5px 20px 5px #ababab;">{{ __('Download Survey Answers') }}</a>

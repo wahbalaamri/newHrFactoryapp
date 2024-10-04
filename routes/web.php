@@ -438,7 +438,8 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::get('clients/SurveyResults/{id}/{type}/{survey}/{vtype}/{vtype_id?}', [ClientsController::class, 'SurveyResults'])->name('clients.SurveyResults');
     Route::get('clients/StartSurveyResults/{id}/{type}/{survey}/{vtype}/{vtype_id?}', [ClientsController::class, 'StartSurveyResults'])->name('clients.StartSurveyResults');
     Route::get('clients/ShowSurveyResults', [ClientsController::class, 'ShowSurveyResults'])->name('clients.ShowSurveyResults');
-    Route::get('clients/DownloadSurveyResults/{survey}/{type}/{type_id?}', [ClientsController::class, 'DownloadSurveyResults'])->name('clients.DownloadSurveyResults');
+    Route::get('clients/DownloadSurveyResults/{survey}/{service_type}/{type}/{type_id?}', [ClientsController::class, 'DownloadSurveyResults'])->name('clients.DownloadSurveyResults');
+    Route::get('clients/DownloadPriorities/{survey}/{type}/{type_id?}', [ClientsController::class, 'DownloadPriorities'])->name('clients.DownloadPriorities');
     Route::get('clients/candidateResult/{id}/{sid}', [Leader360ReviewController::class, 'candidateResult'])->name('clients.candidateResult');
     Route::post('clients/SaveRaters', [ClientsController::class, 'SaveRaters'])->name('clients.SaveRaters');
     Route::post('clients/candidates', [ClientsController::class, 'candidates'])->name('client.candidates');

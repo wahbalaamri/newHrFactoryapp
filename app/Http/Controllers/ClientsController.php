@@ -527,10 +527,16 @@ class ClientsController extends Controller
         return $surveysPrepration->AssignAsUser($request, $id, $cid, true);
     }
     //DownloadSurveyResults function
-    public function DownloadSurveyResults(SurveysPrepration $surveysPrepration, $survey_id, $type, $type_id = null)
+    public function DownloadSurveyResults(SurveysPrepration $surveysPrepration, $survey_id, $service_type, $type, $type_id = null)
     {
         ini_set('max_execution_time', 300);
-        return $surveysPrepration->DownloadSurveyResults($survey_id, $type, $type_id, true);
+        return $surveysPrepration->DownloadSurveyResults($survey_id, $service_type, $type, $type_id, true);
+    }
+    //DownloadPriorities function
+    public function DownloadPriorities(SurveysPrepration $surveysPrepration, $survey_id, $type, $type_id = null)
+    {
+        ini_set('max_execution_time', 300);
+        return $surveysPrepration->DownloadPriorities($survey_id,  $type, $type_id);
     }
     //StartSurveyResults function
     public function StartSurveyResults($Client_id, $Service_type, $survey_id, $vtype, $vtype_id = null)
