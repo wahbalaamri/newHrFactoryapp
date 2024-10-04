@@ -231,7 +231,7 @@
                                         App()->isLocale('en'),
                                         'text-left'=>App()->isLocale('ar')
                                         ])>
-                                        <button type="submit" class="btn btn-primary">
+                                        <button type="submit" class="btn btn-primary btn-sm">
                                             <i class="fas fa-save"></i> {{ __('Save') }}
                                         </button>
                                     </div>
