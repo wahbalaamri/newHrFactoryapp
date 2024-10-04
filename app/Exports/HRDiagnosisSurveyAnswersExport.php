@@ -39,7 +39,9 @@ class HRDiagnosisSurveyAnswersExport implements FromCollection , WithHeadings, W
                 ->join('departments', 'employees.dep_id', '=', 'departments.id')
                 ->join('companies', 'employees.comp_id', '=', 'companies.id')
                 ->where('respondents.survey_id', '=', $this->sid)
-                ->select(['respondents.id', 'respondents.employee_id', 'departments.is_hr', 'employees.employee_type', 'companies.name_en as company_name'])
+                ->select(['respondents.id', 'respondents.employee_id'
+                , 'departments.is_hr', 'employees.employee_type', 'companies.name_en as company_name'
+                ,'employees.name as employee_name', 'employees.email as employee_email'])
                 ->get();
         else {
             //get clients surveys IDs
@@ -73,12 +75,14 @@ class HRDiagnosisSurveyAnswersExport implements FromCollection , WithHeadings, W
                 $exportData[] = [
                     'Survey Id' => $this->sid,
                     'Answered By' => $email->id,
+                    'Name' => $email->employee_name,
+                    'Email' => $email->employee_email,
                     'Company' => $email->company_name,
                     'Respondent Type' => $emp_type
                 ];
                 // foreach ($surveyAnswers as $surveyAnswer) {
                 $count = 4;
-                $indx = 4;
+                $indx = 6;
 
                 foreach ($functions as $function) {
                     foreach (FunctionPractices::where('function_id', $function->id)->get() as $practce) {
@@ -118,6 +122,8 @@ class HRDiagnosisSurveyAnswersExport implements FromCollection , WithHeadings, W
         $heading = [
             'Survey Id',
             'Answered By',
+            'Name',
+            'Email',
             'Company',
             'Respondent Type'
         ];
