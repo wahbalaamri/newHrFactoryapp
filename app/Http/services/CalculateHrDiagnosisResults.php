@@ -7,6 +7,7 @@ use App\Models\Companies;
 use App\Models\Functions;
 use App\Models\PracticeQuestions;
 use App\Models\PrioritiesAnswers;
+use App\Models\Sectors;
 use App\Models\SurveyAnswers;
 use App\Models\Surveys;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,7 @@ class CalculateHrDiagnosisResults
             return $this->calculateSingleClient($client, $survey,);
         }
         if ($type == "sec") {
-            $sector = $client->sectors()->where('id', $entity)->first();
+            $sector = Sectors::where('id', $entity)->where('client_id', $client_id)->first();
             return $this->calculateSectorResults($sector, $survey);
         }
         if ($type == "comp") {
@@ -105,6 +106,12 @@ class CalculateHrDiagnosisResults
         [$hr_teams_respondents, $leaders_respondents, $normal_respondents] = $this->getCompanyRespondents($survey, $company);
         $surveyEmails_ids = array_merge($hr_teams_respondents, $leaders_respondents, $normal_respondents);
         $SurveyResult = SurveyAnswers::where('survey_id', '=', $survey)->whereIn('answered_by', $surveyEmails_ids)->select(['answer_value', 'question_id', 'answered_by'])->get();
+        if ($this->scaleSize == 5) {
+            $SurveyResult = $SurveyResult->map(function ($item, $key) {
+                $item['answer_value'] = $item['answer_value'] - 1;
+                return $item;
+            });
+        }
         if ($SurveyResult->count() == 0 || count($surveyEmails_ids) == 0) {
             return 0;
         }
@@ -120,7 +127,6 @@ class CalculateHrDiagnosisResults
     }
     public function startCalculate($company, $survey, $hr_teams_respondents, $leaders_respondents, $normal_respondents, $SurveyResult, $respondents_count)
     {
-
         $Answers_by_leaders = $SurveyResult->whereIn('answered_by', $leaders_respondents)->unique('answered_by')->count();
         $Answers_by_hr = $SurveyResult->whereIn('answered_by', $hr_teams_respondents)->unique('answered_by')->count();
         $Answers_by_emp = $SurveyResult->whereIn('answered_by', $normal_respondents)->unique('answered_by')->count();
@@ -435,7 +441,7 @@ class CalculateHrDiagnosisResults
             'type_id' => $company->id,
             'entities' => null,
             'entity' => $company->name . ' ' . __('Result Company-wise'),
-            'client_id' => $company->client_id,
+            'client_id' => $company->id,
             'service_type' => 4,
             'heatmap' => []
         ];
