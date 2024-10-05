@@ -80,7 +80,8 @@
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i
+                            class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="{{ route('home') }}" class="nav-link">Home</a>
@@ -210,12 +211,12 @@
                     </a>
                 </li>
                 @if (Auth()->user()->isAdmin)
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#"
-                        role="button">
-                        <i class="fas fa-th-large"></i>
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true"
+                            href="#" role="button">
+                            <i class="fas fa-th-large"></i>
+                        </a>
+                    </li>
                 @endif
             </ul>
         </nav>
@@ -226,7 +227,7 @@
             <!-- Brand Logo -->
             <div class="custom-hover brand-link">
                 <a href="#" class="brand-link col-12">
-                    <img src="{{ App\Http\Facades\Landing::getClientLogo()?asset('uploads/companies/logos/'.App\Http\Facades\Landing::getClientLogo()):asset('assets/img/logo-1.png') }}"
+                    <img src="{{ App\Http\Facades\Landing::getClientLogo() ? asset('uploads/companies/logos/' . App\Http\Facades\Landing::getClientLogo()) : asset('assets/img/logo-1.png') }}"
                         alt="HR Factory App logo" class="brand-image img-circle elevation-3" style="opacity: .8">
                     <span class="brand-text font-weight-light">HR Factory App</span>
                 </a>
@@ -238,7 +239,8 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="{{ asset('images/noimage.png') }}" class="img-circle elevation-2" alt="User Image">
+                        <img src="{{ asset('images/noimage.png') }}" class="img-circle elevation-2"
+                            alt="User Image">
                     </div>
                     <div class="info">
                         <a href="#" class="d-block">{{ Auth()->user()->name }}</a>
@@ -294,126 +296,138 @@
                             </ul>
                         </li> --}}
                         @if (auth()->user()->isAdmin || Auth()->user()->user_type == 'partner')
-                        <li class="nav-item">
-                            <a href="{{ route('Emails.AutomatedEmails') }}" class="nav-link">
-                                <i class="nav-icon fa fa-mail-bulk"></i>
-                                <p>
-                                    {{ __('Emails') }}
-                                    {{-- <span class="right badge badge-danger">New</span> --}}
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('services.index') }}" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
-                                <p>
-                                    {{ __('Services') }}
-                                    {{-- <span class="right badge badge-danger">New</span> --}}
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('clients.index') }}" class="nav-link">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    {{ __('Clients') }}
-                                    {{-- <span class="right badge badge-danger">New</span> --}}
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
+                            <li class="nav-item">
+                                <a href="{{ route('Emails.AutomatedEmails') }}" class="nav-link">
+                                    <i class="nav-icon fa fa-mail-bulk"></i>
+                                    <p>
+                                        {{ __('Emails') }}
+                                        {{-- <span class="right badge badge-danger">New</span> --}}
+                                    </p>
+                                </a>
+                            </li>
                             @php
-                            $active = Auth()->user()->isAdmin ? true:
-                            App\Http\Facades\Landing::HasService(auth()->user()->email,'4');
+                                $active = Auth()->user()->isAdmin
+                                    ? true
+                                    : App\Http\Facades\Landing::isMainPartner(auth()->user()->email);
                             @endphp
-                            <a href="{{$active? route('ManageHrDiagnosis.index'):'#' }}" class="nav-link">
-                                <i class="nav-icon fas fa-user-md"></i>
-                                <p>
-                                    {{ __('Manage Hr Diagnosis') }}
-                                    @if (!$active)
-                                    {{-- lock icon --}}
-                                    <i class="right fas fa-lock"></i>
-                                    @endif
-                                    {{-- <span class="right badge badge-danger">New</span> --}}
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
+                            @if ($active)
+                                <li class="nav-item">
+                                    <a href="{{ route('services.index') }}" class="nav-link">
+                                        <i class="nav-icon fas fa-th"></i>
+                                        <p>
+                                            {{ __('Services') }}
+                                            {{-- <span class="right badge badge-danger">New</span> --}}
+                                        </p>
+                                    </a>
+                                </li>
+                            @endif
+                            <li class="nav-item">
+                                <a href="{{ route('clients.index') }}" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>
+                                        {{ __('Clients') }}
+                                        {{-- <span class="right badge badge-danger">New</span> --}}
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                @php
+                                    $active = Auth()->user()->isAdmin
+                                        ? true
+                                        : App\Http\Facades\Landing::HasService(auth()->user()->email, '4');
+                                @endphp
+                                <a href="{{ $active ? route('ManageHrDiagnosis.index') : '#' }}" class="nav-link">
+                                    <i class="nav-icon fas fa-user-md"></i>
+                                    <p>
+                                        {{ __('Manage Hr Diagnosis') }}
+                                        @if (!$active)
+                                            {{-- lock icon --}}
+                                            <i class="right fas fa-lock"></i>
+                                        @endif
+                                        {{-- <span class="right badge badge-danger">New</span> --}}
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                @php
+                                    $active = Auth()->user()->isAdmin
+                                        ? true
+                                        : App\Http\Facades\Landing::HasService(auth()->user()->email, '5');
+                                @endphp
+                                <a href="{{ $active ? route('Leader360Review.index') : '#' }}" class="nav-link">
+                                    <i class="nav-icon fas fa-compress-arrows-alt"></i>
+                                    <p>
+                                        {{ __('360 Review') }}
+                                        @if (!$active)
+                                            {{-- lock icon --}}
+                                            <i class="right fas fa-lock"></i>
+                                        @endif
+                                        {{-- <span class="right badge badge-danger">New</span> --}}
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                @php
+                                    $active = Auth()->user()->isAdmin
+                                        ? true
+                                        : App\Http\Facades\Landing::HasService(auth()->user()->email, '3');
+                                @endphp
+                                <a href="{{ $active ? route('EmployeeEngagment.index') : '#' }}" class="nav-link">
+                                    <i class="nav-icon fas fa-laugh-beam"></i>
+                                    <p>
+                                        {{ __('Employee Engagment') }}
+                                        @if (!$active)
+                                            {{-- lock icon --}}
+                                            <i class="right fas fa-lock"></i>
+                                        @endif
+                                        {{-- <span class="right badge badge-danger">New</span> --}}
+                                    </p>
+                                </a>
+                            </li>
+                            @if (Auth()->user()->isAdmin)
+                                <li class="nav-item">
+                                    <a href="{{ route('CEmployeeEngagment.index') }}" class="nav-link">
+                                        <i class="nav-icon fas fa-laugh-beam"></i>
+                                        <p>
+                                            {{ __('Customized Employee Engagment') }}
+                                            {{-- <span class="right badge badge-danger">New</span> --}}
+                                        </p>
+                                    </a>
+                                </li>
+                            @endif
+                            <li class="nav-item">
+                                @php
+                                    $active = Auth()->user()->isAdmin
+                                        ? true
+                                        : App\Http\Facades\Landing::HasService(auth()->user()->email, '1');
+                                @endphp
+                                <a href="{{ $active ? route('manualBuilder.index') : '#' }}" class="nav-link">
+                                    <i class="nav-icon fa fa-file-alt"></i>
+                                    <p>
+                                        {{ __('Manual Builder') }}
+                                        @if (!$active)
+                                            {{-- lock icon --}}
+                                            <i class="right fas fa-lock"></i>
+                                        @endif
+                                        {{-- <span class="right badge badge-danger">New</span> --}}
+                                    </p>
+                                </a>
+                            </li>
                             @php
-                            $active = Auth()->user()->isAdmin ? true:
-                            App\Http\Facades\Landing::HasService(auth()->user()->email,'5');
+                                $active = Auth()->user()->isAdmin
+                                    ? true
+                                    : App\Http\Facades\Landing::isMainPartner(auth()->user()->email);
                             @endphp
-                            <a href="{{ $active? route('Leader360Review.index'):'#' }}" class="nav-link">
-                                <i class="nav-icon fas fa-compress-arrows-alt"></i>
-                                <p>
-                                    {{ __('360 Review') }}
-                                    @if (!$active)
-                                    {{-- lock icon --}}
-                                    <i class="right fas fa-lock"></i>
-                                    @endif
-                                    {{-- <span class="right badge badge-danger">New</span> --}}
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            @php
-                            $active = Auth()->user()->isAdmin ? true:
-                            App\Http\Facades\Landing::HasService(auth()->user()->email,'3');
-                            @endphp
-                            <a href="{{ $active?route('EmployeeEngagment.index'):'#' }}" class="nav-link">
-                                <i class="nav-icon fas fa-laugh-beam"></i>
-                                <p>
-                                    {{ __('Employee Engagment') }}
-                                    @if (!$active)
-                                    {{-- lock icon --}}
-                                    <i class="right fas fa-lock"></i>
-                                    @endif
-                                    {{-- <span class="right badge badge-danger">New</span> --}}
-                                </p>
-                            </a>
-                        </li>
-                        @if(Auth()->user()->isAdmin)
-                        <li class="nav-item">
-                            <a href="{{ route('CEmployeeEngagment.index') }}" class="nav-link">
-                                <i class="nav-icon fas fa-laugh-beam"></i>
-                                <p>
-                                    {{ __('Customized Employee Engagment') }}
-                                    {{-- <span class="right badge badge-danger">New</span> --}}
-                                </p>
-                            </a>
-                        </li>
-                        @endif
-                        <li class="nav-item">
-                            @php
-                            $active = Auth()->user()->isAdmin ? true:
-                            App\Http\Facades\Landing::HasService(auth()->user()->email,'1');
-                            @endphp
-                            <a href="{{ $active? route('manualBuilder.index') :'#' }}" class="nav-link">
-                                <i class="nav-icon fa fa-file-alt"></i>
-                                <p>
-                                    {{ __('Manual Builder') }}
-                                    @if (!$active)
-                                    {{-- lock icon --}}
-                                    <i class="right fas fa-lock"></i>
-                                    @endif
-                                    {{-- <span class="right badge badge-danger">New</span> --}}
-                                </p>
-                            </a>
-                        </li>
-                        @php
-                            $active = Auth()->user()->isAdmin ? true:
-                            App\Http\Facades\Landing::isMainPartner(auth()->user()->email);
-                            @endphp
-                        <li class="nav-item">
-                            <a href="{{ route('termsCondition.index') }}" class="nav-link">
-                                <i class="nav-icon fa fa-file-alt"></i>
-                                <p>
-                                    {{ __('Terms & Conditions') }}
-                                    {{-- <span class="right badge badge-danger">New</span> --}}
-                                </p>
-                            </a>
-                        </li>
-                        {{-- <li class="nav-item">
+                            <li class="nav-item">
+                                <a href="{{ route('termsCondition.index') }}" class="nav-link">
+                                    <i class="nav-icon fa fa-file-alt"></i>
+                                    <p>
+                                        {{ __('Terms & Conditions') }}
+                                        {{-- <span class="right badge badge-danger">New</span> --}}
+                                    </p>
+                                </a>
+                            </li>
+                            {{-- <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-copy"></i>
                                 <p>
@@ -1006,28 +1020,28 @@
                                 <p>Informational</p>
                             </a>
                         </li> --}}
-                        @if (auth()->user()->isAdmin)
-                        <li class="nav-item">
-                            <a href="{{ route('partners.index') }}" class="nav-link">
-                                <i class="nav-icon fa fa-business-time"></i>
-                                <p>
-                                    {{ __('Partners') }}
-                                    {{-- <span class="right badge badge-danger">New</span> --}}
-                                </p>
-                            </a>
-                        </li>
-                        @endif
+                            @if (auth()->user()->isAdmin)
+                                <li class="nav-item">
+                                    <a href="{{ route('partners.index') }}" class="nav-link">
+                                        <i class="nav-icon fa fa-business-time"></i>
+                                        <p>
+                                            {{ __('Partners') }}
+                                            {{-- <span class="right badge badge-danger">New</span> --}}
+                                        </p>
+                                    </a>
+                                </li>
+                            @endif
                         @else
-                        <li class="nav-item">
-                            <a href="{{ route('client.manage') }}" class="nav-link">
-                                <i class="nav-icon fa fa-business-time"></i>
-                                <p>
-                                    {{ __('Manage') }}
-                                    {{-- <span class="right badge badge-danger">New</span> --}}
-                                </p>
-                            </a>
-                        </li>
-                        {{-- <li class="nav-item"><a href="{{ route('Client.startup') }}" class="nav-link">
+                            <li class="nav-item">
+                                <a href="{{ route('client.manage') }}" class="nav-link">
+                                    <i class="nav-icon fa fa-business-time"></i>
+                                    <p>
+                                        {{ __('Manage') }}
+                                        {{-- <span class="right badge badge-danger">New</span> --}}
+                                    </p>
+                                </a>
+                            </li>
+                            {{-- <li class="nav-item"><a href="{{ route('Client.startup') }}" class="nav-link">
                                 <i class="fa fa-folder"></i>
                                 <p>StartUp</p>
                             </a>
@@ -1066,7 +1080,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title fs-5" id="changeLogoModalLabel">{{ ('Change Your Company Logo') }}</h3>
+                    <h3 class="modal-title fs-5" id="changeLogoModalLabel">{{ 'Change Your Company Logo' }}</h3>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
                         <i class="fa fa-times"></i>
                     </button>
@@ -1082,9 +1096,10 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close')
-                            }}</button>
-                        <button type="button" class="btn btn-primary" id="saveLogo">{{ __('Save changes') }}</button>
+                        <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-primary"
+                            id="saveLogo">{{ __('Save changes') }}</button>
                 </form>
             </div>
         </div>
@@ -1115,8 +1130,7 @@
     <script src="{{ asset('dashboard/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('dashboard/plugins/daterangepicker/daterangepicker.js') }}"></script>
     <!-- Tempusdominus Bootstrap 4 -->
-    <script src="{{ asset('dashboard/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}">
-    </script>
+    <script src="{{ asset('dashboard/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
     <script src="{{ asset('dashboard/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
     <script src="{{ asset('dashboard/plugins/bs-stepper/js/bs-stepper.min.js') }}"></script>
     <!-- Summernote -->

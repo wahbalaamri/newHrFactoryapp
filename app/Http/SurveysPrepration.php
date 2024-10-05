@@ -990,12 +990,22 @@ class SurveysPrepration
     {
         try {
             $department = Departments::find($id);
-            $department->delete();
+            $this->DeleteDepHelper($department);
             return redirect()->back()->with('success', 'Department deleted successfully');
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
+    }
+    public function DeleteDepHelper($department)
+    {
+        if ($department->subDepartments->count() > 0) {
+
+            foreach ($department->subDepartments as $child) {
+                $this->DeleteDepHelper($child);
+            }
+        }
+        $department->delete();
     }
     // Employees function
     function Employees(Request $request, $id, $by_admin = false)

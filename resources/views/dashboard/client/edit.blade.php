@@ -201,8 +201,7 @@
                                                 </div>
                                                 {{-- switch use default statmants --}}
                                                 <div class="form-group col-md-5 col-sm-12">
-                                                    <label for="notify_client_cred">{{ __('Use Default
-                                                        Statements') }}
+                                                    <label for="notify_client_cred">{{ __('Notify Client') }}
                                                     </label>
                                                     <br>
                                                     <input type="checkbox" name="notify_client_cred" checked
