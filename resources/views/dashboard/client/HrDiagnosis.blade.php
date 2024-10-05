@@ -7,55 +7,57 @@
 @section('content')
 {{-- container --}}
 <div class="content-wrapper">
-<div class="container pt-5 mt-5">
-    <div class="">
-        <div class="col-12" id="finalResult">
-            @include('dashboard.client.hrdiagnosisResults.legand')
-            @include('dashboard.client.hrdiagnosisResults.Function')
-            @include('dashboard.client.hrdiagnosisResults.key')
-            @include('dashboard.client.hrdiagnosisResults.Laverages')
-            @include('dashboard.client.hrdiagnosisResults.HRaverages')
-            @include('dashboard.client.hrdiagnosisResults.Empaverages')
-            @include('dashboard.client.hrdiagnosisResults.heatmap')
-            @include('dashboard.client.hrdiagnosisResults.Linear')
-            @include('dashboard.client.hrdiagnosisResults.Consolidated')
-            @if ( count($heatmap) > 0)
-            @include('dashboard.client.hrdiagnosisResults.heatmapEntities')
-            @endif
-            <div class="card mt-4" style="letter-spacing: 0.065rem;">
-                <div class="card-header">
-                    <h3 class="card-title">{{ __('Downloads') }}</h3>
-                </div>
-                <div class="card-body text-capitalize">
-                    <div class="row text-start">
-                        <div class="col-4 p-3 ">
+    <div class="container pt-5 mt-5">
+        <div class="">
+            <div class="col-12" id="finalResult">
+                @include('dashboard.client.hrdiagnosisResults.legand')
+                @include('dashboard.client.hrdiagnosisResults.Function')
+                @include('dashboard.client.hrdiagnosisResults.key')
+                @include('dashboard.client.hrdiagnosisResults.Laverages')
+                @include('dashboard.client.hrdiagnosisResults.HRaverages')
+                @include('dashboard.client.hrdiagnosisResults.Empaverages')
+                @include('dashboard.client.hrdiagnosisResults.heatmap')
+                @include('dashboard.client.hrdiagnosisResults.Linear')
+                @include('dashboard.client.hrdiagnosisResults.Consolidated')
+                @if ( count($heatmap) > 0)
+                @include('dashboard.client.hrdiagnosisResults.heatmapEntities')
+                @endif
+                <div class="card mt-4" style="letter-spacing: 0.065rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ __('Downloads') }}</h3>
+                    </div>
+                    <div class="card-body text-capitalize">
+                        <div class="row text-start">
+                            <div class="col-4 p-3 ">
 
-                            <button id="DownloadAll" class="btn btn-success mt-3" style="border-radius: 10px;
+                                <button id="DownloadAll" class="btn btn-success mt-3" style="border-radius: 10px;
     -webkit-box-shadow: 5px 5px 20px 5px #ababab;
     box-shadow: 5px 5px 20px 5px #ababab;">
-                                {{ __('Download All Graph') }}
-                            </button>
-                        </div>
-                        <div class="col-4 p-3 ">
+                                    {{ __('Download All Graph') }}
+                                </button>
+                            </div>
+                            @if (Auth()->user()->isAdmin)
+                            <div class="col-4 p-3 ">
 
-                            <a href="{{ route('clients.DownloadSurveyResults',[$id,4,$type]) }}"
-                                class="btn btn-success mt-3" style="border-radius: 10px;
+                                <a href="{{ route('clients.DownloadSurveyResults',[$id,4,$type]) }}"
+                                    class="btn btn-success mt-3" style="border-radius: 10px;
     -webkit-box-shadow: 5px 5px 20px 5px #ababab;
     box-shadow: 5px 5px 20px 5px #ababab;">{{ __('Download Survey Responses') }}</a>
-                        </div>
-                        <div class="col-4 p-3 ">
+                            </div>
+                            <div class="col-4 p-3 ">
 
-                            <a href="{{ route('clients.DownloadPriorities',[$id,$type]) }}"
-                                class="btn btn-success mt-3" style="border-radius: 10px;
+                                <a href="{{ route('clients.DownloadPriorities',[$id,$type]) }}"
+                                    class="btn btn-success mt-3" style="border-radius: 10px;
     -webkit-box-shadow: 5px 5px 20px 5px #ababab;
     box-shadow: 5px 5px 20px 5px #ababab;">{{ __('Download Priorities Answers') }}</a>
+                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 @endsection
 @section('scripts')
@@ -67,7 +69,7 @@
 </script>
 
 <script>
-  Labels = @json($function_Lables);
+    Labels = @json($function_Lables);
     Leaders = @json($leaders_perform_onlyz);
     hr = @json($hr_perform_onlyz);
     //===============================
