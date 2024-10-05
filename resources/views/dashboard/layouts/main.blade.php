@@ -40,18 +40,21 @@
             animation: fadeIn 2s forwards;
             /* Fade in over 2 seconds */
         }
+
         @keyframes fadeIn {
             to {
                 opacity: 1;
                 /* End fully visible */
             }
         }
+
         .fade-out {
             opacity: 1;
             /* Start fully visible */
             animation: fadeOut 2s forwards;
             /* Fade out over 2 seconds */
         }
+
         @keyframes fadeOut {
             to {
                 opacity: 0;
@@ -328,8 +331,8 @@
                                 <p>
                                     {{ __('Manage Hr Diagnosis') }}
                                     @if (!$active)
-                                        {{-- lock icon --}}
-                                        <i class="right fas fa-lock"></i>
+                                    {{-- lock icon --}}
+                                    <i class="right fas fa-lock"></i>
                                     @endif
                                     {{-- <span class="right badge badge-danger">New</span> --}}
                                 </p>
@@ -345,22 +348,31 @@
                                 <p>
                                     {{ __('360 Review') }}
                                     @if (!$active)
-                                        {{-- lock icon --}}
-                                        <i class="right fas fa-lock"></i>
+                                    {{-- lock icon --}}
+                                    <i class="right fas fa-lock"></i>
                                     @endif
                                     {{-- <span class="right badge badge-danger">New</span> --}}
                                 </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('EmployeeEngagment.index') }}" class="nav-link">
+                            @php
+                            $active = Auth()->user()->isAdmin ? true:
+                            App\Http\Facades\Landing::HasService(auth()->user()->email,'3');
+                            @endphp
+                            <a href="{{ $active?route('EmployeeEngagment.index'):'#' }}" class="nav-link">
                                 <i class="nav-icon fas fa-laugh-beam"></i>
                                 <p>
                                     {{ __('Employee Engagment') }}
+                                    @if (!$active)
+                                    {{-- lock icon --}}
+                                    <i class="right fas fa-lock"></i>
+                                    @endif
                                     {{-- <span class="right badge badge-danger">New</span> --}}
                                 </p>
                             </a>
                         </li>
+                        @if(Auth()->user()->isAdmin)
                         <li class="nav-item">
                             <a href="{{ route('CEmployeeEngagment.index') }}" class="nav-link">
                                 <i class="nav-icon fas fa-laugh-beam"></i>
@@ -370,15 +382,28 @@
                                 </p>
                             </a>
                         </li>
+                        @endif
                         <li class="nav-item">
-                            <a href="{{ route('manualBuilder.index') }}" class="nav-link">
+                            @php
+                            $active = Auth()->user()->isAdmin ? true:
+                            App\Http\Facades\Landing::HasService(auth()->user()->email,'1');
+                            @endphp
+                            <a href="{{ $active? route('manualBuilder.index') :'#' }}" class="nav-link">
                                 <i class="nav-icon fa fa-file-alt"></i>
                                 <p>
                                     {{ __('Manual Builder') }}
+                                    @if (!$active)
+                                    {{-- lock icon --}}
+                                    <i class="right fas fa-lock"></i>
+                                    @endif
                                     {{-- <span class="right badge badge-danger">New</span> --}}
                                 </p>
                             </a>
                         </li>
+                        @php
+                            $active = Auth()->user()->isAdmin ? true:
+                            App\Http\Facades\Landing::isMainPartner(auth()->user()->email);
+                            @endphp
                         <li class="nav-item">
                             <a href="{{ route('termsCondition.index') }}" class="nav-link">
                                 <i class="nav-icon fa fa-file-alt"></i>

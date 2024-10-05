@@ -192,6 +192,7 @@ return [
         'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
         'Calculate3hResults' => App\Http\Facades\Calculate3hResultsFacade::class,
         'UserSubscriptions' => App\Http\Facades\UserSubscriptionsFacade::class,
+        'CalculateHrDiagnosisResults' => App\Http\Facades\CalculateHrDiagnosisResultsFacade::class,
     ])->toArray(),
 
 ];

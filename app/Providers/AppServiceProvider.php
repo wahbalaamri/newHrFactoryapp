@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Http\services\Calculate3hResults;
+use App\Http\services\CalculateHrDiagnosisResults;
 use App\Http\services\LandingService;
 use App\Http\services\TempURLServices;
 use App\Http\services\UserSubscriptionsService;
@@ -30,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
         // register UserSubscriptions Facade
         $this->app->singleton('UserSubscriptions', function () {
             return new UserSubscriptionsService();
+        });
+        // register CalculateHrDiagnosisResults Facade
+        $this->app->singleton('CalculateHrDiagnosisResults', function () {
+            return new CalculateHrDiagnosisResults();
         });
     }
 

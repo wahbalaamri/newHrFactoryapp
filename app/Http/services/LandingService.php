@@ -113,4 +113,9 @@ class LandingService
         return in_array($service, $keys);
 
     }
+    function isMainPartner($email){
+        $focal_point = PartnerFocalPoint::where('Email', $email)->first();
+        $partner = Partners::where('id', $focal_point->partner_id)->first();
+        return $partner->is_main;
+    }
 }

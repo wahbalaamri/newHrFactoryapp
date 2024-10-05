@@ -6,6 +6,7 @@ use App\Exports\HRDiagnosisPrioritiesAnswersExport;
 use App\Exports\HRDiagnosisSurveyAnswersExport;
 use App\Exports\SurveyAnswersExport;
 use App\Http\Facades\Calculate3hResultsFacade;
+use App\Http\Facades\CalculateHrDiagnosisResultsFacade;
 use App\Http\Facades\Landing;
 use App\Http\Facades\UserSubscriptionsFacade;
 use App\Jobs\SendAccountInfoJob;
@@ -1692,13 +1693,20 @@ class SurveysPrepration
                 ));
             }
             if ($Service_type == 4) {
-                if ($vtype == "comp") {
-                    $data = $this->company_results($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
-                } elseif ($vtype == "sec") {
-                    $data = $this->sector_results($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
-                } else {
-                    $data = $this->group_results($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
-                }
+                $data = CalculateHrDiagnosisResultsFacade::calculate(
+                    $Client_id,
+                    $survey_id,
+                    $vtype_id,
+                    $vtype
+                );
+                // if ($vtype == "comp") {
+                //     $data = $this->company_results($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
+                // } elseif ($vtype == "sec") {
+                //     $data = $this->sector_results($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
+                // } else {
+                //     $data = $this->group_results($Client_id, $Service_type, $survey_id, $vtype, $vtype_id);
+                // }
+
                 return view('dashboard.client.HrDiagnosis')->with($data);
             }
         } catch (\Exception $e) {
