@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class HRDiagnosisSurveyAnswersExport implements FromCollection , WithHeadings, WithChunkReading
+class HRDiagnosisSurveyAnswersExport implements FromCollection, WithHeadings, WithChunkReading
 {
     /**
      * @return \Illuminate\Support\Collection
@@ -39,9 +39,15 @@ class HRDiagnosisSurveyAnswersExport implements FromCollection , WithHeadings, W
                 ->join('departments', 'employees.dep_id', '=', 'departments.id')
                 ->join('companies', 'employees.comp_id', '=', 'companies.id')
                 ->where('respondents.survey_id', '=', $this->sid)
-                ->select(['respondents.id', 'respondents.employee_id'
-                , 'departments.is_hr', 'employees.employee_type', 'companies.name_en as company_name'
-                ,'employees.name as employee_name', 'employees.email as employee_email'])
+                ->select([
+                    'respondents.id',
+                    'respondents.employee_id',
+                    'departments.is_hr',
+                    'employees.employee_type',
+                    'companies.name_en as company_name',
+                    'employees.name as employee_name',
+                    'employees.email as employee_email'
+                ])
                 ->get();
         else {
             //get clients surveys IDs
@@ -97,7 +103,7 @@ class HRDiagnosisSurveyAnswersExport implements FromCollection , WithHeadings, W
 
                                 //add this value to next column
 
-                                $exportData[$index][$questionTitle . '-Q-' . $indx++] =  ($answerValue->answer_value);
+                                $exportData[$index][$questionTitle . '-Q-' . $indx++] =  ($answerValue->answer_value - 1) == 0 ? "0" : ($answerValue->answer_value - 1);
                                 $count++;
                             } else {
                                 $exportData[$index][$questionTitle . '-Q-' . $indx++] = '-';
