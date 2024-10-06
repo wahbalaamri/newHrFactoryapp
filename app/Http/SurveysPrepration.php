@@ -1088,7 +1088,7 @@ class SurveysPrepration
     {
 
         if ($type == 'r')
-            return Departments::where('company_id', $id)->where('dep_level', 1)->get()->append('name');
+            return Departments::where('company_id', $id)->get()->append('name');
         elseif ($type == 'ed') {
             //find department
             $department = Departments::find($id);
