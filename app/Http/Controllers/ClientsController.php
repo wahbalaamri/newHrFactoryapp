@@ -361,6 +361,11 @@ class ClientsController extends Controller
     {
         return $surveysPrepration->storeEmployee($request, true);
     }
+    //deleteEmployee function
+    public function deleteEmployee(Request $request, SurveysPrepration $surveysPrepration, $id,$cid)
+    {
+        return $surveysPrepration->deleteEmployee($request, $id,$cid, true);
+    }
     //getEmployee function
     public function getEmployee(Request $request, SurveysPrepration $surveysPrepration, $id)
     {
@@ -375,6 +380,11 @@ class ClientsController extends Controller
     public function saveSurveyRespondents(Request $request, SurveysPrepration $surveysPrepration)
     {
         return $surveysPrepration->saveSurveyRespondents($request, true);
+    }
+    //saveIndividualRespondents function
+    public function saveIndividualRespondents(Request $request, SurveysPrepration $surveysPrepration)
+    {
+        return $surveysPrepration->saveIndividualRespondents($request, true);
     }
     //sendSurvey function
     public function showSendSurvey(Request $request, SurveysPrepration $surveysPrepration, $id, $type, $survey_id, $send_type = null, $emp_id = null)

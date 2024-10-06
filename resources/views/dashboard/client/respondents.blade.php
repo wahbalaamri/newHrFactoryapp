@@ -1,117 +1,120 @@
 {{-- extends --}}
 @extends('dashboard.layouts.main')
 @section('styles')
-{{-- css file --}}
-<link rel="stylesheet" href="{{ asset('assets/css/treeView.css') }}">
+    {{-- css file --}}
+    <link rel="stylesheet" href="{{ asset('assets/css/treeView.css') }}">
 @endsection
 {{-- content --}}
 {{-- show client details --}}
 @section('content')
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0">{{ $client->name.__('\'s') }} {{ $survey->survey_title }} {{ __('Respondents') }}</h1>
-                </div><!-- /.col -->
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Dashboard </li>
-                    </ol>
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">{{ $client->name . __('\'s') }} {{ $survey->survey_title }}
+                            {{ __('Respondents') }}
+                        </h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Dashboard </li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                {{-- create funcy card to display surveys --}}
-                <div class="col-12 mt-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ __('Manage Your Respondents') }}</h3>
-                            {{-- tool --}}
-                            <div class="card-tools">
-                                {{-- back --}}
-                                <a href="{{ route('clients.surveyDetails', [$id, $type, $survey->id]) }}"
-                                    class="btn btn-sm btn-tool {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">
-                                    <i class="fas fa-arrow-left"></i>
-                                </a>
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    {{-- create funcy card to display surveys --}}
+                    <div class="col-12 mt-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">{{ __('Manage Your Respondents') }}</h3>
+                                {{-- tool --}}
+                                <div class="card-tools">
+                                    {{-- back --}}
+                                    <a href="{{ route('clients.surveyDetails', [$id, $type, $survey->id]) }}"
+                                        class="btn btn-sm btn-tool {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">
+                                        <i class="fas fa-arrow-left"></i>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table id="Employee-data"
-                                    class="table table-hover table-striped table-bordered text-center text-sm">
-                                    <thead>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="Employee-data"
+                                        class="table table-hover table-striped table-bordered text-center text-sm">
+                                        <thead>
 
-                                        <tr>
-                                            <th>#</th>
-                                            <th>{{ __('Respondents') }}
-                                                {{-- select all button --}}
-                                                <label for="select-all">{{ __('Select All') }}</label>
-                                                <input type="checkbox" id="select-all" class="">
-                                            </th>
-                                            <th>{{ __('Employee Name') }}</th>
-                                            <th>{{ __('Email') }}</th>
-                                            <th>{{ __('Phone') }}</th>
-                                            <th>{{ __('Position') }}</th>
-                                            {{-- <th>{{__('HR Manager?')}}</th>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>{{ __('Respondents') }}
+                                                    {{-- select all button --}}
+                                                    <label for="select-all">{{ __('Select All') }}</label>
+                                                    <input type="checkbox" id="select-all" class="">
+                                                </th>
+                                                <th>{{ __('Employee Name') }}</th>
+                                                <th>{{ __('Email') }}</th>
+                                                <th>{{ __('Phone') }}</th>
+                                                <th>{{ __('Position') }}</th>
+                                                {{-- <th>{{__('HR Manager?')}}</th>
                                             <th>{{__('Actions')}}</th>
                                             <th>{{__('Send Survey')}}</th>
                                             <th>{{__('Send Reminder')}}</th>
                                             <th>{{__('Raters')}}</th> --}}
-                                        </tr>
-                                    </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan=""></td>
-                                            <td>
-                                                {{-- button to read ids --}}
-                                                @if ($survey_type == 5 || $survey_type == 6)
-                                                <a href="javascript:void(0)" onclick="SetAsCandidate()"
-                                                    class="btn btn-sm btn-primary" id="read-all">
-                                                    {{ __('Save') }}
-                                                </a>
-                                                @else
-                                                <a href="javascript:void(0)" onclick="SetAsRespondent()"
-                                                    class="btn btn-sm btn-primary" id="read-all">
-                                                    {{ __('Save') }}
-                                                </a>
-                                                @endif
-                                            </td>
-                                            <td colspan=""></td>
-                                            <td colspan=""></td>
-                                            <td colspan=""></td>
-                                            {{-- <td colspan=""></td>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan=""></td>
+                                                <td>
+                                                    {{-- button to read ids --}}
+                                                    @if ($survey_type == 5 || $survey_type == 6)
+                                                        <a href="javascript:void(0)" onclick="SetAsCandidate()"
+                                                            class="btn btn-sm btn-primary" id="read-all">
+                                                            {{ __('Save') }}
+                                                        </a>
+                                                    @else
+                                                        <a href="javascript:void(0)" onclick="SetAsRespondent()"
+                                                            class="btn btn-sm btn-primary" id="read-all">
+                                                            {{ __('Save') }}
+                                                        </a>
+                                                    @endif
+                                                </td>
+                                                <td colspan=""></td>
+                                                <td colspan=""></td>
+                                                <td colspan=""></td>
+                                                {{-- <td colspan=""></td>
                                             <td colspan=""></td>
                                             <td colspan=""></td>
                                             <td colspan=""></td>
                                             <td colspan=""></td> --}}
-                                        </tr>
-                                    </tfoot>
-                                </table>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-</div>
-<!-- /.content-wrapper -->
-{{-- include AddRater --}}
-@include('dashboard.client.modals.RatersModal')
+        </section>
+    </div>
+    <!-- /.content-wrapper -->
+    {{-- include AddRater --}}
+    @include('dashboard.client.modals.RatersModal')
 @endsection
 @section('scripts')
-<script>
-    $(document).ready(function() {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function() {
             type = "{{ $type }}";
             url = "{{ route('clients.Respondents', [':d', ':type', ':survey']) }}";
             url = url.replace(':d', "{{ $id }}");
@@ -166,21 +169,25 @@
                         if (row.is_candidate_raters) {
 
                             if (row.isAddedAsCandidate == true) {
-                                return '<input type="checkbox" class="row-select" value="' + row
+                                return '<input type="checkbox" onchange="setAsCandidate_(this)" class="row-select" value="' +
+                                    row
                                     .id +
                                     '" checked><label class="form-check-label" for="exampleCheck1">Selected as Candidate</label>';
                             } else {
-                                return '<input type="checkbox" class="row-select" value="' + row
+                                return '<input type="checkbox" class="row-select" onchange="setAsCandidate_(this)" value="' +
+                                    row
                                     .id +
                                     '"><label class="form-check-label" for="exampleCheck1">Add as Candidate</label>';
                             }
                         } else {
                             if (row.isAddAsRespondent == true) {
-                                return '<input type="checkbox" class="row-select" value="' + row
+                                return '<input type="checkbox" class="row-select" onchange="setAsRespondent_(this)" value="' +
+                                    row
                                     .id +
                                     '" checked><label class="form-check-label" for="exampleCheck1">Selected as Respondent</label>';
                             } else {
-                                return '<input type="checkbox" class="row-select" value="' + row
+                                return '<input type="checkbox" class="row-select" onchange="setAsRespondent_(this)" value="' +
+                                    row
                                     .id +
                                     '"><label class="form-check-label" for="exampleCheck1">Add as Respondent</label>';
                             }
@@ -208,7 +215,7 @@
             // Add a button to each row that, when clicked, shows the additional info div
             $('#Employee-data tbody').on('click', 'button.show-more', function() {
                 var isCandidateRaters = "{{ $is_candidate_raters }}";
-                isCandidateRaters=isCandidateRaters==1?true:false;
+                isCandidateRaters = isCandidateRaters == 1 ? true : false;
                 var tr = $(this).closest('tr');
                 var row = table.row(tr);
                 var data = row.data();
@@ -260,7 +267,7 @@
                     ids.push($(this).val());
                 });
                 //get if select-all is checked
-                isAll = $('#select-all').is(':checked')?'all':'';
+                isAll = $('#select-all').is(':checked') ? 'all' : '';
                 console.log(ids.length);
                 if (ids.length > 0) {
                     $.ajax({
@@ -272,8 +279,8 @@
                             "survey": "{{ $survey_id }}",
                             "type": "{{ $type }}",
                             "client": "{{ $id }}",
-                            "tool_type":"normal",
-                            "isAll":isAll
+                            "tool_type": "normal",
+                            "isAll": isAll
                         },
                         success: function(data) {
                             if (data.status) {
@@ -288,6 +295,83 @@
                     });
                 } else {
                     toastr.error("Please select at least one Employee");
+                }
+            }
+            //setAsRespondent_
+            setAsRespondent_ = (ctr) => {
+                //check if ctr is checked
+                var id = $(ctr).val();
+                //get survey_id,type,id
+                survey_id = "{{ $survey_id }}";
+                type = "{{ $type }}";
+                client = "{{ $id }}";
+                checked = false;
+                if ($(ctr).is(':checked')) {
+                    checked = true;
+                } else {
+                    checked = false;
+                }
+                //confirm removing from respondents that leads to deletion of his/her answers
+                if (!checked) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, remove it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{ route('clients.saveIndividualRespondents') }}",
+                                type: "POST",
+                                data: {
+                                    "_token": "{{ csrf_token() }}",
+                                    "id": id,
+                                    "survey": survey_id,
+                                    "type": type,
+                                    "client": client,
+                                    "checked": checked
+                                },
+                                success: function(data) {
+                                    if (data.status) {
+                                        toastr.success(data.message);
+                                        $('#Employee-data').DataTable().ajax.reload();
+                                    }
+                                    if (!data.status) {
+                                        toastr.error(data.message);
+                                        $('#Employee-data').DataTable().ajax.reload();
+                                    }
+                                }
+                            });
+                        } else {
+                            $(ctr).prop('checked', true);
+                        }
+                    });
+                } else {
+                    $.ajax({
+                        url: "{{ route('clients.saveIndividualRespondents') }}",
+                        type: "POST",
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": id,
+                            "survey": survey_id,
+                            "type": type,
+                            "client": client,
+                            "checked": checked
+                        },
+                        success: function(data) {
+                            if (data.status) {
+                                toastr.success(data.message);
+                                $('#Employee-data').DataTable().ajax.reload();
+                            }
+                            if (!data.status) {
+                                toastr.error(data.message);
+                                $('#Employee-data').DataTable().ajax.reload();
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -307,7 +391,7 @@
                         "survey": "{{ $survey_id }}",
                         "type": "{{ $type }}",
                         "client": "{{ $id }}",
-                        "tool_type":"normal"
+                        "tool_type": "normal"
                     },
                     success: function(data) {
                         if (data.status) {
@@ -384,7 +468,7 @@
             getdepartments(company_id);
         });
         getdepartments = (id) => {
-            url = "{{ route('client.departments', [':d','d']) }}";
+            url = "{{ route('client.departments', [':d', 'd']) }}";
             url = url.replace(':d', id);
             if (id) {
                 $.ajax({
@@ -466,8 +550,8 @@
                     "type": type,
                     "survey": survey,
                     "action": action,
-                    "client_id":"{{ $id }}",
-                    "stype":"{{ $survey_type }}"
+                    "client_id": "{{ $id }}",
+                    "stype": "{{ $survey_type }}"
                 },
                 success: function(data) {
                     if (data.stat) {
@@ -493,5 +577,5 @@
                 });
             }
         });
-</script>
+    </script>
 @endsection

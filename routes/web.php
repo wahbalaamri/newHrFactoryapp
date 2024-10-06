@@ -427,8 +427,10 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::post('clients/storeSurveyEmail/{id}/{type}/{survey}/{emailid?}', [ClientsController::class, 'storeSurveyEmail'])->name('clients.storeSurveyEmail');
     Route::get('clients/getClientLogo/{id}', [ClientsController::class, 'getClientLogo'])->name('clients.getClientLogo');
     Route::post('clients/storeEmployee', [ClientsController::class, 'storeEmployee'])->name('clients.storeEmployee');
+    Route::post('clients/deleteEmployee/{id}/{cid}', [ClientsController::class, 'deleteEmployee'])->name('clients.deleteEmployee');
     Route::get('clients/getEmployee/{id}', [ClientsController::class, 'getEmployee'])->name('clients.getEmployee');
     Route::post('clients/saveSurveyRespondents', [ClientsController::class, 'saveSurveyRespondents'])->name('clients.saveSurveyRespondents');
+    Route::post('clients/saveIndividualRespondents', [ClientsController::class, 'saveIndividualRespondents'])->name('clients.saveIndividualRespondents');
     Route::post('clients/saveSurveyCandidates', [ClientsController::class, 'saveSurveyCandidates'])->name('clients.saveSurveyCandidates');
     Route::get('clients/view-Subscriptions/{id}', [ClientsController::class, 'viewSubscriptions'])->name('clients.viewSubscriptions');
     Route::post('clients/saveSubscription/{id}', [ClientsController::class, 'saveSubscription'])->name('clients.saveSubscription');

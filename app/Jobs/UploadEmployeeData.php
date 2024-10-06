@@ -197,14 +197,14 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                         $employee->comp_id = $company->id;
                         $employee->sector_id = $company->sector_id;
                         $employee->dep_id = null;
-                        $employee->name = $Employee['name'];
-                        $employee->emp_id = $Employee['emp_number'];
+                        $employee->name = $Employee['name']??'';
+                        $employee->emp_id = $Employee['emp_number']??'';
                         $employee->email = $Employee['email'];
                         $employee->mobile = $Employee['phone'];
-                        $employee->gender = $Employee['gender'];
+                        $employee->gender = $Employee['gender']??'';
                         $employee->dob = $date_of_birth;
                         $employee->dos = $date_of_service;
-                        $employee->position = $Employee['position'];
+                        $employee->position = $Employee['position']??'';
                         //check if $Employee['employee_type'] conatins Manager
                         if (strpos($Employee['employee_type'], 'Manager') !== false) {
 

@@ -996,13 +996,10 @@ class SurveysPrepration
     }
     function getDepName($dep, $level): string
     {
-        Log::info($level);
         if ($dep->parent_id != null && $dep->dep_level != $level) {
             return $this->getDepName($dep->parent, $level);
         }
         if ($dep->dep_level == $level) {
-            Log::info($dep->name);
-            Log::info($level);
             return $dep->name;
         }
         return '-';
@@ -1172,6 +1169,21 @@ class SurveysPrepration
             return response()->json(['status' => true, 'message' => 'Employee created successfully', 'employee' => $employee]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    //deleteEmployee function
+    function deleteEmployee(Request $request, $id, $cid, $by_admin = false)
+    {
+        try {
+            //find employee
+            $employee = Employees::find($id);
+            //delete employee
+            $employee->delete();
+            //json response with status
+            return response()->json(['status' => true, 'message' => 'Employee deleted successfully']);
+        } catch (\Exception $e) {
+            //json response with status
+            return response()->json(['status' => false, 'message' => $e->getMessage()]);
         }
     }
     //getEmployee function
@@ -1366,6 +1378,78 @@ class SurveysPrepration
             }
             //json response with status
             return response()->json(['status' => true, 'message' => 'Respondents added successfully']);
+        } catch (\Exception $e) {
+            Log::info($e->getMessage());
+            //return json response with status
+            return response()->json(['status' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    //saveIndividualRespondents function
+    function saveIndividualRespondents(Request $request, $by_admin)
+    {
+        try {
+            //get bool checked
+            $checked = ($request->checked === "true" || $request->checked === true) ? true : false;
+            if ($checked) {
+                //find employee from respondent
+                $respondent = Respondents::where('employee_id', $request->id)
+                    ->where('survey_id', $request->survey)
+                    ->where('client_id', $request->client)
+                    ->where('survey_type', $request->type)
+                    ->first();
+                if ($respondent == null) {
+                    $respondent1 = new Respondents();
+                    $respondent1->employee_id = $request->id;
+                    $respondent1->survey_id = $request->survey;
+                    $respondent1->client_id = $request->client;
+                    $respondent1->survey_type = $request->type;
+                    $respondent1->save();
+                    //json response with status
+                    return response()->json(['status' => true, 'message' => 'Respondent added successfully']);
+                } else {
+                    //json response with status
+                    return response()->json(['status' => false, 'message' => 'Respondent already added']);
+                }
+            } else {
+                $respondent = Respondents::where('employee_id', $request->id)
+                    ->where('survey_id', $request->survey)
+                    ->where('client_id', $request->client)
+                    ->where('survey_type', $request->type)
+                    ->first();
+                if ($respondent == null) {
+                    //json response with status
+                    return response()->json(['status' => false, 'message' => 'Respondent not found']);
+                } else {
+                    //delete all answers of the respondent
+                    if ($request->type == 3 || $request->type == 4 || $request->type == 10) {
+                        $answers = SurveyAnswers::where('answered_by', $respondent->id)->get();
+                        foreach ($answers as $answer) {
+                            $answer->delete();
+                        }
+                        if ($request->type == 4) {
+                            $Panswers = PrioritiesAnswers::where('answered_by', $respondent->id)->get();
+                            foreach ($Panswers as $answer) {
+                                $answer->delete();
+                            }
+                        }
+                    }
+                    if ($request->type == 5) {
+                        $answers = SurveyAnswers::where('candidate', $respondent->id)
+                            ->where('survey_id', $request->survey)
+                            ->where('client_id', $request->client)
+                            ->where('survey_type', $request->type)
+                            ->get();
+                        foreach ($answers as $answer) {
+                            $answer->delete();
+                        }
+                    }
+                    //delete the respondent
+                    $respondent->delete();
+                    //json response with status
+                    return response()->json(['status' => true, 'message' => 'Respondent deleted successfully']);
+                }
+            }
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             //return json response with status

@@ -1,113 +1,113 @@
 {{-- extends --}}
 @extends('dashboard.layouts.main')
 @section('styles')
-{{-- css file --}}
-<link rel="stylesheet" href="{{ asset('assets/css/treeView.css') }}">
+    {{-- css file --}}
+    <link rel="stylesheet" href="{{ asset('assets/css/treeView.css') }}">
 @endsection
 {{-- content --}}
 {{-- show client details --}}
 @section('content')
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0">{{ $client->name }} {{ __('Employees') }}</h1>
-                </div><!-- /.col -->
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Dashboard </li>
-                    </ol>
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">{{ $client->name }} {{ __('Employees') }}</h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Dashboard </li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                {{-- create funcy card to display surveys --}}
-                <div class="col-12 mt-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ __('Manage Your Employees') }}</h3>
-                            {{-- tool --}}
-                            <div class="card-tools">
-                                {{-- back --}}
-                                <a href="{{ route('clients.manage', $id) }}"
-                                    class="btn btn-sm btn-tool {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">
-                                    <i class="fas fa-arrow-left"></i>
-                                </a>
-                                {{-- create new Employee --}}
-                                <a href="javascript:void(0);" id="addEmployee" data-toggle="modal"
-                                    onclick="addEmployee()" data-target="#EmployeeModal"
-                                    class="btn btn-sm btn-tool {{ App()->getLocale() == 'ar' ? 'float-end' : 'float-start' }}">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            {{-- card --}}
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title">{{ __('Upload Your Employees Data') }}</h3>
-                                </div>
-                                <div class="card-body">
-                                    {{-- form to upload excel sheet --}}
-                                    <form action="{{ route('clients.uploadEmployeeExcel', $id) }}" method="POST"
-                                        enctype="multipart/form-data">
-                                        @csrf
-                                        <div class="form-group col-md-6 col-sm-12">
-                                            <label for="excel">{{ __('Upload Excel Sheet') }}</label>
-                                            <input type="file" name="excel" class="form-control" required>
-                                        </div>
-                                        <div class="form-group col-sm-12">
-                                            <button type="submit"
-                                                class="btn btn-outline-success btn-sm {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{
-                                                __('Upload') }}</button>
-                                        </div>
-                                    </form>
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    {{-- create funcy card to display surveys --}}
+                    <div class="col-12 mt-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">{{ __('Manage Your Employees') }}</h3>
+                                {{-- tool --}}
+                                <div class="card-tools">
+                                    {{-- back --}}
+                                    <a href="{{ route('clients.manage', $id) }}"
+                                        class="btn btn-sm btn-tool {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">
+                                        <i class="fas fa-arrow-left"></i>
+                                    </a>
+                                    {{-- create new Employee --}}
+                                    <a href="javascript:void(0);" id="addEmployee" data-toggle="modal"
+                                        onclick="addEmployee()" data-target="#EmployeeModal"
+                                        class="btn btn-sm btn-tool {{ App()->getLocale() == 'ar' ? 'float-end' : 'float-start' }}">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
                                 </div>
                             </div>
-                            <div class="table-responsive">
-                                <table id="Employee-data"
-                                    class="table table-hover table-striped table-bordered text-center text-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>{{ __('Employee Name') }}</th>
-                                            <th>{{ __('Email') }}</th>
-                                            <th>{{ __('Phone') }}</th>
-                                            <th>{{ __('Employee Type') }}</th>
-                                            {{-- <th>{{__('Department')}}</th>
+                            <div class="card-body">
+                                {{-- card --}}
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">{{ __('Upload Your Employees Data') }}</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        {{-- form to upload excel sheet --}}
+                                        <form action="{{ route('clients.uploadEmployeeExcel', $id) }}" method="POST"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="form-group col-md-6 col-sm-12">
+                                                <label for="excel">{{ __('Upload Excel Sheet') }}</label>
+                                                <input type="file" name="excel" class="form-control" required>
+                                            </div>
+                                            <div class="form-group col-sm-12">
+                                                <button type="submit"
+                                                    class="btn btn-outline-success btn-sm {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{ __('Upload') }}</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table id="Employee-data"
+                                        class="table table-hover table-striped table-bordered text-center text-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>{{ __('Employee Name') }}</th>
+                                                <th>{{ __('Email') }}</th>
+                                                <th>{{ __('Phone') }}</th>
+                                                <th>{{ __('Employee Type') }}</th>
+                                                {{-- <th>{{__('Department')}}</th>
                                             <th>{{__('Company')}}</th>
                                             <th>{{__('Sector')}}</th>
                                             <th>{{__('HR Manager?')}}</th>
                                             <th>{{__('Is Active')}}</th>
                                             <th>{{__('Actions')}}</th> --}}
-                                        </tr>
-                                    </thead>
-                                </table>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-</div>
-{{-- include editEmployee Modal --}}
-@include('dashboard.client.modals.editEmployee')
-<!-- /.content-wrapper -->
+        </section>
+    </div>
+    {{-- include editEmployee Modal --}}
+    @include('dashboard.client.modals.editEmployee')
+    <!-- /.content-wrapper -->
 @endsection
 @section('scripts')
-<script>
-    isUsingDepartment = "{{ $client->use_departments }}" == 1
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        isUsingDepartment = "{{ $client->use_departments }}" == 1
         isUsingSections = "{{ $client->use_sections }}" == 1
         $(document).ready(function() {
             url = "{{ route('clients.Employees', ':d') }}";
@@ -654,19 +654,20 @@
                                     selected = department.id == id ? "selected" : "";
                                     $('#directorate').append('<option value="' +
                                         department.id +
-                                        '"'+selected+'>' + department.name + '</option>');
+                                        '"' + selected + '>' + department.name + '</option>');
                                 }
                                 if (dep_level == 3) {
                                     //setup division
                                     selected = department.id == id ? "selected" : "";
                                     $('#division').append('<option value="' +
                                         department.id +
-                                        '"'+selected+'>' + department.name + '</option>');
+                                        '"' + selected + '>' + department.name + '</option>');
                                 }
                                 if (dep_level == 4) {
                                     //setup department
                                     selected = department.id == id ? "selected" : "";
-                                    $('#department').append('<option value="' + department.id + '" '+selected+'>' + department
+                                    $('#department').append('<option value="' + department.id + '" ' +
+                                        selected + '>' + department
                                         .name + '</option>');
                                 }
                                 if (dep_level == 5) {
@@ -688,5 +689,45 @@
                 });
             }
         }
-</script>
+
+        deleteEmp = (id) => {
+            //Show delete confirmation swal
+            Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        url = "{{ route('clients.deleteEmployee', [':d', ':c']) }}";
+                        url = url.replace(':d', id);
+                        url = url.replace(':c', "{{ $client->id }}");
+                        $.ajax({
+                            url: url,
+                            type: "post",
+                            data: { _token: '{{ csrf_token() }}' },
+                            success: function(data) {
+                                //if success
+                                if (data.status) {
+                                    //toaster
+                                    toastr.success(data.message);
+                                    //reload table
+                                    $('#Employee-data').DataTable().ajax.reload();
+                                }
+                                else{
+                                    //toaster
+                                    toastr.error(data.message);
+                                }
+                            },
+                            error: function(error) {
+                                console.log(error);
+                            }
+                        });
+                    }
+                });
+        }
+    </script>
 @endsection
