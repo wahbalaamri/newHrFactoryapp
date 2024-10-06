@@ -962,11 +962,20 @@ class SurveysPrepration
                     $action .= '<div class="col-md-6 col-sm-12 text-center"><a href="javascript:void(0);" onclick="DeleteDep(\'' . $department->id . '\')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a></div></div>';
                     return $action;
                 })
-                ->addColumn('super_department', function ($department) {
-                    return $department->parent_id == null ? 'No Super Parent' : (App()->getLocale() == 'en' ? $department->parent->name_en : $department->parent->name_ar);
+                ->addColumn('c4', function ($department) {
+                    return $this->getDepName($department, 4);
+                })
+                ->addColumn('c3', function ($department) {
+                    return $this->getDepName($department, 3);
+                })
+                ->addColumn('c2', function ($department) {
+                    return $this->getDepName($department, 2);
+                })
+                ->addColumn('c1', function ($department) {
+                    return $this->getDepName($department, 1);
                 })
                 ->addColumn('name', function ($department) {
-                    return App()->getLocale() == 'en' ? $department->name_en : $department->name_ar;
+                    return $this->getDepName($department, 5);
                 })
                 ->addColumn('level', function ($department) {
                     return 'c-' . $department->dep_level;
@@ -984,6 +993,19 @@ class SurveysPrepration
                 ->make(true);
         }
         return view('dashboard.client.orgChart.orgChart')->with($data);
+    }
+    function getDepName($dep, $level): string
+    {
+        Log::info($level);
+        if ($dep->parent_id != null && $dep->dep_level != $level) {
+            return $this->getDepName($dep->parent, $level);
+        }
+        if ($dep->dep_level == $level) {
+            Log::info($dep->name);
+            Log::info($level);
+            return $dep->name;
+        }
+        return '-';
     }
     //deleteDep function
     function deleteDep(Request $request, $id, $by_admin = false)

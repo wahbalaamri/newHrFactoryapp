@@ -3,11 +3,14 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>{{__('Department Name')}}</th>
-                <th>{{__('Super Department')}}</th>
-                <th>{{__('Level')}}</th> 
-                <th>{{__('Company')}}</th> 
+                <th>{{__('level C-1')}}</th>
+                <th>{{__('level C-2')}}</th>
+                <th>{{__('level C-3')}}</th>
+                <th>{{__('level C-4')}}</th>
+                <th>{{__('level C-5')}}</th>
+                <th>{{__('Company')}}</th>
                 <th>{{__('Sector')}}</th>
+                <th>{{__('Level')}}</th>
                 <th>{{__('HR Department?')}}</th>
                 <th>{{ __('Actions') }}</th>
             </tr>

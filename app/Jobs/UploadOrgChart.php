@@ -113,13 +113,13 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
             }
             if ($client->multiple_company) {
                 //check if company has value and $sector_id not null
-                if (trim($entity['companies'])!='' && $sector_id && $entity['companies']!=null && $entity['companies']!='') {
-                    $company = Companies::where('name_en', trim($entity['companies']))->where('sector_id', $sector_id)->first();
+                if (trim($entity['Establishments'])!='' && $sector_id && $entity['Establishments']!=null && $entity['Establishments']!='') {
+                    $company = Companies::where('name_en', trim($entity['Establishments']))->where('sector_id', $sector_id)->first();
                     if (!$company) {
                         $company = new Companies();
                     }
-                    $company->name_en = trim($entity['companies']);
-                    $company->name_ar = trim($entity['companies']);
+                    $company->name_en = trim($entity['Establishments']);
+                    $company->name_ar = trim($entity['Establishments']);
                     $company->sector_id = $sector_id;
                     $company->save();
                     $company_id = $company->id;

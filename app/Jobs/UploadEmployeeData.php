@@ -79,7 +79,7 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             //log {"name":"Al Busaidi,Barakat Amin Said","emp_number":"3040","email":"barakat.busaidi@owwsc.nama.om",
             //"phone":"99424415","gender":"Male","date_of_birth":"29-03-1974","date_of_service":"08-04-2006",
             //"position":"Supply Chain Management Senior Manager","employee_type":" Manager","sector":null,
-            //"super_senior_directorate":"Financial Affairs_SDI","directorate":null,"division":"Supply Chain_DIV",
+            //"super_directorate":"Financial Affairs_SDI","directorate":null,"division":"Supply Chain_DIV",
             //"department":null,"region":"Muscat","branch":"Bawshar","sections":"Bawshar"}
             //   0 => name,
             //   1 => emp_id,
@@ -105,8 +105,8 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             $parent_id = null;
             $super_directory = null;
             $directory = null;
-            $date_of_birth = date('Y-m-d', strtotime($Employee['date_of_birth']));
-            $date_of_service = date('Y-m-d', strtotime($Employee['date_of_service']));
+            $date_of_birth = ($Employee['date_of_birth']!=''||$Employee['date_of_birth']!=null)?date('Y-m-d', strtotime($Employee['date_of_birth'])):null;
+            $date_of_service = ($Employee['date_of_service']!=''||$Employee['date_of_service']!=null)?date('Y-m-d', strtotime($Employee['date_of_service'])):null;
             //pluck client sector ids into array
             $sectors = Sectors::where('client_id', $this->client_id)->get()->pluck('id')->toArray();
             //pluck client company ids into array
@@ -114,8 +114,8 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             if ($client->use_departments) {
 
                 //if seinor directorate has value
-                if ($Employee['super_senior_directorate'] != null) {
-                    $super_directory = Departments::where('name_en', trim($Employee['super_senior_directorate']))->whereIn('company_id', $companies)->first();
+                if ($Employee['super_directorate'] != null) {
+                    $super_directory = Departments::where('name_en', trim($Employee['super_directorate']))->whereIn('company_id', $companies)->first();
                     //check if super directorate exist
                     if ($super_directory) {
                         $parent_id = $super_directory->id;
@@ -165,14 +165,14 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                 $employee->comp_id = $entity->company_id;
                 $employee->sector_id = $entity->company->sector_id;
                 $employee->dep_id = $parent_id;
-                $employee->name = $Employee['name'];
-                $employee->emp_id = $Employee['emp_number'];
+                $employee->name = $Employee['name']??'';
+                $employee->emp_id = $Employee['emp_number']??'';
                 $employee->email = $Employee['email'];
                 $employee->mobile = $Employee['phone'];
-                $employee->gender = $Employee['gender'];
+                $employee->gender = $Employee['gender']??'';
                 $employee->dob = $date_of_birth;
                 $employee->dos = $date_of_service;
-                $employee->position = $Employee['position'];
+                $employee->position = $Employee['position']??'';
                 //check if $Employee['employee_type'] conatins Manager
                 if (strpos($Employee['employee_type'], 'Manager') !== false) {
 
@@ -185,10 +185,10 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                 $employee->save();
             } else {
 
-                //check if $Employee['super_senior_directorate'] != null
-                if ($Employee['super_senior_directorate'] != null) {
+                //check if $Employee['super_directorate'] != null
+                if ($Employee['super_directorate'] != null) {
                     //find the company
-                    $company = Companies::where('name_en', trim($Employee['super_senior_directorate']))->whereIn('sector_id', $sectors)->first();
+                    $company = Companies::where('name_en', trim($Employee['super_directorate']))->whereIn('sector_id', $sectors)->first();
                     if ($company) {
                         $employee = Employees::where('emp_id', $Employee['emp_number'])->where('email', $Employee['email'])->where('client_id', $this->client_id)->first();
                         if (!$employee)
@@ -224,7 +224,7 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             $fileName = 'NotAddedEmployees' . time() . '.csv';
             $filePath = storage_path('app/public/' . $fileName);
             $file = fopen($filePath, 'w');
-            fputcsv($file, array('name', 'emp_number', 'email', 'phone', 'gender', 'date_of_birth', 'date_of_service', 'position', 'employee_type', 'sector', 'super_senior_directorate', 'directorate', 'division', 'department', 'region', 'branch'));
+            fputcsv($file, array('name', 'emp_number', 'email', 'phone', 'gender', 'date_of_birth', 'date_of_service', 'position', 'employee_type', 'sector', 'super_directorate', 'directorate', 'division', 'department', 'region', 'branch'));
             foreach ($this->notAdded_Employees as $Employee) {
                 fputcsv($file, $Employee->toArray());
             }

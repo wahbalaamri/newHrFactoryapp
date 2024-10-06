@@ -86,7 +86,7 @@
                                                                 @checked($client->multiple_company)>
                                                             <label class="form-check-label"
                                                                 for="multiple_companies">{{ __('No,
-                                                                                                                                                                                                                                                            Only one company') }}</label>
+                                                                                                                                                                                                                                                                                                                            Only one company') }}</label>
                                                         </div>
 
                                                     </div>
@@ -529,16 +529,29 @@
                         name: 'DT_RowIndex'
                     },
                     {
+                        data: 'c1',
+                        name: 'c1',
+                        visible: {{ $client->use_departments ? 'true' : 'false' }}
+                    },
+                    {
+                        data: 'c2',
+                        name: 'c2',
+                        visible: {{ $client->use_departments ? 'true' : 'false' }}
+                    },
+                    {
+                        data: 'c3',
+                        name: 'c3',
+                        visible: {{ $client->use_departments ? 'true' : 'false' }}
+                    },
+                    {
+                        data: 'c4',
+                        name: 'c4',
+                        visible: {{ $client->use_departments ? 'true' : 'false' }}
+                    },
+                    {
                         data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'super_department',
-                        name: 'super_department'
-                    },
-                    {
-                        data: 'level',
-                        name: 'level'
+                        name: 'name',
+                        visible: {{ $client->use_sections ? 'true' : 'false' }}
                     },
                     {
                         data: 'company',
@@ -548,6 +561,11 @@
                         data: 'sector',
                         name: 'sector'
                     },
+                    {
+                        data: 'level',
+                        name: 'level'
+                    },
+
                     {
                         data: 'is_hr',
                         name: 'is_hr'
