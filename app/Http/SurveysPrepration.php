@@ -4830,6 +4830,9 @@ class SurveysPrepration
                     $employees = [];
                     $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
                     $respondents = $this->getRespondentsIds($employees, $id);
+                    Log::info("fromstst");
+                    Log::info(count($respondents));
+                    Log::info($respondents);
                     $answered = $this->getNumberAnswered($respondents, $id);
                     $entity_stat = [
                         'entity_name' => $department->name,
@@ -5007,6 +5010,8 @@ class SurveysPrepration
     //get respondents ids
     private function getRespondentsIds($employees, $survey)
     {
+        Log::info("from getRespondentsIds");
+        Log::info(count($employees));
         return Respondents::whereIn('employee_id', $employees)->where('survey_id', $survey)->pluck('id')->toArray();
     }
     private function getNumberAnswered($respondents, $survey)
