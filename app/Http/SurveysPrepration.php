@@ -4855,7 +4855,7 @@ class SurveysPrepration
                         'employee' => count($employees),
                         'respondents' => count($respondents),
                         'answered' => $answered,
-                        'percentage' => $respondents == 0 ? 0 : ($answered / count($respondents)) * 100,
+                        'percentage' => count($respondents) == 0 ? 0 : ($answered / count($respondents)) * 100,
                         'type' => 'department',
 
                     ];
@@ -4875,7 +4875,7 @@ class SurveysPrepration
                         'employee' => count($employees),
                         'respondents' => count($respondents),
                         'answered' => $answered,
-                        'percentage' =>  $respondents == 0 ? 0 : ($answered / count($respondents)) * 100,
+                        'percentage' =>  count($respondents) == 0 ? 0 : ($answered / count($respondents)) * 100,
                         'type' => 'department',
                     ];
                     array_push($div_stat, $entity_stat);
