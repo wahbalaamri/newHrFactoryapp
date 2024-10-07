@@ -1061,8 +1061,6 @@ class SurveysPrepration
                         return $employee->company != null ? (App()->getLocale() == 'en' ? $employee->company->name_en : $employee->company->name_ar) : '-';
                     })
                     ->editColumn('department', function ($employee) {
-                        if ($employee->department == null)
-                            Log::info($employee->email);
                         return $employee->department != null ? (App()->getLocale() == 'en' ? $employee->department->name_en : $employee->department->name_ar) : '-';
                     })
                     ->addColumn('active', function ($employee) {
@@ -1097,8 +1095,6 @@ class SurveysPrepration
             //if department is not null
             if ($department != null) {
                 if ($department->parent_id) { //return json
-                    Log::info($department);
-                    Log::info(Departments::where('parent_id', $department->parent_id)->get()->append('name'));
                     return response()->json(['departments' => Departments::where('parent_id', $department->parent_id)->get()->append('name'), 'status' => true]);
                 } else {
                     return response()->json([
@@ -4830,9 +4826,6 @@ class SurveysPrepration
                     $employees = [];
                     $employees = $this->getEmployeeOfEntity($department->id, $cid, 'department');
                     $respondents = $this->getRespondentsIds($employees, $id);
-                    Log::info("fromstst");
-                    Log::info(count($respondents));
-                    Log::info($respondents);
                     $answered = $this->getNumberAnswered($respondents, $id);
                     $entity_stat = [
                         'entity_name' => $department->name,
@@ -4989,7 +4982,6 @@ class SurveysPrepration
             }
         } elseif ($entity_type == 'department') {
             $employees = $this->employeeIdsOfDepartment($entity_id, $client);
-            Log::info(count($employees));
         }
         return $employees;
     }
@@ -5010,8 +5002,6 @@ class SurveysPrepration
     //get respondents ids
     private function getRespondentsIds($employees, $survey)
     {
-        Log::info("from getRespondentsIds");
-        Log::info(count($employees));
         return Respondents::whereIn('employee_id', $employees)->where('survey_id', $survey)->pluck('id')->toArray();
     }
     private function getNumberAnswered($respondents, $survey)
