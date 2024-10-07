@@ -4986,7 +4986,6 @@ class SurveysPrepration
             }
         } elseif ($entity_type == 'department') {
             $employees = $this->employeeIdsOfDepartment($entity_id, $client);
-            Log::info(json_encode($employees));
             Log::info(count($employees));
         }
         return $employees;
@@ -4996,10 +4995,12 @@ class SurveysPrepration
     {
         $employees = [];
         $department = Departments::find($department);
-        $employees = array_merge($employees, $department->employees->pluck('id')->toArray());
+        $employees = array_merge($employees, $department->employees->where('client_id', $client)->pluck('id')->toArray());
         //foreach department subDepartments
-        foreach ($department->subDepartments as $subDepartment) {
-            $employees = array_merge($employees, $this->employeeIdsOfDepartment($subDepartment->id, $client));
+        if (count($department->subDepartments) > 0) {
+            foreach ($department->subDepartments as $subDepartment) {
+                $employees = array_merge($employees, $this->employeeIdsOfDepartment($subDepartment->id, $client));
+            }
         }
         return $employees;
     }
