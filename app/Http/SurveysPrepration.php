@@ -1061,6 +1061,8 @@ class SurveysPrepration
                         return $employee->company != null ? (App()->getLocale() == 'en' ? $employee->company->name_en : $employee->company->name_ar) : '-';
                     })
                     ->editColumn('department', function ($employee) {
+                        if ($employee->department == null)
+                            Log::info($employee->email);
                         return $employee->department != null ? (App()->getLocale() == 'en' ? $employee->department->name_en : $employee->department->name_ar) : '-';
                     })
                     ->addColumn('active', function ($employee) {
