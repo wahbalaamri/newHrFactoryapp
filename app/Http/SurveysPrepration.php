@@ -1392,6 +1392,15 @@ class SurveysPrepration
             //get bool checked
             $checked = ($request->checked === "true" || $request->checked === true) ? true : false;
             if ($checked) {
+                //get count of respondents
+                $count = Respondents::where([['survey_id', $request->survey], ['client_id', $request->client], ['survey_type', $request->type]])->count();
+                //get survey
+                $survey = Surveys::find($request->survey);
+                //get plan
+                $plan = $survey->plans;
+                if ($plan->plan_type == 5 && $count > 4) {
+                    return response()->json(['status' => false, 'message' => 'You reached the limit of respondents']);
+                }
                 //find employee from respondent
                 $respondent = Respondents::where('employee_id', $request->id)
                     ->where('survey_id', $request->survey)
@@ -4846,7 +4855,7 @@ class SurveysPrepration
                         'employee' => count($employees),
                         'respondents' => count($respondents),
                         'answered' => $answered,
-                        'percentage' => ($answered / count($respondents)) * 100,
+                        'percentage' => $respondents == 0 ? 0 : ($answered / count($respondents)) * 100,
                         'type' => 'department',
 
                     ];
@@ -4866,7 +4875,7 @@ class SurveysPrepration
                         'employee' => count($employees),
                         'respondents' => count($respondents),
                         'answered' => $answered,
-                        'percentage' => ($answered / count($respondents)) * 100,
+                        'percentage' =>  $respondents == 0 ? 0 : ($answered / count($respondents)) * 100,
                         'type' => 'department',
                     ];
                     array_push($div_stat, $entity_stat);
