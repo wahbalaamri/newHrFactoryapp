@@ -4793,7 +4793,7 @@ class SurveysPrepration
                         'employee' => count($employees),
                         'respondents' => count($respondents),
                         'answered' => $answered,
-                        'percentage' => count($respondents)==0?0:($answered / count($respondents)) * 100,
+                        'percentage' => count($respondents) == 0 ? 0 : ($answered / count($respondents)) * 100,
                         'type' => 'sector'
                     ];
                     array_push($sector_stat, $entity_stat);
@@ -4813,7 +4813,7 @@ class SurveysPrepration
                         'employee' => count($employees),
                         'respondents' => count($respondents),
                         'answered' => $answered,
-                        'percentage' => count($respondents)==0?0:($answered / count($respondents)) * 100,
+                        'percentage' => count($respondents) == 0 ? 0 : ($answered / count($respondents)) * 100,
                         'type' => 'company'
                     ];
                     //push entity_stat into stat array
@@ -4895,7 +4895,7 @@ class SurveysPrepration
                         'employee' => count($employees),
                         'respondents' => count($respondents),
                         'answered' => $answered,
-                        'percentage' => count($respondents)==0?0:($answered / count($respondents)) * 100,
+                        'percentage' => count($respondents) == 0 ? 0 : ($answered / count($respondents)) * 100,
                         'type' => 'department',
                     ];
                     array_push($deps_stat, $entity_stat);
@@ -4983,13 +4983,21 @@ class SurveysPrepration
                 $employees =  $company->employees->pluck('id')->toArray();
             }
         } elseif ($entity_type == 'department') {
-            //find department
-            $department = Departments::find($entity_id);
-            $employees = $department->employees->pluck('id')->toArray();
-            //foreach department subDepartments
-            foreach ($department->subDepartments as $subDepartment) {
-                $employees = array_merge($employees, $this->getEmployeeOfEntity($subDepartment->id, $client, 'department'));
-            }
+            $employees = $this->employeeIdsOfDepartment($entity_id, $client);
+            Log::info(json_encode($employees));
+            Log::info(count($employees));
+        }
+        return $employees;
+    }
+    //get employees of a department
+    private function employeeIdsOfDepartment($department, $client): array
+    {
+        $employees = [];
+        $department = Departments::find($department);
+        $employees = array_merge($employees, $department->employees->pluck('id')->toArray());
+        //foreach department subDepartments
+        foreach ($department->subDepartments as $subDepartment) {
+            $employees = array_merge($employees, $this->employeeIdsOfDepartment($subDepartment->id, $client));
         }
         return $employees;
     }
