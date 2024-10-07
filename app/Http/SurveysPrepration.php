@@ -4793,7 +4793,7 @@ class SurveysPrepration
                         'employee' => count($employees),
                         'respondents' => count($respondents),
                         'answered' => $answered,
-                        'percentage' => ($answered / count($respondents)) * 100,
+                        'percentage' => count($respondents)==0?0:($answered / count($respondents)) * 100,
                         'type' => 'sector'
                     ];
                     array_push($sector_stat, $entity_stat);
@@ -4813,7 +4813,7 @@ class SurveysPrepration
                         'employee' => count($employees),
                         'respondents' => count($respondents),
                         'answered' => $answered,
-                        'percentage' => ($answered / count($respondents)) * 100,
+                        'percentage' => count($respondents)==0?0:($answered / count($respondents)) * 100,
                         'type' => 'company'
                     ];
                     //push entity_stat into stat array
@@ -4895,7 +4895,7 @@ class SurveysPrepration
                         'employee' => count($employees),
                         'respondents' => count($respondents),
                         'answered' => $answered,
-                        'percentage' => ($answered / count($respondents)) * 100,
+                        'percentage' => count($respondents)==0?0:($answered / count($respondents)) * 100,
                         'type' => 'department',
                     ];
                     array_push($deps_stat, $entity_stat);
