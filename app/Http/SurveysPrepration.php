@@ -1019,7 +1019,7 @@ class SurveysPrepration
     //DownloadOrgChartTemp function
     function DownloadOrgChartTemp(Request $request, $id, $sector, $company, $deps, $by_admin = false)
     {
-        dd($request->all());
+        //dd($request->all());
         //check if request has levels_label
         if ((bool)$deps) {
             //find client
