@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Clients;
 use App\Models\Companies;
 use App\Models\Departments;
+use App\Models\OrgChartDesign;
 use App\Models\Sectors;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -68,28 +69,37 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
     {
         //find client
         $client = Clients::find($this->client_id);
+        $super_directorates = false;
+        $directorates = false;
+        $divisions = false;
+        $departments = false;
+        $super_directorates_hasValue = false;
+        $directorates_hasValue = false;
+        $divisions_hasValue = false;
+        $departments_hasValue = false;
+        $sd_level = 0;
+        $di_level = 0;
+        $div_level = 0;
+        $dep_level = 0;
+        $data = [];
+        foreach ($org_chart as $row) {
+            // Rename headers dynamically based on the prefix
+            $renamedRow = $this->renameHeaders($row);
+            $data[] = $renamedRow;
+            // Process the renamed row here
+            // Example: $renamedRow['Level 1'], $renamedRow['Level 2'], etc.
+        }
+        Log::info(json_encode($data));
+
         // loop through $org_chart
-        foreach ($org_chart as $entity) {
-            //{"sectors":"Water & Wastewater ","companies":"Nama Water Services ","regions":"Ad Dakhliyah",
-            //"branches":"Nizwa Office","super_directorates":"Operation & Maintenance_SDI","directorates":"Region Operation_DI",
-            //"division":"South Batinah & Dakhliyah Operation_DIV","department":"Operations Al Dakhliah Region_DT",
-            //"hr_department":null,"9":null,"10":null,"11":null,"12":null,"13":null,"14":null,"15":null,
-            //"16":null,"17":null,"18":null}
-            //     0 => 'sectors',
-            //     1 => 'companies',
-            //     2 => 'regions',
-            //     3 => 'branches',
-            //     4 => 'super_directorates',
-            //     5 => 'directorates',
-            //     6 => 'division',
-            //     7 => 'department',
-            //     8 => 'section',
-            //     9 => 'hr_department',
+        foreach ($data as $entity) {
+
+            $level = 1;
             $sector_id = null;
             $company_id = null;
             $region_id = null;
             $branch_id = null;
-            $new_parent_id=null;
+            $new_parent_id = null;
             $super_directorate_id = null;
             $directorate_id = null;
             $div_id = null;
@@ -97,7 +107,7 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
             $section_id = null;
             if ($client->multiple_sectors) {
                 //check if sector has value
-                if (trim($entity['sectors'])!='' && $entity['sectors']!=null && $entity['sectors']!='') {
+                if (trim($entity['sectors']) != '' && $entity['sectors'] != null && $entity['sectors'] != '') {
                     $sector = Sectors::where('name_en', trim($entity['sectors']))->where('client_id', $this->client_id)->first();
                     if (!$sector) {
                         $sector = new Sectors();
@@ -113,136 +123,63 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
             }
             if ($client->multiple_company) {
                 //check if company has value and $sector_id not null
-                if (trim($entity['Establishments'])!='' && $sector_id && $entity['Establishments']!=null && $entity['Establishments']!='') {
-                    $company = Companies::where('name_en', trim($entity['Establishments']))->where('sector_id', $sector_id)->first();
+                if (trim($entity['companies']) != '' && $sector_id && $entity['companies'] != null && $entity['companies'] != '') {
+                    $company = Companies::where('name_en', trim($entity['companies']))->where('sector_id', $sector_id)->first();
                     if (!$company) {
                         $company = new Companies();
                     }
-                    $company->name_en = trim($entity['Establishments']);
-                    $company->name_ar = trim($entity['Establishments']);
+                    $company->name_en = trim($entity['companies']);
+                    $company->name_ar = trim($entity['companies']);
                     $company->sector_id = $sector_id;
+                    $company->client_id = $client->id;
                     $company->save();
                     $company_id = $company->id;
                 }
             } else {
                 $company_id = $client->sectors->first()->companies->first()->id;
             }
-            // //check if region has value and $company_id not null
-            // if (trim($entity['regions'])!='' && $company_id && $client->use_departments && $entity['regions']!=null && $entity['regions']!='') {
-            //     $region = Departments::where('name_en', trim($entity['regions']))->where('company_id', $company_id)->first();
-            //     if (!$region) {
-            //         $region = new Departments();
-            //     }
-            //     $region->name_en = trim($entity['regions']);
-            //     $region->name_ar = trim($entity['regions']);
-            //     $region->company_id = $company_id;
-            //     $region->type = 3;
-            //     $region->dep_level = 3;
-            //     $region->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
-            //     $region->save();
-            //     $region_id = $region->id;
-            // }
-            // //check if branch has value and $region_id not null
-            // if (trim($entity['branches'])!='' && $region_id && $client->use_departments && $entity['branches']!=null && $entity['branches']!='') {
-            //     $branch = Departments::where('name_en', trim($entity['branches']))->where('parent_id', $region_id)->first();
-            //     if (!$branch) {
-            //         $branch = new Departments();
-            //     }
-            //     $branch->name_en = trim($entity['branches']);
-            //     $branch->name_ar = trim($entity['branches']);
-            //     $branch->company_id = $company_id;
-            //     $branch->parent_id = $region_id;
-            //     $branch->type = 4;
-            //     $branch->dep_level = 4;
-            //     $branch->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
-            //     $branch->save();
-            //     $branch_id = $branch->id;
-            //     $new_parent_id = $branch->id;
-            // }
-            //check if super_directorate has value and $branch_id not null
-            if (trim($entity['super_directorates'])!='' && $company_id && $client->use_departments && $entity['super_directorates']!=null && $entity['super_directorates']!='') {
-                $super_directorate = Departments::where('name_en', ($entity['super_directorates']))->where('parent_id', $new_parent_id)->first();
-                if (!$super_directorate) {
-                    $super_directorate = new Departments();
-                }
-                $super_directorate->name_en = ($entity['super_directorates']);
-                $super_directorate->name_ar = ($entity['super_directorates']);
-                $super_directorate->company_id = $company_id;
-                $super_directorate->parent_id = $new_parent_id;
-                $super_directorate->type = 1;
-                $super_directorate->dep_level = 1;
-                $super_directorate->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
-                $super_directorate->save();
-                $super_directorate_id = $super_directorate->id;
-                $new_parent_id = $super_directorate->id;
+            $parent_id = null;
+            $local_level = 1;
+           if($client->use_departments) {
+            $orgchartsize=OrgChartDesign::where('client_id', $client->id)->count();
+            $is_hr_department = false;
+            //get is_hr_department
+            if (trim($entity['is_hr_department']) != '' && $entity['is_hr_department'] != null && $entity['is_hr_department'] != '') {
+                $is_hr_department = $entity['is_hr_department'] == 'yes';
             }
-            //check if directorate has value and $super_directorate_id not null
-            if (trim($entity['directorates'])!='' &&  $client->use_departments &&  $entity['directorates']!=null && $entity['directorates']!='') {
-                $directorate = Departments::where('name_en', trim($entity['directorates']))->where('parent_id', $new_parent_id)->first();
-                if (!$directorate) {
-                    $directorate = new Departments();
+            for ($i = 1; $i <= $orgchartsize; $i++) {
+                if(trim($entity['level_' . $i]) != '' && $entity['level_' . $i] != null && $entity['level_' . $i] != '') {
+                    $orgItem = Departments::where('name_en', trim($entity['level_' . $i]))
+                        ->where('company_id', $company_id)
+                        ->where('parent_id', $parent_id)
+                        ->first();
+                    if ($orgItem) {
+                        $parent_id = $orgItem->id;
+                        $orgItem->dep_level = $local_level;
+                        $orgItem->type = $local_level;
+                        $orgItem->is_hr = $is_hr_department;
+                        $orgItem->company_id = $company_id;
+                        $orgItem->name_en = trim($entity['level_' . $i]);
+                        $orgItem->name_ar = trim($entity['level_' . $i]);
+                        $orgItem->save();
+                        $local_level++;
+                    }
+                    else{
+                        $orgItem = new Departments();
+                        $orgItem->name_en = trim($entity['level_' . $i]);
+                        $orgItem->name_ar = trim($entity['level_' . $i]);
+                        $orgItem->company_id = $company_id;
+                        $orgItem->parent_id = $parent_id;
+                        $orgItem->dep_level = $local_level;
+                        $orgItem->type = $local_level;
+                        $orgItem->is_hr = $is_hr_department;
+                        $orgItem->save();
+                        $local_level++;
+                        $parent_id = $orgItem->id;
+                    }
                 }
-                $directorate->name_en = trim($entity['directorates']);
-                $directorate->name_ar = trim($entity['directorates']);
-                $directorate->company_id = $company_id;
-                $directorate->parent_id = $new_parent_id;
-                $directorate->type = 2;
-                $directorate->dep_level = 2;
-                $directorate->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
-                $directorate->save();
-                $directorate_id = $directorate->id;
-                $new_parent_id = $directorate->id;
-            }
-            //check if div has value and $directorate_id not null
-            if (trim($entity['division'])!='' &&  $client->use_departments  && $entity['division']!=null && $entity['division']!='') {
-                $div = Departments::where('name_en', trim($entity['division']))->where('parent_id', $new_parent_id)->first();
-                if (!$div) {
-                    $div = new Departments();
-                }
-                $div->name_en = trim($entity['division']);
-                $div->name_ar = trim($entity['division']);
-                $div->company_id = $company_id;
-                $div->parent_id = $new_parent_id;
-                $div->type = 3;
-                $div->dep_level = 3;
-                $div->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
-                $div->save();
-                $div_id = $div->id;
-                $new_parent_id = $div->id;
-            }
-            //check if department has value and $div_id not null
-            if (trim($entity['department'])!='' &&  $client->use_departments && $entity['department']!=null && $entity['department']!='') {
-                $department = Departments::where('name_en', trim($entity['department']))->where('parent_id', $new_parent_id)->first();
-                if (!$department) {
-                    $department = new Departments();
-                }
-                $department->name_en = trim($entity['department']);
-                $department->name_ar = trim($entity['department']);
-                $department->company_id = $company_id;
-                $department->parent_id = $new_parent_id;
-                $department->type = 4;
-                $department->dep_level = 4;
-                $department->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
-                $department->save();
-                $department_id = $department->id;
-                $new_parent_id = $department->id;
-            }
-            //check if section has value and $department_id not null
-            if (trim($entity['section'])!='' && $department_id && $client->use_sections && $entity['section']!=null && $entity['section']!='') {
-                $section = Departments::where('name_en', trim($entity['section']))->where('parent_id', $new_parent_id)->first();
-                if (!$section) {
-                    $section = new Departments();
-                }
-                $section->name_en = trim($entity['section']);
-                $section->name_ar = trim($entity['section']);
-                $section->company_id = $company_id;
-                $section->parent_id = $department_id;
-                $section->type = 5;
-                $section->dep_level = 5;
-                $section->is_hr = strtolower(trim($entity['hr_department'])) == 'yes';
-                $section->save();
-                $section_id = $section->id;
-            }
+            }}
+
         }
     }
     public function chunkSize(): int
@@ -265,5 +202,37 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
     public function onComplete()
     {
         Log::info("I just Finish Job");
+    }
+    private function renameHeaders($row)
+    {
+        $renamedRow = [];
+
+        $renamedRow = [];
+        foreach ($row as $key => $value) {
+
+            if (str_starts_with($key, 'companies_')) {
+                $renamedRow['companies'] = $value;
+            }
+
+            if (str_starts_with($key, 'sectors_')) {
+                $renamedRow['sectors'] = $value;
+            }
+            if (str_starts_with($key, 'is_hr_department')) {
+                $renamedRow['is_hr_department'] = $value;
+            }
+            for ($i = 1; $i <= 7; $i++) {
+                if (str_starts_with($key, 'level_' . $i)) {
+                    $renamedRow['level_' . $i] = $value;
+                }
+            }
+            // foreach ($this->prefixMap as $prefix => $newName) {
+            //     if (str_starts_with($key, $prefix)) {
+            //         $renamedRow[$newName] = $value;
+            //         $this->exists[$newName] = true; // Mark that this column exists
+            //     }
+            // }
+        }
+
+        return $renamedRow;
     }
 }

@@ -331,6 +331,11 @@ class ClientsController extends Controller
     {
         return $surveysPrepration->orgChart($request, $id, true);
     }
+    //DownloadOrgChartTemp function
+    public function DownloadOrgChartTemp(Request $request, SurveysPrepration $surveysPrepration, $id,$sector,$company,$deps)
+    {
+        return $surveysPrepration->DownloadOrgChartTemp($request, $id, $sector, $company,$deps, true);
+    }
     //deleteDep function
     public function deleteDep(Request $request, SurveysPrepration $surveysPrepration, $id)
     {

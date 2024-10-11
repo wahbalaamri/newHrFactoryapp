@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Exports\ExportClientOrgChartTemplate;
 use App\Exports\HRDiagnosisPrioritiesAnswersExport;
 use App\Exports\HRDiagnosisSurveyAnswersExport;
 use App\Exports\SurveyAnswersExport;
@@ -17,7 +18,7 @@ use App\Models\PlansPrices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use App\Models\{Clients, ClientSubscriptions, Functions, Services, FunctionPractices, Industry, Plans, PracticeQuestions, Sectors, Surveys, Companies, CustomizedSurvey, CustomizedSurveyAnswers, CustomizedSurveyQuestions, CustomizedSurveyRaters, CustomizedSurveyRespondents, Departments, EmailContents, Employees, Partners, Partnerships, PrioritiesAnswers, Respondents, SurveyAnswers, Raters, User};
+use App\Models\{Clients, ClientSubscriptions, Functions, Services, FunctionPractices, Industry, Plans, PracticeQuestions, Sectors, Surveys, Companies, CustomizedSurvey, CustomizedSurveyAnswers, CustomizedSurveyQuestions, CustomizedSurveyRaters, CustomizedSurveyRespondents, Departments, EmailContents, Employees, OrgChartDesign, Partners, Partnerships, PrioritiesAnswers, Respondents, SurveyAnswers, Raters, User};
 use Carbon\Carbon;
 use Str;
 use Yajra\DataTables\Facades\DataTables;
@@ -948,10 +949,25 @@ class SurveysPrepration
     function orgChart(Request $request, $id, $by_admin = false)
     {
         $client = Clients::find($id);
-        $data = [
-            'id' => $id,
-            'client' => $client,
-        ];
+        $sectors_id = $client->sectors->pluck('id')->toArray();
+        //deps
+        $deps = Departments::whereIn('company_id', Companies::whereIn('sector_id', $sectors_id)->pluck('id')->toArray())->get();
+        //get client org chart design
+        $orgchart = OrgChartDesign::where('client_id', $id)->get();
+        $orgchartAva = [];
+        if ($orgchart->count() > 0) {
+            foreach ($orgchart as $itme) {
+                $orgchartAva[] = [
+                    $deps->where('dep_level', $itme->level)->count() > 0
+                ];
+            }
+        }
+            $data = [
+                'id' => $id,
+                'client' => $client,
+                'orgchartAva' => $orgchartAva,
+                'orgchart' => $orgchart
+            ];
         if ($request->ajax()) {
             //setup yajra datatable
             $departments = $client->departments();
@@ -974,7 +990,13 @@ class SurveysPrepration
                 ->addColumn('c1', function ($department) {
                     return $this->getDepName($department, 1);
                 })
-                ->addColumn('name', function ($department) {
+                ->addColumn('c5', function ($department) {
+                    return $this->getDepName($department, 5);
+                })
+                ->addColumn('c6', function ($department) {
+                    return $this->getDepName($department, 5);
+                })
+                ->addColumn('c7', function ($department) {
                     return $this->getDepName($department, 5);
                 })
                 ->addColumn('level', function ($department) {
@@ -993,6 +1015,54 @@ class SurveysPrepration
                 ->make(true);
         }
         return view('dashboard.client.orgChart.orgChart')->with($data);
+    }
+    //DownloadOrgChartTemp function
+    function DownloadOrgChartTemp(Request $request, $id, $sector, $company, $deps, $by_admin = false)
+    {
+        dd($request->all());
+        //check if request has levels_label
+        if ((bool)$deps) {
+            //find client
+            $client = Clients::find($id);
+            //find orgChartDesign
+            $org = OrgChartDesign::where('client_id', $id)->get();
+            if ($org->count() > 0) {
+                $index = 1;
+                foreach ($request->levels_label as $level_label) {
+                    if ($level_label != null) {
+                        Log::info($index);
+                        $label = $org->where('level', $index++)->first();
+                        Log::info($label);
+                        Log::info($index);
+                        if ($label != null) {
+                            $item = OrgChartDesign::find($label->id);
+                            $item->user_label = $level_label;
+                            $item->save();
+                        }
+                        else{
+                            $label = new OrgChartDesign();
+                            $label->client_id = $id;
+                            $label->level = $index++;
+                            $label->user_label = $level_label;
+                            $label->save();
+                        }
+                    }
+                }
+            } else {
+                $index = 1;
+                foreach ($request->levels_label as $level_label) {
+                    $label = new OrgChartDesign();
+                    $label->client_id = $id;
+                    $label->level = $index++;
+                    $label->user_label = $level_label;
+                    $label->save();
+                }
+            }
+            //export
+            return Excel::download(new ExportClientOrgChartTemplate($id, $sector, $company, $deps), 'org-chart-template.xlsx');
+        } else {
+            return Excel::download(new ExportClientOrgChartTemplate($id, $sector, $company, $deps), 'org-chart-template.xlsx');
+        }
     }
     function getDepName($dep, $level): string
     {
