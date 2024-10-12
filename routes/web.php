@@ -417,7 +417,11 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::get('clients/respondents/{id}/{type}/{survey}', [ClientsController::class, 'Respondents'])->name('clients.Respondents');
     Route::get('clients/CustomizedsurveyRespondents/{id}/{type}/{survey}', [ClientsController::class, 'CustomizedsurveyRespondents'])->name('clients.CustomizedsurveyRespondents');
     Route::get('clients/orgChart/{id}', [ClientsController::class, 'orgChart'])->name('clients.orgChart');
+    Route::post('clients/DeleteLeveL/{id}', [ClientsController::class, 'DeleteLeveL'])->name('clients.DeleteLeveL');
+    Route::post('clients/AddCompany/{id}', [ClientsController::class, 'AddCompany'])->name('clients.AddCompany');
+    Route::post('clients/DeleteCompany/{id}', [ClientsController::class, 'DeleteCompany'])->name('clients.DeleteCompany');
     Route::post('clients/DownloadOrgChartTemp/{id}/{sector}/{company}/{deps}', [ClientsController::class, 'DownloadOrgChartTemp'])->name('clients.DownloadOrgChartTemp');
+    Route::get('clients/DownloadEmployeeTemp/{id}', [ClientsController::class, 'DownloadEmployeeTemp'])->name('clients.DownloadEmployeeTemp');
     Route::post('clients/saveOrgInfo/{id}', [ClientsController::class, 'saveOrgInfo'])->name('clients.saveOrgInfo');
     Route::post('clients/deleteDep/{id}', [ClientsController::class, 'deleteDep'])->name('clients.deleteDep');
     Route::post('clients/uploadOrgChartExcel/{id}', [ClientsController::class, 'uploadOrgChartExcel'])->name('clients.uploadOrgChartExcel');

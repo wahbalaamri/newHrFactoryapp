@@ -89,8 +89,6 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
             // Process the renamed row here
             // Example: $renamedRow['Level 1'], $renamedRow['Level 2'], etc.
         }
-        Log::info(json_encode($data));
-
         // loop through $org_chart
         foreach ($data as $entity) {
 

@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Exports\ExportClientEmployeeDataTemplate;
 use App\Exports\ExportClientOrgChartTemplate;
 use App\Exports\HRDiagnosisPrioritiesAnswersExport;
 use App\Exports\HRDiagnosisSurveyAnswersExport;
@@ -962,12 +963,12 @@ class SurveysPrepration
                 ];
             }
         }
-            $data = [
-                'id' => $id,
-                'client' => $client,
-                'orgchartAva' => $orgchartAva,
-                'orgchart' => $orgchart
-            ];
+        $data = [
+            'id' => $id,
+            'client' => $client,
+            'orgchartAva' => $orgchartAva,
+            'orgchart' => $orgchart
+        ];
         if ($request->ajax()) {
             //setup yajra datatable
             $departments = $client->departments();
@@ -1016,6 +1017,19 @@ class SurveysPrepration
         }
         return view('dashboard.client.orgChart.orgChart')->with($data);
     }
+    //DeleteLeveL
+    function DeleteLeveL(Request $request, $id, $by_admin = false)
+    {
+        try { //delete level
+            $level = OrgChartDesign::find($id);
+            $level->delete();
+            //return json with success
+            return response()->json(['status' => true, 'message' => __('Level Deleted Successfully')]);
+        } catch (\Exception $e) {
+            Log::info($e->getMessage());
+            return response()->json(['status' => false, 'message' => $e->getMessage()]);
+        }
+    }
     //DownloadOrgChartTemp function
     function DownloadOrgChartTemp(Request $request, $id, $sector, $company, $deps, $by_admin = false)
     {
@@ -1038,8 +1052,7 @@ class SurveysPrepration
                             $item = OrgChartDesign::find($label->id);
                             $item->user_label = $level_label;
                             $item->save();
-                        }
-                        else{
+                        } else {
                             $label = new OrgChartDesign();
                             $label->client_id = $id;
                             $label->level = $index++;
@@ -1063,6 +1076,12 @@ class SurveysPrepration
         } else {
             return Excel::download(new ExportClientOrgChartTemplate($id, $sector, $company, $deps), 'org-chart-template.xlsx');
         }
+    }
+    //DownloadEmployeeTemp function
+    function DownloadEmployeeTemp(Request $request, $id, $by_admin = false)
+    {
+        //export
+        return Excel::download(new ExportClientEmployeeDataTemplate($id), 'employee-template.xlsx');
     }
     function getDepName($dep, $level): string
     {

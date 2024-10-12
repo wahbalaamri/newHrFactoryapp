@@ -6,6 +6,7 @@ use App\Models\Clients;
 use App\Models\Companies;
 use App\Models\Departments;
 use App\Models\Employees;
+use App\Models\OrgChartDesign;
 use App\Models\Sectors;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -71,153 +72,112 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
     public function collection(Collection $Employees)
     {
         $client = Clients::find($this->client_id);
-
         $counter = 0;
-
-        foreach ($Employees as $Employee) {
+        $data = [];
+        foreach ($Employees as $row) {
+            // Rename headers dynamically based on the prefix
+            $renamedRow = $this->renameHeaders($row);
+            $data[] = $renamedRow;
+            // Process the renamed row here
+            // Example: $renamedRow['Level 1'], $renamedRow['Level 2'], etc.
+        }
+        foreach ($data as $Employee) {
             $counter++;
-            //log {"name":"Al Busaidi,Barakat Amin Said","emp_number":"3040","email":"barakat.busaidi@owwsc.nama.om",
-            //"phone":"99424415","gender":"Male","date_of_birth":"29-03-1974","date_of_service":"08-04-2006",
-            //"position":"Supply Chain Management Senior Manager","employee_type":" Manager","sector":null,
-            //"super_directorate":"Financial Affairs_SDI","directorate":null,"division":"Supply Chain_DIV",
-            //"department":null,"region":"Muscat","branch":"Bawshar","sections":"Bawshar"}
-            //   0 => name,
-            //   1 => emp_id,
-            //   2 => email,
-            //   3 => mobile,
-            //   4 => gender,
-            //   5 => dob,
-            //   6 => dos,
-            //   7 => position,
-            //   8 => EmployeeType,
-            //   9 => Sector,
-            //   10 => super directorate,
-            //   11 => directorate,
-            //   12 => div,
-            //   13 => department,
-            //   14 => region,
-            //   15 => branch,
             $department = null;
-            $sector = null;
-            $company = null;
+            $sectors_ob = null;
+            $companies_ob = null;
             $region = null;
             $branch = null;
             $parent_id = null;
             $super_directory = null;
             $directory = null;
-            $date_of_birth = ($Employee['date_of_birth']!=''||$Employee['date_of_birth']!=null)?date('Y-m-d', strtotime($Employee['date_of_birth'])):null;
-            $date_of_service = ($Employee['date_of_service']!=''||$Employee['date_of_service']!=null)?date('Y-m-d', strtotime($Employee['date_of_service'])):null;
+            $sectors = [];
+            $companies = [];
+            $date_of_birth = ($Employee['date_of_birth'] != '' || $Employee['date_of_birth'] != null) ? date('Y-m-d', strtotime($Employee['date_of_birth'])) : null;
+            $date_of_service = ($Employee['date_of_service'] != '' || $Employee['date_of_service'] != null) ? date('Y-m-d', strtotime($Employee['date_of_service'])) : null;
             //pluck client sector ids into array
-            $sectors = Sectors::where('client_id', $this->client_id)->get()->pluck('id')->toArray();
-            //pluck client company ids into array
-            $companies = Companies::where('client_id', $this->client_id)->whereIn('sector_id', $sectors)->get()->pluck('id')->toArray();
-            if ($client->use_departments) {
-
-                //if seinor directorate has value
-                if ($Employee['super_directorate'] != null) {
-                    $super_directory = Departments::where('name_en', trim($Employee['super_directorate']))->whereIn('company_id', $companies)->first();
-                    //check if super directorate exist
-                    if ($super_directory) {
-                        $parent_id = $super_directory->id;
-                        $entity = $super_directory;
-                    }
+            if ($client->multiple_sectors) {
+                //check $Employee['sectors'] is not null and the sectors is set
+                if (isset($Employee['sectors']) && $Employee['sectors'] != '') {
+                    $sectors_ob = Sectors::where('client_id', $this->client_id)->where('name_en', trim($Employee['sectors']))->get();
+                    $sectors = $sectors_ob->pluck('id')->toArray();
                 }
-                //if directorate has value
-                if ($Employee['directorate'] != null) {
-                    $directory = Departments::where('name_en', trim($Employee['directorate']))->where('parent_id', $parent_id)->first();
-                    //check if directorate exist
-                    if ($directory) {
-                        $parent_id = $directory->id;
-                        $entity = $directory;
-                    }
-                }
-                //if division has value
-                if ($Employee['division'] != null) {
-                    $department = Departments::where('name_en', trim($Employee['division']))->where('parent_id', $parent_id)->first();
-                    //check if division exist
-                    if ($department) {
-                        $parent_id = $department->id;
-                        $entity = $department;
-                    }
-                }
-                //if department has value
-                if ($Employee['department'] != null) {
-                    $department = Departments::where('name_en', trim($Employee['department']))->where('parent_id', $parent_id)->first();
-                    //check if department exist
-                    if ($department) {
-                        $parent_id = $department->id;
-                        $entity = $department;
-                    }
-                }
-                //if client use sections and sections has value
-                if ($Employee['sections'] != null && $client->use_sections) {
-                    $section = Departments::where('name_en', trim($Employee['sections']))->where('parent_id', $parent_id)->first();
-                    //check if section exist
-                    if ($section) {
-                        $parent_id = $section->id;
-                        $entity = $section;
-                    }
-                }
-                $employee = Employees::where('emp_id', $Employee['emp_number'])->where('email', $Employee['email'])->where('client_id', $this->client_id)->first();
-                if (!$employee)
-                    $employee = new Employees();
-                $employee->client_id = $this->client_id;
-                $employee->comp_id = $entity->company_id;
-                $employee->sector_id = $entity->company->sector_id;
-                $employee->dep_id = $parent_id;
-                $employee->name = $Employee['name']??'';
-                $employee->emp_id = $Employee['emp_number']??'';
-                $employee->email = $Employee['email'];
-                $employee->mobile = $Employee['phone'];
-                $employee->gender = $Employee['gender']??'';
-                $employee->dob = $date_of_birth;
-                $employee->dos = $date_of_service;
-                $employee->position = $Employee['position']??'';
-                //check if $Employee['employee_type'] conatins Manager
-                if (strpos($Employee['employee_type'], 'Manager') !== false) {
-
-                    $employee->employee_type = 1;
-                } else {
-                    $employee->employee_type = 2;
-                }
-                //added_by
-                $employee->added_by = $this->user_id;
-                $employee->save();
             } else {
-
-                //check if $Employee['super_directorate'] != null
-                if ($Employee['super_directorate'] != null) {
-                    //find the company
-                    $company = Companies::where('name_en', trim($Employee['super_directorate']))->whereIn('sector_id', $sectors)->first();
-                    if ($company) {
-                        $employee = Employees::where('emp_id', $Employee['emp_number'])->where('email', $Employee['email'])->where('client_id', $this->client_id)->first();
-                        if (!$employee)
-                            $employee = new Employees();
-                        $employee->client_id = $this->client_id;
-                        $employee->comp_id = $company->id;
-                        $employee->sector_id = $company->sector_id;
-                        $employee->dep_id = null;
-                        $employee->name = $Employee['name']??'';
-                        $employee->emp_id = $Employee['emp_number']??'';
-                        $employee->email = $Employee['email'];
-                        $employee->mobile = $Employee['phone'];
-                        $employee->gender = $Employee['gender']??'';
-                        $employee->dob = $date_of_birth;
-                        $employee->dos = $date_of_service;
-                        $employee->position = $Employee['position']??'';
-                        //check if $Employee['employee_type'] conatins Manager
-                        if (strpos($Employee['employee_type'], 'Manager') !== false) {
-
-                            $employee->employee_type = 1;
-                        } else {
-                            $employee->employee_type = 2;
+                $sectors_ob = Sectors::where('client_id', $this->client_id)->get();
+                $sectors = $sectors_ob->pluck('id')->toArray();
+            }
+            if ($client->multiple_company) {
+                if (isset($Employee['companies']) && $Employee['companies'] != '') {
+                    $companies_ob = Companies::where('client_id', $this->client_id)->where('name_en', trim($Employee['companies']))->whereIn('sector_id', $sectors)->get();
+                    $companies = $companies_ob->pluck('id')->toArray();
+                }
+            } else {
+                $companies_ob = Companies::where('client_id', $this->client_id)->whereIn('sector_id', $sectors)->get();
+                $companies = $companies_ob->pluck('id')->toArray();
+            }
+            //pluck client company ids into array
+            if ($client->use_departments) {
+                //find org chart design
+                $org_chart_design = OrgChartDesign::where('client_id', $this->client_id)->orderBy('level', 'asc')->get();
+                $leve_id = null;
+                $indexer = 1;
+                foreach ($org_chart_design as $org_chart) {
+                    //check if $Employee['level'] is not null and the level is set
+                    if (isset($Employee['level_' . $indexer]) && $Employee['level_' . $indexer] != '') {
+                        $leve = Departments::whereIn('company_id', $companies)->where('name_en', trim($Employee['level_' . $indexer]))->first();
+                        if ($leve) {
+                            $leve_id = $leve->id;
                         }
-                        //added_by
-                        $employee->added_by = $this->user_id;
-                        $employee->save();
                     }
+                    $indexer++;
+                }
+                if ($leve_id) {
+                    $entity = Departments::where('id', $leve_id)->first();
+                    $parent_id = $leve_id;
                 }
             }
+            $comp_id = null;
+            if ($companies_ob) {
+                if (count($companies_ob) > 0) {
+                    $comp_id = $companies_ob->first()->id;
+                } else
+                    $comp_id = null;
+            } else
+                $comp_id = null;
+            $sec_id = null;
+            if ($sectors_ob) {
+                if (count($sectors_ob) > 0) {
+                    $sec_id = $sectors_ob->first()->id;
+                } else {
+                    $sec_id = null;
+                }
+            } else
+                $sec_id = null;
+            $employee = Employees::where('emp_id', trim($Employee['emp_number']))->where('email', trim($Employee['email']))->where('client_id', $this->client_id)->first();
+            if (!$employee)
+                $employee = new Employees();
+            $employee->client_id = $this->client_id;
+            $employee->comp_id = $comp_id;
+            $employee->sector_id = $sec_id;
+            $employee->dep_id = $parent_id;
+            $employee->name = trim($Employee['name']) ?? '';
+            $employee->emp_id = trim($Employee['emp_number']) ?? '';
+            $employee->email = trim($Employee['email']);
+            $employee->mobile = trim($Employee['phone']);
+            $employee->gender = trim($Employee['gender']) ?? '';
+            $employee->dob = $date_of_birth;
+            $employee->dos = $date_of_service;
+            $employee->position = trim($Employee['position']) ?? '';
+            //check if $Employee['employee_type'] conatins Manager
+            if (strpos(trim($Employee['employee_type']), 'Manager') !== false) {
+
+                $employee->employee_type = 1;
+            } else {
+                $employee->employee_type = 2;
+            }
+            //added_by
+            $employee->added_by = $this->user_id;
+            $employee->save();
         }
         //export not added employees
         if (count($this->notAdded_Employees) > 0) {
@@ -234,5 +194,54 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
     public function chunkSize(): int
     {
         return 500;
+    }
+    private function renameHeaders($row)
+    {
+        $renamedRow = [];
+
+        $renamedRow = [];
+        foreach ($row as $key => $value) {
+
+            if (str_starts_with($key, 'companies_')) {
+                $renamedRow['companies'] = $value;
+            }
+
+            if (str_starts_with($key, 'sectors_')) {
+                $renamedRow['sectors'] = $value;
+            }
+            for ($i = 1; $i <= 7; $i++) {
+                if (str_starts_with($key, 'level_' . $i)) {
+                    $renamedRow['level_' . $i] = $value;
+                }
+            }
+            if (str_starts_with($key, 'name_')) {
+                $renamedRow['name'] = $value;
+            }
+            if (str_starts_with($key, 'employee_id')) {
+                $renamedRow['emp_number'] = $value;
+            }
+            if (str_starts_with($key, 'email_')) {
+                $renamedRow['email'] = $value;
+            }
+            if (str_starts_with($key, 'phone_')) {
+                $renamedRow['phone'] = $value;
+            }
+            if (str_starts_with($key, 'gender_')) {
+                $renamedRow['gender'] = $value;
+            }
+            if (str_starts_with($key, 'date_of_birth_')) {
+                $renamedRow['date_of_birth'] = $value;
+            }
+            if (str_starts_with($key, 'date_of_service_')) {
+                $renamedRow['date_of_service'] = $value;
+            }
+            if (str_starts_with($key, 'position_')) {
+                $renamedRow['position'] = $value;
+            }
+            if (str_starts_with($key, 'employee_type_')) {
+                $renamedRow['employee_type'] = $value;
+            }
+        }
+        return $renamedRow;
     }
 }

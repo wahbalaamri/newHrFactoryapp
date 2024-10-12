@@ -63,6 +63,13 @@
                                             enctype="multipart/form-data">
                                             @csrf
                                             <div class="form-group col-md-6 col-sm-12">
+                                                {{-- download excel --}}
+                                                <a href="{{ route('clients.DownloadEmployeeTemp', $id) }}" class="btn btn-outline-info btn-sm">
+                                                    <i class="fa fa-download"></i>
+                                                    {{ __('Download Employee Data Template') }}
+                                                </a>
+                                            </div>
+                                            <div class="form-group col-md-6 col-sm-12">
                                                 <label for="excel">{{ __('Upload Excel Sheet') }}</label>
                                                 <input type="file" name="excel" class="form-control" required>
                                             </div>

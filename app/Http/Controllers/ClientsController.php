@@ -331,10 +331,20 @@ class ClientsController extends Controller
     {
         return $surveysPrepration->orgChart($request, $id, true);
     }
+    //DeleteLeveL function
+    public function DeleteLeveL(Request $request, SurveysPrepration $surveysPrepration, $id)
+    {
+        return $surveysPrepration->DeleteLeveL($request, $id, true);
+    }
     //DownloadOrgChartTemp function
     public function DownloadOrgChartTemp(Request $request, SurveysPrepration $surveysPrepration, $id,$sector,$company,$deps)
     {
         return $surveysPrepration->DownloadOrgChartTemp($request, $id, $sector, $company,$deps, true);
+    }
+    //DownloadEmployeeTemp function
+    public function DownloadEmployeeTemp(Request $request, SurveysPrepration $surveysPrepration, $id)
+    {
+        return $surveysPrepration->DownloadEmployeeTemp($request, $id, true);
     }
     //deleteDep function
     public function deleteDep(Request $request, SurveysPrepration $surveysPrepration, $id)
