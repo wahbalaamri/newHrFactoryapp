@@ -106,7 +106,8 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
             if ($client->multiple_sectors) {
                 //check if sector has value
                 if (trim($entity['sectors']) != '' && $entity['sectors'] != null && $entity['sectors'] != '') {
-                    $sector = Sectors::where('name_en', trim($entity['sectors']))->where('client_id', $this->client_id)->first();
+                    $sector = Sectors::where('name_en', trim($entity['sectors']))
+                        ->where('client_id', $this->client_id)->first();
                     if (!$sector) {
                         $sector = new Sectors();
                     }
@@ -122,7 +123,10 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
             if ($client->multiple_company) {
                 //check if company has value and $sector_id not null
                 if (trim($entity['companies']) != '' && $sector_id && $entity['companies'] != null && $entity['companies'] != '') {
-                    $company = Companies::where('name_en', trim($entity['companies']))->where('sector_id', $sector_id)->first();
+                    $company = Companies::where('name_en', trim($entity['companies']))
+                        ->where('client_id', $this->client_id)
+                        ->where('sector_id', $sector_id)
+                        ->first();
                     if (!$company) {
                         $company = new Companies();
                     }
@@ -134,36 +138,28 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
                     $company_id = $company->id;
                 }
             } else {
-                $company_id = $client->sectors->first()->companies->first()->id;
+                $company_id =  Companies::where('sector_id', $sector_id)
+                    ->where('client_id', $this->client_id)
+                    ->first()->id;
             }
             $parent_id = null;
             $local_level = 1;
-           if($client->use_departments) {
-            $orgchartsize=OrgChartDesign::where('client_id', $client->id)->count();
-            $is_hr_department = false;
-            //get is_hr_department
-            if (trim($entity['is_hr_department']) != '' && $entity['is_hr_department'] != null && $entity['is_hr_department'] != '') {
-                $is_hr_department = $entity['is_hr_department'] == 'yes';
-            }
-            for ($i = 1; $i <= $orgchartsize; $i++) {
-                if(trim($entity['level_' . $i]) != '' && $entity['level_' . $i] != null && $entity['level_' . $i] != '') {
-                    $orgItem = Departments::where('name_en', trim($entity['level_' . $i]))
-                        ->where('company_id', $company_id)
-                        ->where('parent_id', $parent_id)
-                        ->first();
-                    if ($orgItem) {
-                        $parent_id = $orgItem->id;
-                        $orgItem->dep_level = $local_level;
-                        $orgItem->type = $local_level;
-                        $orgItem->is_hr = $is_hr_department;
-                        $orgItem->company_id = $company_id;
-                        $orgItem->name_en = trim($entity['level_' . $i]);
-                        $orgItem->name_ar = trim($entity['level_' . $i]);
-                        $orgItem->save();
-                        $local_level++;
-                    }
-                    else{
-                        $orgItem = new Departments();
+            if ($client->use_departments) {
+                $orgchartsize = OrgChartDesign::where('client_id', $client->id)->count();
+                $is_hr_department = false;
+                //get is_hr_department
+                if (trim($entity['is_hr_department']) != '' && $entity['is_hr_department'] != null && $entity['is_hr_department'] != '') {
+                    $is_hr_department = strtolower($entity['is_hr_department']) == 'yes';
+                }
+                for ($i = 1; $i <= $orgchartsize; $i++) {
+                    if (trim($entity['level_' . $i]) != '' && $entity['level_' . $i] != null && $entity['level_' . $i] != '') {
+                        $orgItem = Departments::where('name_en', trim($entity['level_' . $i]))
+                            ->where('company_id', $company_id)
+                            ->where('parent_id', $parent_id)
+                            ->first();
+                        if ($orgItem == null) {
+                            $orgItem = new Departments();
+                        }
                         $orgItem->name_en = trim($entity['level_' . $i]);
                         $orgItem->name_ar = trim($entity['level_' . $i]);
                         $orgItem->company_id = $company_id;
@@ -172,12 +168,11 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
                         $orgItem->type = $local_level;
                         $orgItem->is_hr = $is_hr_department;
                         $orgItem->save();
-                        $local_level++;
                         $parent_id = $orgItem->id;
+                        $local_level++;
                     }
                 }
-            }}
-
+            }
         }
     }
     public function chunkSize(): int
