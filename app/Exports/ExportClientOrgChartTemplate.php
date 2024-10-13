@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ExportClientOrgChartTemplate implements FromCollection, WithHeadings
+class ExportClientOrgChartTemplate implements FromCollection, WithHeadings, WithStyles
 {
     private $client_id;
     private $multi_sectors = false;
@@ -64,17 +66,17 @@ class ExportClientOrgChartTemplate implements FromCollection, WithHeadings
             $headings[] = "Sectors: Names of Business Industries or Fields";
             $this->columns_count++;
         }
-        if ($this->multi_companies)
-            {$headings[] = "Companies: Names of Organizations or Entities That work in your Business Industries or Fields";
-            $this->columns_count++;}
+        if ($this->multi_companies) {
+            $headings[] = "Companies: Names of Organizations or Entities That work in your Business Industries or Fields";
+            $this->columns_count++;
+        }
         if ($this->use_deps) {
             $org = OrgChartDesign::where('client_id', $this->client_id)->get();
             foreach ($org as $level) {
                 $headings[] = "Level-" . $level->level . ": " . $level->user_label;
                 $this->columns_count++;
             }
-            $headings[] = "Is HR Department: indecate current level organization sturcture is HR Department or not (Yes/No)";
-
+            $headings[] = "Is HR Department: indicate current level organization sturcture is HR Department or not (Yes/No)";
         }
         return $headings;
     }
@@ -110,5 +112,65 @@ class ExportClientOrgChartTemplate implements FromCollection, WithHeadings
         for ($row = 2; $row <= $highestRow; $row++) {
             $sheet->getCell($statusColumnLetter . $row)->setDataValidation(clone $validation);
         }
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        // Get the header row
+        $headerRow = 1; // Header is on the first row
+        $headings = $this->headings();
+        $headerColumns = range('A', 'Z'); // You can extend this if needed
+        $last_coordinate = '';
+        // Loop through headings
+        foreach ($headings as $index => $heading) {
+            if ($index >= count($headerColumns)) {
+                break; // Prevent overflow beyond the defined range
+            }
+            $last_coordinate = $headerColumns[$index];
+
+            $cell = $headerColumns[$index] . $headerRow;
+            $headerValue = $heading;
+
+            // Check if the header contains "Mandatory"
+            if (stripos($headerValue, 'Mandatory') !== false) {
+                $sheet->getStyle($cell)->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => ['argb' => 'FFFF00'], // Yellow fill for mandatory headers
+                    ],
+                    'font' => [
+                        'bold' => true,
+                        'color' => ['argb' => 'FF000000'],
+                    ],
+                ]);
+            } else {
+                $sheet->getStyle($cell)->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'color' => ['argb' => 'FF000000'],
+                    ],
+                ]);
+            }
+        }
+        $totalRows = $sheet->getHighestRow();
+        $totalRows = $totalRows + 5;
+        $coordinate = 'A' . $totalRows . ':' . $last_coordinate . $totalRows;
+        $sheet->mergeCells('A' . $totalRows . ':' . $last_coordinate . $totalRows);
+        $sheet->setCellValue('A' . $totalRows, 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.')->getStyle('A' . $totalRows)->getFont()->setBold(true);
+        $sheet->getStyle('A' . $totalRows)->applyFromArray([
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FFFF00'], // Yellow fill for header
+            ],
+            'font' => [
+                'bold' => true,
+                'size' => 16,
+                'color' => ['argb' => 'FF000000'],
+                //center the text
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                ],
+            ]
+        ]);
     }
 }

@@ -4,10 +4,13 @@ namespace App\Exports;
 
 use App\Models\Clients;
 use App\Models\OrgChartDesign;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ExportClientEmployeeDataTemplate implements FromCollection, WithHeadings
+class ExportClientEmployeeDataTemplate implements FromCollection, WithHeadings, WithStyles
 {
     private $client_id;
     private $client;
@@ -21,35 +24,81 @@ class ExportClientEmployeeDataTemplate implements FromCollection, WithHeadings
      */
     public function collection()
     {
-        //
         $employee_template_data = [];
-        for ($i = 0; $i < 50; $i++) {
-            $row = [];
-            if ($this->client->multiple_sectors) {
-                $row[] = "Please specify your Sector Where Employee Works ";
-            }
-            if ($this->client->multiple_company) {
-                $row[] = "Please specify your Company Where Employee Works ";
-            }
-            if ($this->client->use_departments) {
-                //find org chart
-                $org = OrgChartDesign::where('client_id', $this->client->id)->get();
-                if ($org->count() > 0) {
-                    foreach ($org as $o) {
-                        $row[] = "Please specify your level_" . $o->level . " organization structure or " . $o->user_label . " Where Employee Works ";
+        foreach ($this->client->sectors as $sector) {
+            foreach ($sector->companies as $company) {
+                if ($this->client->use_departments) {
+                    foreach ($company->departments as $department) {
+                        $row = [];
+                        if ($this->client->multiple_sectors) {
+                            $row[] = $sector->name_en;
+                        }
+                        $row[] = $company->name_en;
+                        $row[] = $department->name_en;
+                        $row[] = "Name_";
+                        $row[] = "Employee ID_";
+                        $row[] = "employee_email@companydomain.com ";
+                        $row[] = "9xxxxxxx or 7xxxxxxx ";
+                        $row[] = "Employee";
+                        $row[] = "Female";
+                        $row[] = "Date Of Birth e.g. 1990-01-01 ";
+                        $row[] = "Date Of Service e.g. 1990-01-01 ";
+                        $row[] = "Position ";
+                        $employee_template_data[] = $row;
+                        $row = [];
+                        if ($this->client->multiple_sectors) {
+                            $row[] = $sector->name_en;
+                        }
+                        $row[] = $company->name_en;
+                        $row[] = $department->name_en;
+                        $row[] = "Name_";
+                        $row[] = "Employee ID_";
+                        $row[] = "employee_email@companydomain.com ";
+                        $row[] = "9xxxxxxx or 7xxxxxxx ";
+                        $row[] = "Manager";
+                        $row[] = "Male";
+                        $row[] = "Date Of Birth e.g. 1990-01-01 ";
+                        $row[] = "Date Of Service e.g. 1990-01-01 ";
+                        $row[] = "Position ";
+                        $employee_template_data[] = $row;
                     }
+                } else {
+                    $row = [];
+                    if ($this->client->multiple_sectors) {
+                        $row[] = $sector->name_en;
+                    }
+                    $row[] = $company->name_en;
+                    $row[] = "Name_";
+                    $row[] = "Employee ID_";
+                    $row[] = "employee_email@companydomain.com ";
+                    $row[] = "9xxxxxxx or 7xxxxxxx ";
+                    $row[] = "Employee";
+                    $row[] = "Female";
+                    $row[] = "Date Of Birth e.g. 1990-01-01 ";
+                    $row[] = "Date Of Service e.g. 1990-01-01 ";
+                    $row[] = "Position ";
+                    $employee_template_data[] = $row;
+                    $row = [];
+                    if ($this->client->multiple_sectors) {
+                        $row[] = $sector->name_en;
+                    }
+                    $row[] = $company->name_en;
+                    $row[] = "Name_";
+                    $row[] = "Employee ID_";
+                    $row[] = "employee_email@companydomain.com ";
+                    $row[] = "9xxxxxxx or 7xxxxxxx ";
+                    $row[] = "Manager";
+                    $row[] = "Male";
+                    $row[] = "Date Of Birth e.g. 1990-01-01 ";
+                    $row[] = "Date Of Service e.g. 1990-01-01 ";
+                    $row[] = "Position ";
+                    $employee_template_data[] = $row;
                 }
             }
-            $row[] = "Name_" . $i;
-            $row[] = "Employee ID_" . $i;
-            $row[] = "employee_email@companydomain.com " . $i;
-            $row[] = "9xxxxxxx or 7xxxxxxx " . $i;
-            $row[] = $i % 5 == 0 ? "Manager" : "Employee";
-            $row[] = $i % 2 == 0 ? "Male" : "Female" . $i;
-            $row[] = "Date Of Birth e.g. 1990-01-01 " . $i;
-            $row[] = "Date Of Service e.g. 1990-01-01 " . $i;
-            $row[] = "Position " . $i;
-            $employee_template_data[] = $row;
+        }
+        $row = [];
+        //merging
+        if ($this->client->use_departments) {
         }
         return collect($employee_template_data);
     }
@@ -60,28 +109,100 @@ class ExportClientEmployeeDataTemplate implements FromCollection, WithHeadings
         // find client
 
         if ($this->client->multiple_sectors) {
-            $heading[] = "Sector : Your Sector Where Your Employee Works";
+            $heading[] = "Sector *Mandatory*";
         }
-        if ($this->client->multiple_company) {
-            $heading[] = "Company : Your Company Where Your Employee Works";
-        }
+        // if ($this->client->multiple_company) {
+        $heading[] = "Company *Mandatory*";
+        // }
         if ($this->client->use_departments) {
             $org = OrgChartDesign::where('client_id', $this->client->id)->get();
+            $header = "Hirarchal Level : e.g. (";
             if ($org->count() > 0) {
+                $index = 1;
                 foreach ($org as $o) {
-                    $heading[] = "LeveL_" . $o->level . " : Your level_" . $o->level . " organization structure or " . $o->user_label . " Where Your Employee Works";
+                    $header .= $o->user_label;
+                    if ($index == ($org->count() - 1)) {
+                        $header .= " or ";
+                    } elseif ($index  == ($org->count())) {
+                        $header .= ").*Mandatory*";
+                    } else {
+                        $header .= ", ";
+                    }
+                    $index++;
                 }
             }
+            $heading[] = $header;
         }
-        $heading[] = "Name : Your Employee Name";
-        $heading[] = "Employee ID : Your Employee ID";
-        $heading[] = "Email : Your Employee Email Address *Mandatory";
-        $heading[] = "Phone : Your Employee Phone Number *Mandatory";
-        $heading[] = "Employee Type : Your Employee Type either Manager or Employee *Mandatory";
-        $heading[] = "Gender : Your Employee Gender either Male or Female";
-        $heading[] = "Date of Birth : Your Employee Date of Birth *Mandatory";
-        $heading[] = "Date of Service : Your Employee Date of Service *Mandatory";
-        $heading[] = "Position : Your Employee Position *Mandatory";
+        $heading[] = "Name";
+        $heading[] = "Employee ID ";
+        $heading[] = "Email  *Mandatory*";
+        $heading[] = "Phone";
+        $heading[] = "Employee Type *Mandatory*";
+        $heading[] = "Gender";
+        $heading[] = "Date of Birth";
+        $heading[] = "Date of Service";
+        $heading[] = "Position";
         return $heading;
+    }
+    //implemnt style
+
+    public function styles(Worksheet $sheet)
+    {
+        // Get the header row
+        $headerRow = 1; // Header is on the first row
+        $headings = $this->headings();
+        $headerColumns = range('A', 'Z'); // You can extend this if needed
+        $last_coordinate = '';
+        // Loop through headings
+        foreach ($headings as $index => $heading) {
+            if ($index >= count($headerColumns)) {
+                break; // Prevent overflow beyond the defined range
+            }
+            $last_coordinate = $headerColumns[$index];
+
+            $cell = $headerColumns[$index] . $headerRow;
+            $headerValue = $heading;
+
+            // Check if the header contains "Mandatory"
+            if (stripos($headerValue, 'Mandatory') !== false) {
+                $sheet->getStyle($cell)->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => ['argb' => 'FFFF00'], // Yellow fill for mandatory headers
+                    ],
+                    'font' => [
+                        'bold' => true,
+                        'color' => ['argb' => 'FF000000'],
+                    ],
+                ]);
+            } else {
+                $sheet->getStyle($cell)->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'color' => ['argb' => 'FF000000'],
+                    ],
+                ]);
+            }
+        }
+        $totalRows = $sheet->getHighestRow();
+        $totalRows = $totalRows + 5;
+        $coordinate='A' . $totalRows . ':' . $last_coordinate . $totalRows;
+        $sheet->mergeCells('A' . $totalRows . ':' . $last_coordinate . $totalRows);
+        $sheet->setCellValue('A'. $totalRows, 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.')->getStyle('A'.$totalRows)->getFont()->setBold(true);
+        $sheet->getStyle('A'.$totalRows)->applyFromArray([
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FFFF00'], // Yellow fill for header
+            ],
+            'font' => [
+                'bold' => true,
+                'size' => 16,
+                'color' => ['argb' => 'FF000000'],
+                //center the text
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                ],
+            ]
+        ]);
     }
 }

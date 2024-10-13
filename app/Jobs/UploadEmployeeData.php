@@ -118,21 +118,16 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             //pluck client company ids into array
             if ($client->use_departments) {
                 //find org chart design
-                $org_chart_design = OrgChartDesign::where('client_id', $this->client_id)->orderBy('level', 'asc')->get();
                 $leve_id = null;
-                $indexer = 1;
-                foreach ($org_chart_design as $org_chart) {
-                    //check if $Employee['level'] is not null and the level is set
-                    if (isset($Employee['level_' . $indexer]) && $Employee['level_' . $indexer] != '') {
-                        $leve = Departments::whereIn('company_id', $companies)->where('name_en', trim($Employee['level_' . $indexer]))->first();
-                        if ($leve) {
-                            $leve_id = $leve->id;
-                        }
+                //check if $Employee['level'] is not null and the level is set
+                if (isset($Employee['hirarchal_level']) && $Employee['hirarchal_level'] != '') {
+                    $leve = Departments::whereIn('company_id', $companies)
+                        ->where('name_en', trim($Employee['hirarchal_level']))->first();
+                    if ($leve) {
+                        $leve_id = $leve->id;
                     }
-                    $indexer++;
                 }
                 if ($leve_id) {
-                    $entity = Departments::where('id', $leve_id)->first();
                     $parent_id = $leve_id;
                 }
             }
@@ -163,7 +158,7 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             $employee->name = trim($Employee['name']) ?? '';
             $employee->emp_id = trim($Employee['emp_number']) ?? '';
             $employee->email = trim($Employee['email']);
-            $employee->mobile = trim($Employee['phone']);
+            $employee->mobile = trim($Employee['phone']) ?? '';
             $employee->gender = trim($Employee['gender']) ?? '';
             $employee->dob = $date_of_birth;
             $employee->dos = $date_of_service;
@@ -202,43 +197,41 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
         $renamedRow = [];
         foreach ($row as $key => $value) {
 
-            if (str_starts_with($key, 'companies_')) {
+            if (str_starts_with($key, 'companies')) {
                 $renamedRow['companies'] = $value;
             }
 
-            if (str_starts_with($key, 'sectors_')) {
+            if (str_starts_with($key, 'sectors')) {
                 $renamedRow['sectors'] = $value;
             }
-            for ($i = 1; $i <= 7; $i++) {
-                if (str_starts_with($key, 'level_' . $i)) {
-                    $renamedRow['level_' . $i] = $value;
-                }
+            if (str_starts_with(strtolower($key), 'hirarchal_level')) {
+                $renamedRow['hirarchal_level'] = $value;
             }
-            if (str_starts_with($key, 'name_')) {
+            if (str_starts_with($key, 'name')) {
                 $renamedRow['name'] = $value;
             }
             if (str_starts_with($key, 'employee_id')) {
                 $renamedRow['emp_number'] = $value;
             }
-            if (str_starts_with($key, 'email_')) {
+            if (str_starts_with($key, 'email')) {
                 $renamedRow['email'] = $value;
             }
-            if (str_starts_with($key, 'phone_')) {
+            if (str_starts_with($key, 'phone')) {
                 $renamedRow['phone'] = $value;
             }
-            if (str_starts_with($key, 'gender_')) {
+            if (str_starts_with($key, 'gender')) {
                 $renamedRow['gender'] = $value;
             }
-            if (str_starts_with($key, 'date_of_birth_')) {
+            if (str_starts_with($key, 'date_of_birth')) {
                 $renamedRow['date_of_birth'] = $value;
             }
-            if (str_starts_with($key, 'date_of_service_')) {
+            if (str_starts_with($key, 'date_of_service')) {
                 $renamedRow['date_of_service'] = $value;
             }
-            if (str_starts_with($key, 'position_')) {
+            if (str_starts_with($key, 'position')) {
                 $renamedRow['position'] = $value;
             }
-            if (str_starts_with($key, 'employee_type_')) {
+            if (str_starts_with($key, 'employee_type')) {
                 $renamedRow['employee_type'] = $value;
             }
         }
