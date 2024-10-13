@@ -161,6 +161,7 @@ class ExportClientEmployeeDataTemplate implements FromCollection, WithHeadings, 
             $last_coordinate = $headerColumns[$index];
 
             $cell = $headerColumns[$index] . $headerRow;
+            $sheet->freezePane($cell);
             $headerValue = $heading;
 
             // Check if the header contains "Mandatory"
@@ -187,6 +188,7 @@ class ExportClientEmployeeDataTemplate implements FromCollection, WithHeadings, 
         $totalRows = $sheet->getHighestRow();
         $totalRows = $totalRows + 5;
         $coordinate='A' . $totalRows . ':' . $last_coordinate . $totalRows;
+
         $sheet->mergeCells('A' . $totalRows . ':' . $last_coordinate . $totalRows);
         $sheet->setCellValue('A'. $totalRows, 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.')->getStyle('A'.$totalRows)->getFont()->setBold(true);
         $sheet->getStyle('A'.$totalRows)->applyFromArray([

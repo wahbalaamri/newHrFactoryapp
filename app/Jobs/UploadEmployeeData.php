@@ -93,6 +93,7 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             $directory = null;
             $sectors = [];
             $companies = [];
+            $is_hr = false;
             $date_of_birth = ($Employee['date_of_birth'] != '' || $Employee['date_of_birth'] != null) ? date('Y-m-d', strtotime($Employee['date_of_birth'])) : null;
             $date_of_service = ($Employee['date_of_service'] != '' || $Employee['date_of_service'] != null) ? date('Y-m-d', strtotime($Employee['date_of_service'])) : null;
             //pluck client sector ids into array
@@ -119,12 +120,14 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             if ($client->use_departments) {
                 //find org chart design
                 $leve_id = null;
+
                 //check if $Employee['level'] is not null and the level is set
                 if (isset($Employee['hirarchal_level']) && $Employee['hirarchal_level'] != '') {
                     $leve = Departments::whereIn('company_id', $companies)
                         ->where('name_en', trim($Employee['hirarchal_level']))->first();
                     if ($leve) {
                         $leve_id = $leve->id;
+                        $is_hr = $leve->is_hr;
                     }
                 }
                 if ($leve_id) {
@@ -167,9 +170,16 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             if (strpos(trim($Employee['employee_type']), 'Manager') !== false) {
 
                 $employee->employee_type = 1;
+                if ($parent_id != null && $is_hr) {
+                    $employee->is_hr_manager = true;
+                } else {
+                    $employee->is_hr_manager = false;
+                }
             } else {
                 $employee->employee_type = 2;
+                $employee->is_hr_manager = false;
             }
+
             //added_by
             $employee->added_by = $this->user_id;
             $employee->save();
