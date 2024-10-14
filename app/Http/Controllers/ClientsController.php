@@ -17,6 +17,7 @@ use App\Models\Departments;
 use App\Models\Employees;
 use App\Models\FocalPoints;
 use App\Models\Industry;
+use App\Models\OrgChartDesign;
 use App\Models\PartnerFocalPoint;
 use App\Models\Partners;
 use App\Models\Partnerships;
@@ -649,6 +650,8 @@ class ClientsController extends Controller
             }
             $sector->delete();
         }
+        //delete client org design chart
+        OrgChartDesign::where('client_id', $client->id)->delete();
         //delete client
         $client->delete();
         //return back
