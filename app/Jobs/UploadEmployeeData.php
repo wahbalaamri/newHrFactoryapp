@@ -170,7 +170,7 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             if (strpos(trim($Employee['employee_type']), 'Manager') !== false) {
 
                 $employee->employee_type = 1;
-                if ($parent_id != null && $is_hr) {
+                if ($is_hr) {
                     $employee->is_hr_manager = true;
                 } else {
                     $employee->is_hr_manager = false;
