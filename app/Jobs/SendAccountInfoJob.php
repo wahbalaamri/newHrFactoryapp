@@ -83,7 +83,7 @@ class SendAccountInfoJob implements ShouldQueue
                 //get current country
                 $country = Landing::getCurrentCountry();
                 //get partners
-                $partners = Partners::where('country_id', $country)->where('is_main',true)->pluck('id')->toArray();
+                $partners = Partners::where('country', $country)->where('is_main',true)->pluck('id')->toArray();
                 //find partnership for current country
                 $partnership = Partnerships::where('country_id', $country)->whereIn('partner_id',$partners)->first();
                 if ($partnership) {
