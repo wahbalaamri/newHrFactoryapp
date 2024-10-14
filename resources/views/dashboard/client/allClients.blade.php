@@ -130,16 +130,20 @@
                                                     </a>
                                                 </td>
                                                 <td>
+                                                    @if(Auth()->user()->isAdmin)
                                                     {{-- delete --}}
-                                                    <form action="{{-- {{ route('client.destroy', $client->id) }} --}}"
+                                                    <a href="{{ route('clients.DeleteClient', $client->id) }}" class="btn btn-danger btn-xs">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                    {{-- <form action=""
                                                         method="POST">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-danger btn-sm">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
-                                                    </form>
-
+                                                    </form> --}}
+                                                    @endif
                                                 </td>
                                             </tr>
                                             @endforeach

@@ -395,6 +395,7 @@ Route::group(['middleware' => ['auth:web'], 'prefix' => 'admin'], function () {
     Route::get('clients/index', action: [ClientsController::class, 'index'])->name('clients.index');
     Route::get('clients/ResendAccount/{email}', [ClientsController::class, 'ResendAccount'])->name('clients.ResendAccount');
     Route::get('clients/create', [ClientsController::class, 'create'])->name('clients.create');
+    Route::get('clients/DeleteClient/{id}', [ClientsController::class, 'DeleteClient'])->name('clients.DeleteClient');
     Route::post('clients/store', [ClientsController::class, 'store'])->name('clients.store');
     Route::get('clients/manage/{id}', [ClientsController::class, 'manage'])->name('clients.manage');
     Route::get('clients/ShowSurveys/{id}/{type}', [ClientsController::class, 'ShowSurveys'])->name('clients.ShowSurveys');

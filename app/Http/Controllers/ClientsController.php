@@ -12,6 +12,7 @@ use App\Jobs\Calculate3hResultsJob;
 use App\Jobs\SendAccountInfoJob;
 use App\Models\Companies;
 use App\Models\Countries;
+use App\Models\CustomizedSurveyFunctions;
 use App\Models\Departments;
 use App\Models\Employees;
 use App\Models\FocalPoints;
@@ -20,11 +21,15 @@ use App\Models\PartnerFocalPoint;
 use App\Models\Partners;
 use App\Models\Partnerships;
 use App\Models\Plans;
+use App\Models\PrioritiesAnswers;
+use App\Models\Respondents;
 use App\Models\Sectors;
 use App\Models\Services;
+use App\Models\SurveyAnswers;
 use App\Models\Surveys;
 use App\Models\TermsConditions;
 use App\Models\User;
+use App\Models\UserSections;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -592,6 +597,60 @@ class ClientsController extends Controller
             $job = (new SendAccountInfoJob($email, $password))->delay(now()->addSeconds(2));
             dispatch($job);
         }
+        //return back
+        return back();
+    }
+    //DeleteClient function
+    public function DeleteClient($id)
+    {
+        //find client
+        $client = Clients::find($id);
+        //Delete client subscriptions
+        $client->subscriptions()->delete();
+        //Delete client sections
+        $sections = UserSections::where('user_id', $client->id)->get();
+        foreach ($sections as $section) {
+            $section->delete();
+        }
+        //delete client employees respondents answers
+        $respondents= Respondents::where('client_id', $client->id)->get();
+        //Delete survey answers
+        $surveyAnswers = SurveyAnswers::whereIn('answered_by',  $respondents->pluck('id')->toArray())->delete();
+        PrioritiesAnswers::whereIn('answered_by',  $respondents->pluck('id')->toArray())->delete();
+
+        foreach ($respondents as $respondent) {
+            $respondent->delete();
+        }
+        //Delete client customized surveys
+        $customizedSurveys = CustomizedSurveyFunctions::where('client', $client->id)->get();
+        foreach ($customizedSurveys as $customizedSurvey) {
+            //loop through practices
+            foreach ($customizedSurvey->practices as $practice) {
+                //delete questions
+                $practice->questions()->delete();
+                $practice->delete();
+            }
+            $customizedSurvey->delete();
+        }
+        //Delete client surveys
+        Surveys::where('client_id', $client->id)->delete();
+        //delete client focal points
+        $client->focalPoint()->delete();
+        //delete client users
+        User::where('client_id', $client->id)->delete();
+        $client->employeesData()->delete();
+        //loop through sectors
+        foreach ($client->sectors as $sector) {
+            //loop through companies
+            foreach ($sector->companies as $company) {
+                //delete departments
+                $company->departments()->delete();
+                $company->delete();
+            }
+            $sector->delete();
+        }
+        //delete client
+        $client->delete();
         //return back
         return back();
     }
