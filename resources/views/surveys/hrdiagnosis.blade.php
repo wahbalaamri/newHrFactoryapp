@@ -275,9 +275,9 @@
                                             <div class="progress-step @if ($loop->first)
                                                 stpactive
                                             @endif" data-title="@if (str_contains($function->FunctionTitle,'Head') || str_contains($function->FunctionTitle,'Hand') || str_contains($function->FunctionTitle,'Heart'))
-                                            H{{ $loop->iteration }}
+                                            Group {{ $loop->iteration }}
                                             @else
-                                            D
+                                            Group {{ $loop->iteration }}
                                             @endif">
                                             </div>
                                             @endforeach
