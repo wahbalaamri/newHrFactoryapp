@@ -587,9 +587,12 @@ class ClientsController extends Controller
         if ($user) {
             //update password
             $user->password = bcrypt($password);
-
+            $user->save();
+            //send email
             $job = (new SendAccountInfoJob($email, $password))->delay(now()->addSeconds(2));
             dispatch($job);
         }
+        //return back
+        return back();
     }
 }
