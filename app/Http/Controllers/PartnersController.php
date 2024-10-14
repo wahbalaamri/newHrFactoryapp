@@ -277,7 +277,7 @@ class PartnersController extends Controller
                 ];
             }
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+            Log::error($e);
             $data = [
                 'stat' => false,
                 'msg' => "Error occured while saving data",

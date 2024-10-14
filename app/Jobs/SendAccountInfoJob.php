@@ -58,46 +58,46 @@ class SendAccountInfoJob implements ShouldQueue
                 $partner_focal_point = $default_partnership->partner->focalPoints->first();
                 $data['partner_email'] = $partner_focal_point->Email;
                 $data['partner_phone'] = $partner_focal_point->phone;
-            }
-            //find employee
-            $employee = Employees::where('email', $this->email)->first();
-            $data['password'] = $this->password;
-            $data['email'] = $this->email;
-            $data['name'] = $employee->name;
-            $data['position'] = $employee->position;
-            //get company
-            $company = $employee->company;
-            $data['company'] = $company->name_en;
-            //get client
-            $client = $employee->client;
-            $data['client_logo'] = $client->logo_path;
-            if ($client->partner_id != null) {
-                //find partner
-                $partner = Partners::where('id', $client->partner_id)->first();
-                $data['partner_logo'] = $partner->logo_path;
-                //get partner focal point
-                $partner_focal_point = $partner->focalPoints->first();
-                $data['partner_email'] = $partner_focal_point->Email;
-                $data['partner_phone'] = $partner_focal_point->phone;
-            } else {
-                //get current country
-                $country = Landing::getCurrentCountry();
-                //get partners
-                $partners = Partners::where('country', $country)->where('is_main',true)->pluck('id')->toArray();
-                //find partnership for current country
-                $partnership = Partnerships::where('country_id', $country)->whereIn('partner_id',$partners)->first();
-                if ($partnership) {
-                    //get partner partner
-                    $data['partner_logo'] = $partnership->partner->logo_path;
-                    $partner_focal_point = $partnership->partner->focalPoints->first();
+            } else { //find employee
+                $employee = Employees::where('email', $this->email)->first();
+                $data['password'] = $this->password;
+                $data['email'] = $this->email;
+                $data['name'] = $employee->name;
+                $data['position'] = $employee->position;
+                //get company
+                $company = $employee->company;
+                $data['company'] = $company->name_en;
+                //get client
+                $client = $employee->client;
+                $data['client_logo'] = $client->logo_path;
+                if ($client->partner_id != null) {
+                    //find partner
+                    $partner = Partners::where('id', $client->partner_id)->first();
+                    $data['partner_logo'] = $partner->logo_path;
+                    //get partner focal point
+                    $partner_focal_point = $partner->focalPoints->first();
                     $data['partner_email'] = $partner_focal_point->Email;
                     $data['partner_phone'] = $partner_focal_point->phone;
                 } else {
-                    $default_partnership = Partnerships::where('country_id', Landing::getDefaultCountry())->first();
-                    $data['partner_logo'] = $default_partnership->partner->logo_path;
-                    $partner_focal_point = $default_partnership->partner->focalPoints->first();
-                    $data['partner_email'] = $partner_focal_point->Email;
-                    $data['partner_phone'] = $partner_focal_point->phone;
+                    //get current country
+                    $country = Landing::getCurrentCountry();
+                    //get partners
+                    $partners = Partners::where('country', $country)->where('is_main', true)->pluck('id')->toArray();
+                    //find partnership for current country
+                    $partnership = Partnerships::where('country_id', $country)->whereIn('partner_id', $partners)->first();
+                    if ($partnership) {
+                        //get partner partner
+                        $data['partner_logo'] = $partnership->partner->logo_path;
+                        $partner_focal_point = $partnership->partner->focalPoints->first();
+                        $data['partner_email'] = $partner_focal_point->Email;
+                        $data['partner_phone'] = $partner_focal_point->phone;
+                    } else {
+                        $default_partnership = Partnerships::where('country_id', Landing::getDefaultCountry())->first();
+                        $data['partner_logo'] = $default_partnership->partner->logo_path;
+                        $partner_focal_point = $default_partnership->partner->focalPoints->first();
+                        $data['partner_email'] = $partner_focal_point->Email;
+                        $data['partner_phone'] = $partner_focal_point->phone;
+                    }
                 }
             }
             //partner_id
