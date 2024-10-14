@@ -337,9 +337,9 @@ class ClientsController extends Controller
         return $surveysPrepration->DeleteLeveL($request, $id, true);
     }
     //DownloadOrgChartTemp function
-    public function DownloadOrgChartTemp(Request $request, SurveysPrepration $surveysPrepration, $id,$sector,$company,$deps)
+    public function DownloadOrgChartTemp(Request $request, SurveysPrepration $surveysPrepration, $id, $sector, $company, $deps)
     {
-        return $surveysPrepration->DownloadOrgChartTemp($request, $id, $sector, $company,$deps, true);
+        return $surveysPrepration->DownloadOrgChartTemp($request, $id, $sector, $company, $deps, true);
     }
     //DownloadEmployeeTemp function
     public function DownloadEmployeeTemp(Request $request, SurveysPrepration $surveysPrepration, $id)
@@ -377,9 +377,9 @@ class ClientsController extends Controller
         return $surveysPrepration->storeEmployee($request, true);
     }
     //deleteEmployee function
-    public function deleteEmployee(Request $request, SurveysPrepration $surveysPrepration, $id,$cid)
+    public function deleteEmployee(Request $request, SurveysPrepration $surveysPrepration, $id, $cid)
     {
-        return $surveysPrepration->deleteEmployee($request, $id,$cid, true);
+        return $surveysPrepration->deleteEmployee($request, $id, $cid, true);
     }
     //getEmployee function
     public function getEmployee(Request $request, SurveysPrepration $surveysPrepration, $id)
@@ -576,5 +576,20 @@ class ClientsController extends Controller
     {
         //get session data
         $data = session()->get('data');
+    }
+    public function ResendAccount(Request $request, $email)
+    {
+        //find user
+        $user = User::where('email', $email)->first();
+        //random password
+        $password = Landing::generateRandomPassword();
+        //if user exists
+        if ($user) {
+            //update password
+            $user->password = bcrypt($password);
+
+            $job = (new SendAccountInfoJob($email, $password))->delay(now()->addSeconds(2));
+            dispatch($job);
+        }
     }
 }

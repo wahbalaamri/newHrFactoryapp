@@ -1,5 +1,5 @@
 {{-- modal to show all focal points --}}
-<div class="modal fade" id="focalPointsModal" tabindex="-1" aria-labelledby="focalPointsModalLabel" aria-hidden="true">
+<div class="modal fade" id="focalPointsModal" data-resend="{{ route('clients.ResendAccount',':email') }}" tabindex="-1" aria-labelledby="focalPointsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -35,6 +35,8 @@
                                     <th>{{ __('Position') }}
                                     </th>
                                     <th>{{ __('Status') }}
+                                    </th>
+                                    <th>{{ __('Resend Account information') }}
                                     </th>
                                     <th colspan="2">{{ __('Actions') }}
                                     </th>

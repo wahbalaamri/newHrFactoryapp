@@ -70,8 +70,12 @@ function SaveFocalPoint(btn) {
 
 function getHtmlFormOfData(focal_points) {
     var html = '';
+    //from focalPointsModal get data-resend
+    var resend_url = $('#focalPointsModal').data('resend');
+
     index = 1;
     focal_points.forEach(element => {
+        resend_url=resend_url.replace(':email',element.Email);
         F_status = element.is_active ? "Active" : "Inactive";
         Focal_p=JSON.stringify(element)
         html += `<tr><td>${index++}</td>
@@ -80,6 +84,11 @@ function getHtmlFormOfData(focal_points) {
         <td>${element.phone}</td>
         <td>${element.position}</td>
         <td>${F_status}</td>
+        <td>
+        <a href="${resend_url}" class="btn btn-primary btn-xs">
+        <i class="fa fa-paper-plane"></i>
+        </a>
+        </td>
         <td>
         <a href="javascript:void(0)" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#EditfocalPointsModal" data-element='${element}'
         onclick="CollectPartnerFP(${element.id},'${element.name}' ,'${element.name_ar}' ,'${element.Email}','${element.phone}','${element.position}' ,'${F_status}')">
