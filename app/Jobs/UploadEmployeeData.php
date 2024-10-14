@@ -120,7 +120,7 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             if ($client->use_departments) {
                 //find org chart design
                 $leve_id = null;
-
+                $is_hr = false;
                 //check if $Employee['level'] is not null and the level is set
                 if (isset($Employee['hirarchal_level']) && $Employee['hirarchal_level'] != '') {
                     $leve = Departments::whereIn('company_id', $companies)
