@@ -112,7 +112,7 @@
                                     </div>
                                 </div>
                                 @endif
-                                @if(App\Http\Facades\UserSubscriptionsFacade::canViewService(Auth()->user()->user_type,$id,10))
+                                @if(App\Http\Facades\UserSubscriptionsFacade::canViewService(Auth()->user()->user_type,$id,10) || Auth()->user()->client_id == 164)
                                 <div class="col-lg-3 col-md-4 col-sm-12">
 
                                     <div class="small-box bg-warning">
