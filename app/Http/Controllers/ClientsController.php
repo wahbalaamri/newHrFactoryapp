@@ -179,7 +179,7 @@ class ClientsController extends Controller
             $newEmployee->isBoard = false;
             $newEmployee->acting_for = null;
             $newEmployee->is_hr_manager = false;
-            $newEmployee->added_by = 0;
+            $newEmployee->added_by = Auth::user()->id;
             $newEmployee->save();
             //create new user
             $newUser = new User();
@@ -206,7 +206,7 @@ class ClientsController extends Controller
             //
             //redirect to login page with success message
             // (new SendSurvey($emails, $data))->delay(now()->addSeconds(2));
-            if (!$request_hasPass && $notify_client) {
+            if (!$request_hasPass && $notify_client && Auth::user()->user_type != 'partner') {
                 $job = (new SendAccountInfoJob($request->focal_email, $password))->delay(now()->addSeconds(2));
                 dispatch($job);
                 //redirect to route name('clients.index')

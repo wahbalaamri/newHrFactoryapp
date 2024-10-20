@@ -204,8 +204,7 @@
                                                     <label for="notify_client_cred">{{ __('Notify Client') }}
                                                     </label>
                                                     <br>
-                                                    <input type="checkbox" name="notify_client_cred" checked
-                                                        data-bootstrap-switch data-off-color="danger"
+                                                    <input type="checkbox" name="notify_client_cred" data-bootstrap-switch data-off-color="danger"
                                                         data-on-color="success">
                                                     <small class="blockquote-footer">
                                                         {{ __('By checking system will send account credentials to the focal point of the client.')
