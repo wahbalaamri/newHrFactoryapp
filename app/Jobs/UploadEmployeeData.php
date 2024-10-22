@@ -94,12 +94,16 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             $sectors = [];
             $companies = [];
             $is_hr = false;
-            $date_of_birth = ($Employee['date_of_birth'] != '' || $Employee['date_of_birth'] != null) ? date('Y-m-d', strtotime($Employee['date_of_birth'])) : null;
-            $date_of_service = ($Employee['date_of_service'] != '' || $Employee['date_of_service'] != null) ? date('Y-m-d', strtotime($Employee['date_of_service'])) : null;
+            $date_of_birth = ($Employee['date_of_birth'] != '' && $Employee['date_of_birth'] != null && $Employee['date_of_birth'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.') ? date('Y-m-d', strtotime($Employee['date_of_birth'])) : null;
+            $date_of_service = ($Employee['date_of_service'] != '' && $Employee['date_of_service'] != null && $Employee['date_of_service'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.') ? date('Y-m-d', strtotime($Employee['date_of_service'])) : null;
             //pluck client sector ids into array
             if ($client->multiple_sectors) {
                 //check $Employee['sectors'] is not null and the sectors is set
-                if (isset($Employee['sectors']) && $Employee['sectors'] != '') {
+                if (
+                    isset($Employee['sectors'])
+                    && $Employee['sectors'] != ''
+                    && $Employee['sectors'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.'
+                ) {
                     $sectors_ob = Sectors::where('client_id', $this->client_id)->where('name_en', trim($Employee['sectors']))->get();
                     $sectors = $sectors_ob->pluck('id')->toArray();
                 }
@@ -108,7 +112,11 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                 $sectors = $sectors_ob->pluck('id')->toArray();
             }
             if ($client->multiple_company) {
-                if (isset($Employee['companies']) && $Employee['companies'] != '') {
+                if (
+                    isset($Employee['companies'])
+                    && $Employee['companies'] != ''
+                    && $Employee['companies'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.'
+                ) {
                     $companies_ob = Companies::where('client_id', $this->client_id)->where('name_en', trim($Employee['companies']))->whereIn('sector_id', $sectors)->get();
                     $companies = $companies_ob->pluck('id')->toArray();
                 }
@@ -122,7 +130,11 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                 $leve_id = null;
                 $is_hr = false;
                 //check if $Employee['level'] is not null and the level is set
-                if (isset($Employee['hirarchal_level']) && $Employee['hirarchal_level'] != '') {
+                if (
+                    isset($Employee['hirarchal_level'])
+                    && $Employee['hirarchal_level'] != ''
+                    && $Employee['hirarchal_level'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.'
+                ) {
                     $leve = Departments::whereIn('company_id', $companies)
                         ->where('name_en', trim($Employee['hirarchal_level']))->first();
                     if ($leve) {

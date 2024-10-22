@@ -79,9 +79,9 @@
                                             <div class="row">
                                                 {{-- company name in English --}}
                                                 <div class="form-group col-md-6 col-sm-12">
-                                                    <label for="company_name_en">{{ __('Organization Name') }}</label>
+                                                    <label for="company_name_en">{{ __('Client Offical Name') }}</label>
                                                     <input type="text" class="form-control" id="company_name_en"
-                                                        name="company_name_en" placeholder="Organization Name">
+                                                        name="company_name_en" placeholder="Client Offical Name">
                                                     @error('company_name_en')
                                                     <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -97,7 +97,7 @@
                                                     @enderror
                                                 </div> --}}
                                                 {{-- select company sector --}}
-                                                <div class="form-group col-md-6 col-sm-12">
+                                                {{-- <div class="form-group col-md-6 col-sm-12">
                                                     <label for="company_sector">{{ __('Sector') }}</label>
                                                     <select class="form-control" id="company_sector"
                                                         name="company_sector">
@@ -115,7 +115,7 @@
                                                     @error('company_sector')
                                                     <span class="text-danger">{{ $message }}</span>
                                                     @enderror
-                                                </div>
+                                                </div> --}}
                                                 {{-- select company country --}}
                                                 <div class="form-group col-md-6 col-sm-12">
                                                     <label for="company_country">{{ __('Country') }}</label>
@@ -137,12 +137,10 @@
                                                     @enderror
                                                 </div>
                                                 {{-- select company size group --}}
-                                                <div class="form-group col-md-6 col-sm-12">
+                                                {{-- <div class="form-group col-md-6 col-sm-12">
                                                     <label for="company_size">{{ __('Size') }}</label>
                                                     <select class="form-control" id="company_size" name="company_size">
                                                         <option value="">{{ __('Select Size') }}</option>
-                                                        {{-- KEY VALUE LOOP --}}
-
                                                         @foreach ($numberOfEmployees as $vlue => $size)
                                                         <option value="{{ $vlue }}">{{ $size }}</option>
                                                         @endforeach
@@ -150,7 +148,7 @@
                                                     @error('company_size')
                                                     <span class="text-danger">{{ $message }}</span>
                                                     @enderror
-                                                </div>
+                                                </div> --}}
                                                 {{-- company phone number --}}
                                                 <div class="form-group col-md-6 col-sm-12">
                                                     <label for="phone">{{ __('Phone') }}</label>

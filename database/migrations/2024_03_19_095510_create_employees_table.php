@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->integer('client_id')->references('id')->on('clients')->onDelete('cascade');
-            $table->integer('sector_id')->nullable()->references('id')->on('sectors')->onDelete('restrict');
-            $table->integer('comp_id')->nullable()->references('id')->on('companies')->onDelete('restrict');
-            $table->integer('dep_id')->nullable()->references('id')->on('departments')->onDelete('restrict');
+            $table->unsignedBigInteger('client_id')->references('id')->on('clients')->onDelete('cascade');
+            $table->unsignedBigInteger('sector_id')->nullable()->references('id')->on('sectors')->onDelete('restrict');
+            $table->unsignedBigInteger('comp_id')->nullable()->references('id')->on('companies')->onDelete('restrict');
+            $table->unsignedBigInteger('dep_id')->nullable()->references('id')->on('departments')->onDelete('restrict');
             $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->string('mobile')->nullable();

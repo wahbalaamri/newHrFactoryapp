@@ -1,325 +1,377 @@
 {{-- extends --}}
 @extends('dashboard.layouts.main')
 @section('styles')
-    {{-- css file --}}
-    <link rel="stylesheet" href="{{ asset('assets/css/treeView.css') }}">
+{{-- css file --}}
+<link rel="stylesheet" href="{{ asset('assets/css/treeView.css') }}">
 @endsection
 {{-- content --}}
 {{-- show client details --}}
 @section('content')
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">{{ __('Org-Chart') }}</h1>
-                    </div><!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Dashboard </li>
-                        </ol>
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
-        </div>
-        <!-- /.content-header -->
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ __('Org-Chart') }}</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Dashboard </li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
 
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    {{-- create funcy card to display surveys --}}
-                    <div class="col-12 mt-3">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">{{ __('Manage Your Org-Chart') }}</h3>
-                                {{-- tool --}}
-                                <div class="card-tools">
-                                    {{-- back --}}
-                                    <a href="{{ route('clients.manage', $id) }}"
-                                        class="btn btn-sm btn-primary {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{ __('Back') }}</a>
-                                    {{-- create new survey --}}
-                                </div>
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                {{-- create funcy card to display surveys --}}
+                <div class="col-12 mt-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ __('Manage Your Org-Chart') }}</h3>
+                            {{-- tool --}}
+                            <div class="card-tools">
+                                {{-- back --}}
+                                <a href="{{ route('clients.manage', $id) }}"
+                                    class="btn btn-sm btn-primary {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{
+                                    __('Back') }}</a>
+                                {{-- create new survey --}}
                             </div>
-                            <div class="card-body">
-                                <div class="accordion" id="accordionExample">
-                                    <div class="card">
-                                        <div class="card-header" id="headingOne">
-                                            <h2 class="mb-0">
-                                                <button class="btn btn-link btn-block text-left" type="button"
-                                                    data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
-                                                    aria-controls="collapseOne">
-                                                    {{ __('Set you organaization info') }}
-                                                </button>
-                                            </h2>
-                                        </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="accordionExample">
+                                <div class="card">
+                                    <div class="card-header" id="headingOne">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link btn-block text-left" type="button"
+                                                data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                                aria-controls="collapseOne">
+                                                {{ __('Set you organaization info') }}
+                                            </button>
+                                        </h2>
+                                    </div>
 
-                                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
-                                            data-parent="#accordionExample">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="form-group col-md-6 col-sm-12">
-                                                        <label
-                                                            for="phone">{{ __('Do you have multiple sectors?') }}</label>
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input" type="checkbox" role="switch"
-                                                                id="multiple_sectors" name="multiple_sectors"
-                                                                @checked($client->multiple_sectors)>
-                                                            <label class="form-check-label" for="multiple_sectors">
-                                                                @if ($client->multiple_sectors)
-                                                                    {{ __('Yes, We have multiple sectors') }}
-                                                                @else
-                                                                    {{ __('No, Only one sector') }}
-                                                                @endif
-                                                            </label>
-                                                        </div>
+                                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                        data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="form-group col-md-6 col-sm-12">
+                                                    <label for="phone">{{ __('Do you have multiple sectors?') }}</label>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" role="switch"
+                                                            id="multiple_sectors" name="multiple_sectors"
+                                                            @checked($client->multiple_sectors)>
+                                                        <label class="form-check-label" for="multiple_sectors">
+                                                            @if ($client->multiple_sectors)
+                                                            {{ __('Yes, We have multiple sectors') }}
+                                                            @else
+                                                            {{ __('No, Only one sector') }}
+                                                            @endif
+                                                        </label>
                                                     </div>
-                                                    <div class="form-group col-md-6 col-sm-12">
-                                                        <label
-                                                            for="phone">{{ __('Do you have multiple companies?') }}</label>
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input" type="checkbox" role="switch"
-                                                                id="multiple_companies" name="multiple_companies"
-                                                                @checked($client->multiple_company)>
-                                                            <label class="form-check-label"
-                                                                for="multiple_companies">{{ __('No,
-                                                                                                                            Only one company') }}</label>
-                                                        </div>
-
-                                                    </div>
-                                                    {{-- use departments --}}
-                                                    <div class="form-group col-md-6 col-sm-12">
-                                                        <label
-                                                            for="phone">{{ __('Would like to use your local levels
-                                                                                                                    organization structure in the system?') }}</label>
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input" type="checkbox" role="switch"
-                                                                id="use_departments" name="use_departments"
-                                                                @checked($client->use_departments)>
-                                                            <label class="form-check-label" for="use_departments">
-                                                                @if ($client->use_departments)
-                                                                    {{ __('Yes, We like to use local levels structure') }}
-                                                                @else
-                                                                    {{ __('No, just stop on Company level') }}
-                                                                @endif
-                                                            </label>
-                                                            <small class="blockquote-footer">
-                                                                @if ($client->use_departments)
-                                                                    {{ __('This will allow you to view breckdown reports per
-                                                                                                                                your local levels structure (Depends on your subscription
-                                                                                                                                plan).') }}
-                                                                @else
-                                                                    {{ __('By switching-off you will be unable to view breckdown
-                                                                                                                                reports per your local levels structure') }}
-                                                                @endif
-                                                            </small>
-                                                        </div>
+                                                </div>
+                                                <div class="form-group col-md-6 col-sm-12">
+                                                    <label for="phone">{{ __('Do you have multiple companies?')
+                                                        }}</label>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" role="switch"
+                                                            id="multiple_companies" name="multiple_companies"
+                                                            @checked($client->multiple_company)>
+                                                        <label class="form-check-label" for="multiple_companies">{{
+                                                            __('No,
+                                                            Only one company') }}</label>
                                                     </div>
 
-                                                    {{-- submit --}}
-                                                    <div class="form-group col-sm-12">
-                                                        <a href="javascript:void(0)" onclick="saveOrgInfo()"
-                                                            @class([
-                                                                'btn btn-outline-success btn-sm',
-                                                                'float-right' => app()->isLocale('en'),
-                                                                'float-left' => app()->isLocale('ar'),
-                                                            ])>{{ __('Save') }}</a>
+                                                </div>
+                                                {{-- use departments --}}
+                                                <div class="form-group col-md-6 col-sm-12">
+                                                    <label for="phone">{{ __('Would like to use your local levels
+                                                        organization structure in the system?') }}</label>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" role="switch"
+                                                            id="use_departments" name="use_departments"
+                                                            @checked($client->use_departments)>
+                                                        <label class="form-check-label" for="use_departments">
+                                                            @if ($client->use_departments)
+                                                            {{ __('Yes, We like to use local levels structure') }}
+                                                            @else
+                                                            {{ __('No, just stop on Company level') }}
+                                                            @endif
+                                                        </label>
+                                                        <small class="blockquote-footer">
+                                                            @if ($client->use_departments)
+                                                            {{ __('This will allow you to view breckdown reports per
+                                                            your local levels structure (Depends on your subscription
+                                                            plan).') }}
+                                                            @else
+                                                            {{ __('By switching-off you will be unable to view breckdown
+                                                            reports per your local levels structure') }}
+                                                            @endif
+                                                        </small>
                                                     </div>
+                                                </div>
+                                            </div>
+                                            @if(!$company && !$sector)
+                                            <div class="row">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <div class="card-title">
+                                                            <h5 class="h5">{{ __('Add Company') }}</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="row justify-content-center">
+                                                            {{-- info alert --}}
+                                                            <div class="alert alert-warning" role="alert">
+                                                                <strong>{{ __('Note:') }}</strong>
+                                                                {{ __('There is no company or sector for this client, so please add one') }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            {{-- compnay name --}}
+                                                            <div class="form-group col-md-6 col-sm-12">
+                                                                <label for="name">{{ __('Company Name') }}</label>
+                                                                <input type="text" class="form-control"
+                                                                    id="company_name" name="company_name"
+                                                                    placeholder="{{ __('Company Name') }}">
+                                                            </div>
+                                                            <div class="form-group col-md-6 col-sm-12">
+                                                                <label for="name">{{ __('slect sector') }}</label>
+                                                                <select name="new_sector_id" id="new_sector_id"
+                                                                    class="form-control">
+                                                                    <option value="">{{ __('Select Sector') }}</option>
+                                                                    @foreach ($industries as $industry)
+                                                                    <option value="{{ $industry->id }}">{{
+                                                                        $industry->name }}
+                                                                    </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group col-md-6 col-sm-12">
+                                                                <label for="name">{{ __('slect company siize')
+                                                                    }}</label>
+                                                                <select class="form-control" id="company_size"
+                                                                    name="company_size">
+                                                                    <option value="">{{ __('Select Size') }}</option>
+                                                                    @foreach ($numberOfEmployees as $vlue => $size)
+                                                                    <option value="{{ $vlue }}">{{ $size }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                                @error('company_size')
+                                                                <span class="text-danger">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            @endif
+                                            <div class="row">
+                                                {{-- submit --}}
+                                                <div class="form-group col-sm-12">
+                                                    <a href="javascript:void(0)" onclick="saveOrgInfo()"
+                                                        @class([ 'btn btn-outline-success btn-sm' , 'float-right'=>
+                                                        app()->isLocale('en'),
+                                                        'float-left' => app()->isLocale('ar'),
+                                                        ])>{{ __('Save') }}</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card">
-                                        <div class="card-header" id="headingOrg">
-                                            <h2 class="mb-0">
-                                                <button class="btn btn-link btn-block text-left" type="button"
-                                                    data-toggle="collapse" data-target="#collapseOrg" aria-expanded="true"
-                                                    aria-controls="collapseOne">
-                                                    {{ __('Download your organization chart template') }}
-                                                </button>
-                                            </h2>
-                                        </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header" id="headingOrg">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link btn-block text-left" type="button"
+                                                data-toggle="collapse" data-target="#collapseOrg" aria-expanded="true"
+                                                aria-controls="collapseOne">
+                                                {{ __('Download your organization chart template') }}
+                                            </button>
+                                        </h2>
+                                    </div>
 
-                                        <div id="collapseOrg" class="collapse" aria-labelledby="headingOrg"
-                                            data-parent="#accordionExample">
-                                            <div class="card-body">
-                                                @if (!$client->multiple_sectors && !$client->multiple_company && !$client->use_departments)
-                                                    {{-- alert --}}
-                                                    <div class="alert alert-info" role="alert">
-                                                        <strong>{{ __('Info!') }}</strong>
-                                                        {{ __('You don\'t need to upload any excel sheet') }}
+                                    <div id="collapseOrg" class="collapse" aria-labelledby="headingOrg"
+                                        data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            @if (!$client->multiple_sectors && !$client->multiple_company &&
+                                            !$client->use_departments)
+                                            {{-- alert --}}
+                                            <div class="alert alert-info" role="alert">
+                                                <strong>{{ __('Info!') }}</strong>
+                                                {{ __('You don\'t need to upload any excel sheet') }}
+                                            </div>
+                                            @elseif(!$client->multiple_sectors && $client->multiple_company &&
+                                            !$client->use_departments)
+                                            {{-- add new company --}}
+                                            <div class="row justify-content-center">
+                                                <div class="col-md-6 col-sm-12">
+
+                                                    <div class="" id="addNewCompanDiv">
+                                                        {{-- form-group --}}
+                                                        <div class="form-group">
+                                                            <label for="phone">{{ __('Company Offical Name') }}</label>
+                                                            <input type="text" class="form-control" id="add_new_company"
+                                                                name="add_new_company[]"
+                                                                placeholder="{{ __('Enter Company Offical Name') }}">
+                                                        </div>
                                                     </div>
-                                                @elseif(!$client->multiple_sectors && $client->multiple_company && !$client->use_departments)
-                                                    {{-- add new company --}}
-                                                    <div class="row justify-content-center">
+                                                    <div class="row">
+                                                        {{-- add more --}}
                                                         <div class="col-md-6 col-sm-12">
-
-                                                            <div class="" id="addNewCompanDiv">
-                                                                {{-- form-group --}}
-                                                                <div class="form-group">
-                                                                    <label
-                                                                        for="phone">{{ __('Company Offical Name') }}</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="add_new_company" name="add_new_company[]"
-                                                                        placeholder="{{ __('Enter Company Offical Name') }}">
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                {{-- add more --}}
-                                                                <div class="col-md-6 col-sm-12">
-                                                                    <a href="javascript:void(0)" onclick="addCompany()"
-                                                                        class="btn btn-primary btn-sm"><i
-                                                                            class="fa fa-plus"></i>
-                                                                        {{ __('Add') }}</a>
-                                                                </div>
-                                                                {{-- submit --}}
-                                                                <div class="col-md-6 col-sm-12">
-                                                                    <a href="javascript:void(0)"
-                                                                        onclick="saveCompany({{ $client->sectors[0]->id }})"
-                                                                        class="btn btn-outline-success btn-sm"><i
-                                                                            class="fa fa-save"></i>
-                                                                        {{ __('Save') }}</a>
-                                                                </div>
-                                                            </div>
+                                                            <a href="javascript:void(0)" onclick="addCompany()"
+                                                                class="btn btn-primary btn-sm"><i
+                                                                    class="fa fa-plus"></i>
+                                                                {{ __('Add') }}</a>
                                                         </div>
-
+                                                        {{-- submit --}}
+                                                        <div class="col-md-6 col-sm-12">
+                                                            <a href="javascript:void(0)"
+                                                                onclick="saveCompany({{ $client->sectors[0]->id }})"
+                                                                class="btn btn-outline-success btn-sm"><i
+                                                                    class="fa fa-save"></i>
+                                                                {{ __('Save') }}</a>
+                                                        </div>
                                                     </div>
-                                                @elseif($client->multiple_sectors && $client->multiple_company && !$client->use_departments)
-                                                    <form
-                                                        action="{{ route('clients.DownloadOrgChartTemp', [$client->id, $client->multiple_sectors, $client->multiple_company, $client->use_departments]) }}"
-                                                        method="post">
-                                                        @csrf
-                                                        <div class="row justify-content-center text-center">
-                                                            <div class="col-md-6 col-sm-12">
-                                                                {{-- download btn --}}
-                                                                <button type="submit"
-                                                                    class="btn btn-outline-success btn-sm"><i
-                                                                        class="fa fa-download"></i>
-                                                                    {{ __('Download Your Org-chart Template') }}</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                @elseif (
-                                                    (!$client->multiple_sectors || $client->multiple_sectors) &&
-                                                        (!$client->multiple_company || $client->multiple_company) &&
-                                                        $client->use_departments)
-                                                    <form
-                                                        action="{{ route('clients.DownloadOrgChartTemp', [$client->id, $client->multiple_sectors, $client->multiple_company, $client->use_departments]) }}"
-                                                        method="post">
-                                                        @csrf
-                                                        <div class="col-10" id="addLevelDiv">
-                                                            <div class="row row-levels">
-                                                                <div class="col-md-6 col-sm-12 form-group">
-                                                                    <label
-                                                                        for="levels_label[]">{{ __('Your org chart label of
-                                                                                                                                        Level-1') }}</label>
-                                                                    <div class="input-group mb-3">
-                                                                        <div class="input-group-prepend">
-                                                                            <span class="input-group-text">Level-1:</span>
-                                                                        </div>
-                                                                        <input type="text" class="form-control"
-                                                                            name="levels_label[]"
-                                                                            placeholder="{{ __('Enter label of Level-1 of your org chart') }}">
-                                                                    </div>
-                                                                    {{-- hint --}}
-                                                                    <small class="text-muted">
-                                                                        {{ __('Enter label of your org chart e.g. Directorate,
-                                                                                                                                        Division, Department, Section or Unit') }}
-                                                                    </small>
-                                                                </div>
-                                                                {{-- add more btn --}}
-                                                                <div class="col-md-6 col-sm-12">
-                                                                    <a href="javascript:void(0)"
-                                                                        class="btn btn-outline-warning btn-sm"
-                                                                        id="addLevelbtn">
-                                                                        <i class="fa fa-plus"></i>
-                                                                        {{ __('Add') }}</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row justify-content-center text-center">
-                                                            <div class="col-md-6 col-sm-12">
-                                                                {{-- download btn --}}
-                                                                <button type="submit"
-                                                                    class="btn btn-outline-success btn-sm"><i
-                                                                        class="fa fa-download"></i>
-                                                                    {{ __('Download Your Org-chart Template') }}</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                @endif
+                                                </div>
+
                                             </div>
+                                            @elseif($client->multiple_sectors && $client->multiple_company &&
+                                            !$client->use_departments)
+                                            <form
+                                                action="{{ route('clients.DownloadOrgChartTemp', [$client->id, $client->multiple_sectors, $client->multiple_company, $client->use_departments]) }}"
+                                                method="post">
+                                                @csrf
+                                                <div class="row justify-content-center text-center">
+                                                    <div class="col-md-6 col-sm-12">
+                                                        {{-- download btn --}}
+                                                        <button type="submit" class="btn btn-outline-success btn-sm"><i
+                                                                class="fa fa-download"></i>
+                                                            {{ __('Download Your Org-chart Template') }}</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            @elseif (
+                                            (!$client->multiple_sectors || $client->multiple_sectors) &&
+                                            (!$client->multiple_company || $client->multiple_company) &&
+                                            $client->use_departments)
+                                            <form
+                                                action="{{ route('clients.DownloadOrgChartTemp', [$client->id, $client->multiple_sectors, $client->multiple_company, $client->use_departments]) }}"
+                                                method="post">
+                                                @csrf
+                                                <div class="col-10" id="addLevelDiv">
+                                                    <div class="row row-levels">
+                                                        <div class="col-md-6 col-sm-12 form-group">
+                                                            <label for="levels_label[]">{{ __('Your org chart label of
+                                                                Level-1') }}</label>
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Level-1:</span>
+                                                                </div>
+                                                                <input type="text" class="form-control"
+                                                                    name="levels_label[]"
+                                                                    placeholder="{{ __('Enter label of Level-1 of your org chart') }}">
+                                                            </div>
+                                                            {{-- hint --}}
+                                                            <small class="text-muted">
+                                                                {{ __('Enter label of your org chart e.g. Directorate,
+                                                                Division, Department, Section or Unit') }}
+                                                            </small>
+                                                        </div>
+                                                        {{-- add more btn --}}
+                                                        <div class="col-md-6 col-sm-12">
+                                                            <a href="javascript:void(0)"
+                                                                class="btn btn-outline-warning btn-sm" id="addLevelbtn">
+                                                                <i class="fa fa-plus"></i>
+                                                                {{ __('Add') }}</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row justify-content-center text-center">
+                                                    <div class="col-md-6 col-sm-12">
+                                                        {{-- download btn --}}
+                                                        <button type="submit" class="btn btn-outline-success btn-sm"><i
+                                                                class="fa fa-download"></i>
+                                                            {{ __('Download Your Org-chart Template') }}</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            @endif
                                         </div>
                                     </div>
-                                    <div class="card">
-                                        <div class="card-header" id="headingTwo">
-                                            <h2 class="mb-0">
-                                                <button class="btn btn-link btn-block text-left" type="button"
-                                                    data-toggle="collapse" data-target="#collapseTwo"
-                                                    aria-expanded="true" aria-controls="collapseTwo">
-                                                    {{ __('Upload Excel Sheet') }}
-                                                </button>
-                                            </h2>
-                                        </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header" id="headingTwo">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link btn-block text-left" type="button"
+                                                data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
+                                                aria-controls="collapseTwo">
+                                                {{ __('Upload Excel Sheet') }}
+                                            </button>
+                                        </h2>
+                                    </div>
 
-                                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
-                                            data-parent="#accordionExample">
-                                            <div class="card-body">
-                                                {{-- form to upload excel sheet --}}
-                                                <form action="{{ route('clients.uploadOrgChartExcel', $id) }}"
-                                                    method="POST" enctype="multipart/form-data">
-                                                    @csrf
-                                                    <div class="form-group col-md-6 col-sm-12">
-                                                        <label for="excel">{{ __('Upload Excel Sheet') }}</label>
-                                                        <input type="file" name="excel" class="form-control"
-                                                            required>
-                                                    </div>
-                                                    <div class="form-group col-sm-12">
-                                                        <button type="submit"
-                                                            class="btn btn-outline-success btn-sm {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{ __('Upload') }}</button>
-                                                    </div>
-                                                </form>
-                                            </div>
+                                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                        data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            {{-- form to upload excel sheet --}}
+                                            <form action="{{ route('clients.uploadOrgChartExcel', $id) }}" method="POST"
+                                                enctype="multipart/form-data">
+                                                @csrf
+                                                <div class="form-group col-md-6 col-sm-12">
+                                                    <label for="excel">{{ __('Upload Excel Sheet') }}</label>
+                                                    <input type="file" name="excel" class="form-control" required>
+                                                </div>
+                                                <div class="form-group col-sm-12">
+                                                    <button type="submit"
+                                                        class="btn btn-outline-success btn-sm {{ App()->getLocale() == 'ar' ? 'float-start' : 'float-end' }}">{{
+                                                        __('Upload') }}</button>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
-                                    <div class="card">
-                                        <div class="card-header" id="headingThree">
-                                            <h2 class="mb-0">
-                                                <button class="btn btn-link btn-block text-left" type="button"
-                                                    data-toggle="collapse" data-target="#collapseThree"
-                                                    aria-expanded="true" aria-controls="collapseThree">
-                                                    {{ __('Tree View') }}
-                                                </button>
-                                            </h2>
-                                        </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header" id="headingThree">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link btn-block text-left" type="button"
+                                                data-toggle="collapse" data-target="#collapseThree" aria-expanded="true"
+                                                aria-controls="collapseThree">
+                                                {{ __('Tree View') }}
+                                            </button>
+                                        </h2>
+                                    </div>
 
-                                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
-                                            data-parent="#accordionExample">
-                                            <div class="card-body">
-                                                @include('dashboard.client.orgChart.OrgChartTree', [
-                                                    'client' => $client,
-                                                ])
-                                            </div>
+                                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                                        data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            @include('dashboard.client.orgChart.OrgChartTree', [
+                                            'client' => $client,
+                                            ])
                                         </div>
                                     </div>
-                                    <div class="card">
-                                        <div class="card-header" id="headingFour">
-                                            <h2 class="mb-0">
-                                                <button class="btn btn-link btn-block text-left collapsed" type="button"
-                                                    data-toggle="collapse" data-target="#collapseFour"
-                                                    aria-expanded="false" aria-controls="collapseFour">
-                                                    {{ __('Table View') }}
-                                                </button>
-                                            </h2>
-                                        </div>
-                                        <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
-                                            data-parent="#accordionExample">
-                                            <div class="card-body">
-                                                @include('dashboard.client.orgChart.orgChartTable')
-                                            </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header" id="headingFour">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link btn-block text-left collapsed" type="button"
+                                                data-toggle="collapse" data-target="#collapseFour" aria-expanded="false"
+                                                aria-controls="collapseFour">
+                                                {{ __('Table View') }}
+                                            </button>
+                                        </h2>
+                                    </div>
+                                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
+                                        data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            @include('dashboard.client.orgChart.orgChartTable')
                                         </div>
                                     </div>
                                 </div>
@@ -328,18 +380,19 @@
                     </div>
                 </div>
             </div>
-        </section>
-    </div>
-    {{-- -modal to create new sector --}}
-    @include('dashboard.client.modals.addSector')
-    @include('dashboard.client.modals.AddOrAssignAccting')
-    {{-- -modal to create new company --}}
+        </div>
+    </section>
+</div>
+{{-- -modal to create new sector --}}
+@include('dashboard.client.modals.addSector')
+@include('dashboard.client.modals.AddOrAssignAccting')
+{{-- -modal to create new company --}}
 @endsection
 @section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    {{-- js file --}}
-    <script>
-        $("[name='is_hr']").bootstrapSwitch();
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- js file --}}
+<script>
+    $("[name='is_hr']").bootstrapSwitch();
         $("#multiple_sectors").bootstrapSwitch();
         $("#multiple_companies").bootstrapSwitch();
         $(".form-check-input").bootstrapSwitch();
@@ -631,6 +684,14 @@
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex'
                     },
+                    {
+                        data: 'sector',
+                        name: 'sector'
+                    },
+                    {
+                        data: 'company',
+                        name: 'company'
+                    },
                     @foreach ($orgchart as $item)
                         {
                             data: 'c{{ $item->level }}',
@@ -638,16 +699,6 @@
                             // visible: {{ $orgchartAva[$loop->index] == 1 ? 'true' : 'false' }},
                         },
                     @endforeach
-
-
-                    {
-                        data: 'company',
-                        name: 'company'
-                    },
-                    {
-                        data: 'sector',
-                        name: 'sector'
-                    },
                     {
                         data: 'level',
                         name: 'level'
@@ -806,7 +857,29 @@
         });
         //saveOrgInfo function
         saveOrgInfo = () => {
+            company="{{ $company }}"==1? true : false;
+            sector="{{ $sector }}"==1? true : false;
+            if(!company && !sector){
+                //validate company name company_name
+                if (!$("#company_name").val()) {
+                    toastr.error('Please Enter Company Name');
+                    return;
+                }
+                //validate sector name
+                if (!$("#new_sector_id").val() || $("#new_sector_id").val()=='') {
+                    toastr.error('Please Enter Select Sector');
+                    return;
+                }
+                //validate company_size
+                if (!$("#company_size").val() || $("#company_size").val()=='') {
+                    toastr.error('Please Enter Select Company Size');
+                    return;
+                }
+            }
             //get data
+            company_size = $("#company_size").val();
+            sector_id = $("#new_sector_id").val();
+            company_name = $("#company_name").val();
             multiple_sectors = $("#multiple_sectors").bootstrapSwitch('state') ? 1 : 0;
             multiple_companies = $("#multiple_companies").bootstrapSwitch('state') ? 1 : 0;
             //use_departments
@@ -820,7 +893,12 @@
                 'multiple_sectors': multiple_sectors,
                 'multiple_companies': multiple_companies,
                 'use_departments': use_departments,
-                'use_sections': false
+                'use_sections': false,
+                'company': company,
+                'sector': sector,
+                'company_name': company_name,
+                'company_size': company_size,
+                'sector_id': sector_id
             };
             //send data
             $.ajax({
@@ -1035,5 +1113,5 @@
                 })
             }
         });
-    </script>
+</script>
 @endsection

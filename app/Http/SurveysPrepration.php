@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Enums\NumberOfEmployees;
 use App\Exports\ExportClientEmployeeDataTemplate;
 use App\Exports\ExportClientOrgChartTemplate;
 use App\Exports\HRDiagnosisPrioritiesAnswersExport;
@@ -950,24 +951,39 @@ class SurveysPrepration
     function orgChart(Request $request, $id, $by_admin = false)
     {
         $client = Clients::find($id);
-        $sectors_id = $client->sectors->pluck('id')->toArray();
+        $sectors_id = ($client->sectors->count() > 0) ? $client->sectors->pluck('id')->toArray() : [];
         //deps
-        $deps = Departments::whereIn('company_id', Companies::whereIn('sector_id', $sectors_id)->pluck('id')->toArray())->get();
+        $deps = count($sectors_id) > 0 ? Departments::whereIn('company_id', Companies::whereIn('sector_id', $sectors_id)->pluck('id')->toArray())->get() : [];
         //get client org chart design
         $orgchart = OrgChartDesign::where('client_id', $id)->get();
         $orgchartAva = [];
-        if ($orgchart->count() > 0) {
+        if ($orgchart->count() > 0 && $deps->count() > 0) {
             foreach ($orgchart as $itme) {
                 $orgchartAva[] = [
                     $deps->where('dep_level', $itme->level)->count() > 0
                 ];
             }
         }
+        //get client company
+        $company = Companies::where('client_id', $id)->count() > 0;
+        //get client sectors
+        $sector = count($sectors_id) > 0;
+        $Employee = new NumberOfEmployees();
+        //get all industries create by system or by client
+        $industries = Industry::where(function ($query) use ($id) {
+            $query->where('system_create', true)
+                ->orWhere('client_id', $id);
+        })
+            ->get();
         $data = [
             'id' => $id,
             'client' => $client,
             'orgchartAva' => $orgchartAva,
-            'orgchart' => $orgchart
+            'orgchart' => $orgchart,
+            'company' => $company,
+            'sector' => $sector,
+            'numberOfEmployees' => $Employee->getList(),
+            'industries'=> $industries
         ];
         if ($request->ajax()) {
             //setup yajra datatable
@@ -975,8 +991,8 @@ class SurveysPrepration
             return DataTables::of($departments)
                 ->addIndexColumn()
                 ->addColumn('action', function ($department) {
-                    $action = '<div class="row"><div class="col-md-6 col-sm-12 text-center"><a href="javascript:void(0);" onclick="EditDep(\'' . $department->id . '\',\'' . $department->parent_id . '\',\'' . $department->company->client_id . '\',\'sub-dep\')" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a></div>';
-                    $action .= '<div class="col-md-6 col-sm-12 text-center"><a href="javascript:void(0);" onclick="DeleteDep(\'' . $department->id . '\')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a></div></div>';
+                    $action = '<div class="row"><div class="col-md-6 col-sm-12 text-center"><a href="javascript:void(0);" onclick="EditDep(\'' . $department->id . '\',\'' . $department->parent_id . '\',\'' . $department->company->client_id . '\',\'sub-dep\')" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i></a></div>';
+                    $action .= '<div class="col-md-6 col-sm-12 text-center"><a href="javascript:void(0);" onclick="DeleteDep(\'' . $department->id . '\')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a></div></div>';
                     return $action;
                 })
                 ->addColumn('c4', function ($department) {
@@ -4721,6 +4737,28 @@ class SurveysPrepration
     function saveOrgInfo(Request $request, $id, $is_admin = false)
     {
         try {
+            //get boolean from request
+            $company=$request->company==1?true:false;
+            if(!$company){
+                Log::info($request->sector_id);
+                //find industry
+                $industry=Industry::find($request->sector_id);
+                //add new sector
+                $sector= new Sectors();
+                $sector->name_en=$industry->name;
+                $sector->name_ar=$industry->name_ar;
+                $sector->client_id=$id;
+                $sector->industry_id=$industry->id;
+                $sector->save();
+                //add new company
+                $company_obj= new Companies();
+                $company_obj->name_en=$request->company_name;
+                $company_obj->name_ar=$request->company_name;
+                $company_obj->client_id=$id;
+                $company_obj->sector_id=$sector->id;
+                $company_obj->company_size=$request->company_size;
+                $company_obj->save();
+            }
             $client = Clients::find($id);
 
             $client->multiple_sectors = ($request->multiple_sectors) == 1 ? true : false;
@@ -4731,6 +4769,7 @@ class SurveysPrepration
             return response()->json(['message' => 'Organization info saved successfully', 'stat' => true], 200);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
+            Log::error($e);
             return response()->json(['message' => 'Error saving Organization info', 'stat' => false], 500);
         }
     }

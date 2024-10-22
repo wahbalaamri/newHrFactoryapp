@@ -16,6 +16,7 @@ return new class extends Migration
             //cascading on client id on delete
             $table->unsignedBigInteger('client_id')->references('id')->on('clients')->onDelete('cascade');
             // sector name in english
+            $table->unsignedBigInteger('industry_id')->nullable()->references('id')->on('industries')->onDelete('cascade');
             $table->string('name_en');
             // sector name in arabic
             $table->string('name_ar');

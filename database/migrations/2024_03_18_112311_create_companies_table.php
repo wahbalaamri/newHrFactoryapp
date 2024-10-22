@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('name_en');
             // company name in arabic
             $table->string('name_ar')->nullable();
+            $table->integer('company_size')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

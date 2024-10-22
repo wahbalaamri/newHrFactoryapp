@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Clients;
 use App\Models\OrgChartDesign;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -38,25 +39,43 @@ class ExportClientOrgChartTemplate implements FromCollection, WithHeadings, With
         $dummy = [];
         //get org chart design
         $org = OrgChartDesign::where('client_id', $this->client_id)->get();
+        //find client
+        $client = Clients::find($this->client_id);
+        foreach ($client->sectors as $sector) {
+            //foreach sector companies
+            foreach ($sector->companies as $company) {
+                for ($i = 0; $i < 10; $i++) {
+                    $row = [];
+                    if ($this->multi_sectors)
+                        $row[] = $sector->name_en;
+                    if ($this->multi_companies)
+                        $row[] = $company->name_en;
+                    foreach ($org as $level) {
+                        $row[] = "Enter Your " . $level->user_label . " Names or Titles";
+                    }
+                    if ($i % 5 == 0)
+                        $row[] = "yes";
+                    else
+                        $row[] = "no";
+                    $dummy[] = $row;
+                }
+            }
+        }
         for ($i = 0; $i < 10; $i++) {
             $row = [];
             if ($this->multi_sectors)
-                $row[] = "Enter Your Sectors Names or Titles";
+                $row[] = "Your New Sector/Business Industries";
             if ($this->multi_companies)
-                $row[] = "Enter Your Companies Names or Titles";
-            if ($this->use_deps) {
-                $org = OrgChartDesign::where('client_id', $this->client_id)->get();
-                foreach ($org as $level) {
-                    $row[] = "Enter Your " . $level->user_label . " Names or Titles";
-                }
-                if ($i != 5)
-                    $row[] = "no";
-                else
-                    $row[] = "yes";
+                $row[] = "Your New Company/Organization";
+            foreach ($org as $level) {
+                $row[] = "Enter Your " . $level->user_label . " Names or Titles";
             }
+            if ($i % 5 == 0)
+                $row[] = "yes";
+            else
+                $row[] = "no";
             $dummy[] = $row;
         }
-
         return collect($dummy);
     }
     public function headings(): array

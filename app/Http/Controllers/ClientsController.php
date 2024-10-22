@@ -149,30 +149,14 @@ class ClientsController extends Controller
             $newClient->added_by = Auth::user()->id;
             $newClient->updated_by = Auth::user()->id;
             $newClient->save();
-            //retrieve industry
-            $industry = Industry::find($request->company_sector);
-            //create new sector
-            $newSector = new Sectors();
-            $newSector->client_id = $newClient->id;
-            $newSector->name_en = $industry->name;
-            $newSector->name_ar = $industry->name_ar;
-            $newSector->save();
-            //add new comapny
-            //create new company
-            $company = new Companies();
-            $company->client_id = $newClient->id;
-            $company->sector_id = $newSector->id;
-            $company->name_en = $request->company_name_en;
-            $company->name_ar = $request->company_name_ar != null ? $request->company_name_ar : $request->company_name_en;
-            $company->save();
             //new Employee
             $newEmployee = new Employees();
             $newEmployee->name = $request->focal_name;
             $newEmployee->client_id = $newClient->id;
             $newEmployee->email = $request->focal_email;
             $newEmployee->mobile = $request->focal_phone;
-            $newEmployee->sector_id = $newSector->id;
-            $newEmployee->comp_id = $company->id;
+            $newEmployee->sector_id = null;
+            $newEmployee->comp_id = null;
             $newEmployee->emp_id = null;
             $newEmployee->employee_type = 2;
             $newEmployee->isCandidate = false;
@@ -187,7 +171,7 @@ class ClientsController extends Controller
             $newUser->email = $request->focal_email;
             $newUser->password = Hash::make($password);
             $newUser->client_id = $newClient->id;
-            $newUser->sector_id = $newSector->id;
+            $newUser->sector_id = null;
             $newUser->emp_id = $newEmployee->id;
             $newUser->is_main = true;
             //user_type

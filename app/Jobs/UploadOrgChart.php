@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Clients;
 use App\Models\Companies;
 use App\Models\Departments;
+use App\Models\Industry;
 use App\Models\OrgChartDesign;
 use App\Models\Sectors;
 use Illuminate\Bus\Queueable;
@@ -105,11 +106,30 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
             $section_id = null;
             if ($client->multiple_sectors) {
                 //check if sector has value
-                if (trim($entity['sectors']) != '' && $entity['sectors'] != null && $entity['sectors'] != '') {
+                if (
+                    trim($entity['sectors']) != ''
+                    && $entity['sectors'] != null
+                    && $entity['sectors'] != ''
+                    && $entity['sectors'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.'
+                ) {
                     $sector = Sectors::where('name_en', trim($entity['sectors']))
                         ->where('client_id', $this->client_id)->first();
                     if (!$sector) {
                         $sector = new Sectors();
+                        //find industry
+                        $industry = Industry::where('name', trim($entity['sectors']))->where('system_create', true)->first();
+                        $industry = $industry != null ? $industry : Industry::where('name', trim($entity['sectors']))->where('client_id', $this->client_id)->first();
+                        if (!$industry) {
+                            //create industry
+                            $industry = new Industry();
+                            $industry->name = trim($entity['sectors']);
+                            $industry->name_ar = trim($entity['sectors']);
+                            $industry->system_create = false;
+                            $industry->client_id = $this->client_id;
+                            $industry->is_active = true;
+                            $industry->save();
+                        }
+                        $sector->industry_id = $industry->id;
                     }
                     $sector->name_en = trim($entity['sectors']);
                     $sector->name_ar = trim($entity['sectors']);
@@ -122,7 +142,13 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
             }
             if ($client->multiple_company) {
                 //check if company has value and $sector_id not null
-                if (trim($entity['companies']) != '' && $sector_id && $entity['companies'] != null && $entity['companies'] != '') {
+                if (
+                    trim($entity['companies']) != ''
+                    && $sector_id
+                    && $entity['companies'] != null
+                    && $entity['companies'] != ''
+                    && $entity['companies'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.'
+                ) {
                     $company = Companies::where('name_en', trim($entity['companies']))
                         ->where('client_id', $this->client_id)
                         ->where('sector_id', $sector_id)
@@ -148,11 +174,21 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
                 $orgchartsize = OrgChartDesign::where('client_id', $client->id)->count();
                 $is_hr_department = false;
                 //get is_hr_department
-                if (trim($entity['is_hr_department']) != '' && $entity['is_hr_department'] != null && $entity['is_hr_department'] != '') {
+                if (
+                    trim($entity['is_hr_department']) != ''
+                    && $entity['is_hr_department'] != null
+                    && $entity['is_hr_department'] != ''
+                    && $entity['is_hr_department'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.'
+                ) {
                     $is_hr_department = strtolower($entity['is_hr_department']) == 'yes';
                 }
                 for ($i = 1; $i <= $orgchartsize; $i++) {
-                    if (trim($entity['level_' . $i]) != '' && $entity['level_' . $i] != null && $entity['level_' . $i] != '') {
+                    if (
+                        trim($entity['level_' . $i]) != ''
+                        && $entity['level_' . $i] != null
+                        && $entity['level_' . $i] != ''
+                        && $entity['level_' . $i] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.'
+                    ) {
                         $orgItem = Departments::where('name_en', trim($entity['level_' . $i]))
                             ->where('company_id', $company_id)
                             ->where('parent_id', $parent_id)
@@ -194,7 +230,7 @@ class LargeExcelImportOrg implements ToCollection, WithChunkReading, WithHeading
     }
     public function onComplete()
     {
-        Log::info("I just Finish Job");
+        // Log::info("I just Finish Job");
     }
     private function renameHeaders($row)
     {
