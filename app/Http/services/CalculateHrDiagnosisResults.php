@@ -370,7 +370,7 @@ class CalculateHrDiagnosisResults
             $performence_ = [
                 "function" => $function->translated_title,
                 "function_id" => $function->id,
-                "performance" => number_format((($totalz / count($function->practices))/$this->scaleSize) * 100),
+                "performance" => number_format(($totalz / count($function->practices)) * 100),
                 // "performance" => number_format((($avge + $avgh + $avgl) / $p_count_) * 100),
             ];
             array_push($performences_, $performence_);
