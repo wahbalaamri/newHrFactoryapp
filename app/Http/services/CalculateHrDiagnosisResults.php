@@ -297,6 +297,7 @@ class CalculateHrDiagnosisResults
                 //     return ['data_size' => 0];
                 // $OverAllAv = ($the_three_avg) / $avg_factor;
                 $practiceWeight =  round((($OverAllAv) / $this->scaleSize), 2);
+                $totalz+=$practiceWeight;
                 // $function_w += $practiceWeight;
                 // $p_count_++;
                 // $practiceWeightz =  round((($OverAllAv) / $this->scaleSize), 2);
@@ -369,7 +370,8 @@ class CalculateHrDiagnosisResults
             $performence_ = [
                 "function" => $function->translated_title,
                 "function_id" => $function->id,
-                "performance" => number_format((($avge + $avgh + $avgl) / $p_count_) * 100),
+                "performance" => number_format((($totalz / count($function->practices))/$this->scaleSize) * 100),
+                // "performance" => number_format((($avge + $avgh + $avgl) / $p_count_) * 100),
             ];
             array_push($performences_, $performence_);
         }
