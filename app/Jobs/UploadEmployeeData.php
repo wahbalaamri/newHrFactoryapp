@@ -102,7 +102,6 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                 if (
                     isset($Employee['sectors'])
                     && $Employee['sectors'] != ''
-                    && $Employee['sectors'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.'
                 ) {
                     $sectors_ob = Sectors::where('client_id', $this->client_id)->where('name_en', trim($Employee['sectors']))->first();
                     $sectors = $sectors_ob->id;
@@ -118,8 +117,8 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                 if (
                     isset($Employee['companies'])
                     && $Employee['companies'] != ''
-                    && $Employee['companies'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.'
                 ) {
+                    Log::info($Employee['companies']);
                     $companies_ob = Companies::where('client_id', $this->client_id)->where('name_en', trim($Employee['companies']))->where('sector_id', $sectors)->first();
                     $companies = $companies_ob->id;
                 }
