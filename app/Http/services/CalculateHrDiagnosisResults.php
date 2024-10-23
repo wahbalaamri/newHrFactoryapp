@@ -134,8 +134,8 @@ class CalculateHrDiagnosisResults
         $Emp_score = $SurveyResult->whereIn('answered_by', $normal_respondents)->avg('answer_value');
         $Leaders_score = $SurveyResult->whereIn('answered_by', $leaders_respondents)->avg('answer_value');
         $_all_score = ($HR_score + $Emp_score + $Leaders_score) / 3;
-        if ($Answers_by_leaders == 0 || $Answers_by_hr == 0)
-            return 1;
+        // if ($Answers_by_leaders == 0 || $Answers_by_hr == 0)
+        //     return 1;
         $planID = Surveys::where('id', $survey)->first()->plans->service;
         $functions = Functions::where('service_id', $planID)->select(['id', 'title_ar', 'title'])->get();
         $prioritiesRes = PrioritiesAnswers::where('survey_id', $survey)->select(['answer_value', 'question_id', 'answered_by'])->get();

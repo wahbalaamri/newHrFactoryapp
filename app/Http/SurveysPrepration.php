@@ -1939,7 +1939,8 @@ class SurveysPrepration
             }
         } catch (\Exception $e) {
             Log::info($e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+            Log::info($e);
+            return redirect()->back()->withErrors('error', $e->getMessage());
         }
     }
     function getDepartment3hResults($company, $dep_id, $Survey_id, $Client_id, $service_type, $dep_level)
