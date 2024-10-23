@@ -133,7 +133,6 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                 if (
                     isset($Employee['hirarchal_level'])
                     && $Employee['hirarchal_level'] != ''
-                    && $Employee['hirarchal_level'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.'
                 ) {
                     $leve = Departments::whereIn('company_id', $companies)
                         ->where('name_en', trim($Employee['hirarchal_level']))->first();
