@@ -114,6 +114,7 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             Log::info($sectors);
             Log::info($sectors_ob);
             if ($client->multiple_company) {
+                Log::info($Employee['companies']);
                 if (
                     isset($Employee['companies'])
                     && $Employee['companies'] != ''
@@ -218,11 +219,11 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
         $renamedRow = [];
         foreach ($row as $key => $value) {
 
-            if (str_starts_with($key, 'companies')) {
+            if (str_starts_with($key, 'Company')) {
                 $renamedRow['companies'] = $value;
             }
 
-            if (str_starts_with($key, 'sectors')) {
+            if (str_starts_with($key, 'Sector')) {
                 $renamedRow['sectors'] = $value;
             }
             if (str_starts_with(strtolower($key), 'hirarchal_level')) {
