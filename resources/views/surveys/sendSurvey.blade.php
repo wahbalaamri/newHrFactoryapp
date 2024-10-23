@@ -233,7 +233,7 @@
                         </td>
                         <td bgcolor="#ffffff" align="center" valign="top"
                             style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 1px; line-height: 48px;">
-                            {{ __('Managed By:') }}<img src="{{ asset('assets/img/Extra-Miles.jpg') }}" width="60"
+                            {{ __('Managed By:') }}<img src="{{ asset('uploads/companies/logos/'.$data['partner_log']) }}" width="60"
                                 height="60" style="display: block; border: 0px;" />
                         </td>
                     </tr>

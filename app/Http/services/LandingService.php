@@ -50,6 +50,12 @@ class LandingService
             $querey->select('partner_id')->from('partnerships')->where('country_id', $this->getCurrentCountry());
         })->first();
     }
+    public function getDefaultPartner()
+    {
+        return Partners::where('is_main', true)->whereIn('id', function ($querey) {
+            $querey->select('partner_id')->from('partnerships')->where('country_id', $this->getDefaultCountry());
+        })->first();
+    }
     //check user subscription
     public function CheckUserSubscription($id, $service_type)
     {
@@ -107,15 +113,29 @@ class LandingService
         $partnership_services = json_decode(Partnerships::where('partner_id', $focal_point->partner_id)
             ->where('country_id', $focal_point->country)
             ->where('is_active', true)
-            ->first()->services,true);
+            ->first()->services, true);
         //check if service exists
-        $keys=array_keys($partnership_services);
+        $keys = array_keys($partnership_services);
         return in_array($service, $keys);
-
     }
-    function isMainPartner($email){
+    function isMainPartner($email)
+    {
         $focal_point = PartnerFocalPoint::where('Email', $email)->first();
         $partner = Partners::where('id', $focal_point->partner_id)->first();
         return $partner->is_main;
+    }
+    function getPartnerLogo($partner_id = null): string
+    {
+        if ($partner_id) {
+            $partner = Partners::where('id', $partner_id)->first();
+            if ($partner) {
+                return $partner->logo_path;
+            }
+        }
+        $country_partner = $this->getPartner();
+        if ($country_partner != null) {
+            return $country_partner->logo_path;
+        }
+        return $this->getDefaultPartner()->logo_path;
     }
 }

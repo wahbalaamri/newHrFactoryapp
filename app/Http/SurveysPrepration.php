@@ -1749,7 +1749,7 @@ class SurveysPrepration
             if ($type != 5 || $type != 6) { //get all respondents of the survey and client
                 $emails = collect();
                 if ($send_type == null) {
-                    $respondents = Respondents::where('survey_id', $survey_id)->where('client_id', $id)->where('survey_type', $type)->where('send_status', false)->get();
+                    $respondents = Respondents::where('survey_id', $survey_id)->where('client_id', $id)->where('survey_type', $type)->get();
                     //get all employees based on the where querey and id of respondents
                     if (count($this->ids) > 0)
                         $employees = Employees::select('email', 'id')->where($where)->whereIn('id', $respondents->pluck('employee_id')->toArray())->whereIn('dep_id', $this->ids)->get();
@@ -1765,12 +1765,12 @@ class SurveysPrepration
                     //get distinct answered_by as an array from survey_answers
                     $answered_by = SurveyAnswers::where('survey_id', $survey_id)->distinct('answered_by')->pluck('answered_by')->toArray();
                     //get employee_id from Respondent where id not in $answered_by
-                    $respondents = Respondents::where('survey_id', $survey_id)->where('client_id', $id)->where('reminder_status', false)->whereNotIn('id', $answered_by)->pluck('employee_id')->toArray();
+                    $respondents = Respondents::where('survey_id', $survey_id)->where('client_id', $id)->whereNotIn('id', $answered_by)->pluck('employee_id')->toArray();
                     //get all employees based on the where querey and id of respondents
                     $employees = Employees::select('email', 'id')->where($where)->whereIn('id', $respondents)->get();
                     //create a collection of emails from $employees and ids from $respondents
                     foreach ($employees as $employee) {
-                        $rid = Respondents::where('employee_id', $employee->id)->where('survey_id', $survey_id)->where('client_id', $id)->where('reminder_status', false)->first()->id;
+                        $rid = Respondents::where('employee_id', $employee->id)->where('survey_id', $survey_id)->where('client_id', $id)->first()->id;
                         $emails->push(['email' => $employee->email, 'id' => $rid]);
                     }
                 }
@@ -1793,7 +1793,8 @@ class SurveysPrepration
                     'body_footer_ar' => $emailContent->body_footer_ar,
                     'logo' => $emailContent->logo,
                     'client_logo' => $emailContent->use_client_logo ? $client->logo_path : null,
-                    'type' => $type
+                    'type' => $type,
+                    'partner_log'=>Landing::getPartnerLogo($client->partner_id)
                 ];
 
                 $job = (new SendSurvey($emails, $data, $send_type))->delay(now()->addSeconds(2));
