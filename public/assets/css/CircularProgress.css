@@ -223,7 +223,11 @@
 .mask .fill-47,
 .mask .fill-48,
 .mask .fill-49,
-.mask .fill-50,
+.mask .fill-50 {
+    clip: rect(0px, 85px, 180px, 0px);
+    background-color: #dc3545;
+}
+
 .mask .fill-51,
 .mask .fill-52,
 .mask .fill-53,
@@ -233,11 +237,7 @@
 .mask .fill-57,
 .mask .fill-58,
 .mask .fill-59,
-.mask .fill-60 {
-    clip: rect(0px, 85px, 180px, 0px);
-    background-color: #dc3545;
-}
-
+.mask .fill-60,
 .mask .fill-61,
 .mask .fill-62,
 .mask .fill-63,
