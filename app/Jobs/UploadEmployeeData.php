@@ -104,12 +104,12 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                     && $Employee['sectors'] != ''
                     && $Employee['sectors'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.'
                 ) {
-                    $sectors_ob = Sectors::where('client_id', $this->client_id)->where('name_en', trim($Employee['sectors']))->get();
-                    $sectors = $sectors_ob->pluck('id')->toArray();
+                    $sectors_ob = Sectors::where('client_id', $this->client_id)->where('name_en', trim($Employee['sectors']))->first();
+                    $sectors = $sectors_ob->id;
                 }
             } else {
-                $sectors_ob = Sectors::where('client_id', $this->client_id)->get();
-                $sectors = $sectors_ob->pluck('id')->toArray();
+                $sectors_ob = Sectors::where('client_id', $this->client_id)->first();
+                $sectors = $sectors_ob->id;
             }
             Log::info("sectors");
             Log::info($sectors);
@@ -120,12 +120,12 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                     && $Employee['companies'] != ''
                     && $Employee['companies'] != 'Please Do Not Edit or Delete the header row, but you can delete this row once you have filled in the data.'
                 ) {
-                    $companies_ob = Companies::where('client_id', $this->client_id)->where('name_en', trim($Employee['companies']))->whereIn('sector_id', $sectors)->get();
-                    $companies = $companies_ob->pluck('id')->toArray();
+                    $companies_ob = Companies::where('client_id', $this->client_id)->where('name_en', trim($Employee['companies']))->where('sector_id', $sectors)->first();
+                    $companies = $companies_ob->id;
                 }
             } else {
-                $companies_ob = Companies::where('client_id', $this->client_id)->whereIn('sector_id', $sectors)->get();
-                $companies = $companies_ob->pluck('id')->toArray();
+                $companies_ob = Companies::where('client_id', $this->client_id)->where('sector_id', $sectors)->first();
+                $companies = $companies_ob->id;
             }
             Log::info("companies");
             Log::info($companies);
@@ -140,7 +140,7 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                     isset($Employee['hirarchal_level'])
                     && $Employee['hirarchal_level'] != ''
                 ) {
-                    $leve = Departments::whereIn('company_id', $companies)
+                    $leve = Departments::where('company_id', $companies)
                         ->where('name_en', trim($Employee['hirarchal_level']))->first();
                     if ($leve) {
                         $leve_id = $leve->id;
@@ -155,19 +155,12 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
             Log::info($parent_id);
             $comp_id = null;
             if ($companies_ob) {
-                if (count($companies_ob) > 0) {
-                    $comp_id = $companies_ob->first()->id;
-                } else
-                    $comp_id = null;
+                $comp_id = $companies_ob->id;
             } else
                 $comp_id = null;
             $sec_id = null;
             if ($sectors_ob) {
-                if (count($sectors_ob) > 0) {
-                    $sec_id = $sectors_ob->first()->id;
-                } else {
-                    $sec_id = null;
-                }
+                $sec_id = $sectors_ob->id;
             } else
                 $sec_id = null;
             $employee = Employees::where('emp_id', trim($Employee['emp_number']))->where('email', trim($Employee['email']))->where('client_id', $this->client_id)->first();
