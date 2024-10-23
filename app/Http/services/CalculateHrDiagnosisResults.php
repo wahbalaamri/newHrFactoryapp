@@ -293,8 +293,8 @@ class CalculateHrDiagnosisResults
 
                 $OverAllAv = $SurveyResult->where('question_id', '=', $functionPractice->questions->first()->id)
                 ->avg('answer_value');
-                if ($avg_factor <= 0)
-                    return ['data_size' => 0];
+                // if ($avg_factor <= 0)
+                //     return ['data_size' => 0];
                 // $OverAllAv = ($the_three_avg) / $avg_factor;
                 $practiceWeight =  round((($OverAllAv) / $this->scaleSize), 2);
                 // $function_w += $practiceWeight;
