@@ -111,6 +111,9 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                 $sectors_ob = Sectors::where('client_id', $this->client_id)->get();
                 $sectors = $sectors_ob->pluck('id')->toArray();
             }
+            Log::info("sectors");
+            Log::info($sectors);
+            Log::info($sectors_ob);
             if ($client->multiple_company) {
                 if (
                     isset($Employee['companies'])
@@ -124,6 +127,9 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                 $companies_ob = Companies::where('client_id', $this->client_id)->whereIn('sector_id', $sectors)->get();
                 $companies = $companies_ob->pluck('id')->toArray();
             }
+            Log::info("companies");
+            Log::info($companies);
+            Log::info($companies_ob);
             //pluck client company ids into array
             if ($client->use_departments) {
                 //find org chart design
@@ -145,6 +151,8 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
                     $parent_id = $leve_id;
                 }
             }
+            Log::info("parent_id");
+            Log::info($parent_id);
             $comp_id = null;
             if ($companies_ob) {
                 if (count($companies_ob) > 0) {
