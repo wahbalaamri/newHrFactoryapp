@@ -219,11 +219,11 @@ class LargeExcelImport implements ToCollection, WithChunkReading, WithHeadingRow
         $renamedRow = [];
         foreach ($row as $key => $value) {
 
-            if (str_starts_with($key, 'Company')) {
+            if (str_starts_with($key, 'company')) {
                 $renamedRow['companies'] = $value;
             }
 
-            if (str_starts_with($key, 'Sector')) {
+            if (str_starts_with($key, 'sector')) {
                 $renamedRow['sectors'] = $value;
             }
             if (str_starts_with(strtolower($key), 'hirarchal_level')) {
