@@ -45,6 +45,8 @@ class CalculateHrDiagnosisResults
             ->where('departments.is_hr', true)
             ->where('respondents.survey_id', $survey)
             ->pluck('respondents.id')->toArray();
+            Log::info("hr_teams_respondents");
+            Log::info($hr_teams_respondents);
         //get Leaders
         $leaders_respondents = DB::table('respondents')
             ->join('employees', 'respondents.employee_id', '=', 'employees.id')
@@ -54,6 +56,8 @@ class CalculateHrDiagnosisResults
             ->where('respondents.survey_id', $survey)
             ->where('employees.employee_type', 1)
             ->pluck('respondents.id')->toArray();
+            Log::info("leaders_respondents");
+            Log::info($leaders_respondents);
         //get normal employees
         $normal_respondents = DB::table('respondents')
             ->join('employees', 'respondents.employee_id', '=', 'employees.id')
@@ -63,6 +67,8 @@ class CalculateHrDiagnosisResults
             ->where('respondents.survey_id', $survey)
             ->where('employees.employee_type', 2)
             ->pluck('respondents.id')->toArray();
+            Log::info("normal_respondents");
+            Log::info($normal_respondents);
 
         return [$hr_teams_respondents, $leaders_respondents, $normal_respondents];
     }
