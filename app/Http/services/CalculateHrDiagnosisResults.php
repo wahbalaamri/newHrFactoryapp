@@ -294,12 +294,12 @@ class CalculateHrDiagnosisResults
                 }
 
                 $OverAllAv = $SurveyResult->where('question_id', '=', $functionPractice->questions->first()->id)
-                ->avg('answer_value');
+                    ->avg('answer_value');
                 // if ($avg_factor <= 0)
                 //     return ['data_size' => 0];
                 // $OverAllAv = ($the_three_avg) / $avg_factor;
                 $practiceWeight =  round((($OverAllAv) / $this->scaleSize), 2);
-                $totalz+=$practiceWeight;
+                $totalz += $practiceWeight;
                 // $function_w += $practiceWeight;
                 // $p_count_++;
                 // $practiceWeightz =  round((($OverAllAv) / $this->scaleSize), 2);
@@ -369,7 +369,7 @@ class CalculateHrDiagnosisResults
             $priorityVal = $count_answers > 0 ? round((($total_answers / $count_answers) / 3), 2) : 0;
             $priority = ["priority" => number_format($priorityVal * 100), "function" => $function->translated_title, "function_id" => $function->id, "performance" => number_format($avgl * 100), "performancez" => number_format($avgl * 100)];
             array_push($priorities, $priority);
-            $function_total+=($totalz / count($function->practices));
+            $function_total += ($totalz / count($function->practices));
             $performence_ = [
                 "function" => $function->translated_title,
                 "function_id" => $function->id,
@@ -378,7 +378,7 @@ class CalculateHrDiagnosisResults
             ];
             array_push($performences_, $performence_);
         }
-        $overallResult = ($function_total/count($functions))*100;
+        $overallResult = number_format(($function_total / count($functions)) * 100);
         $unsorted_performences = $performences_;
         $sorted_leader_performences = $leader_performences_;
         $sorted_hr_performences = $hr_performences_;
