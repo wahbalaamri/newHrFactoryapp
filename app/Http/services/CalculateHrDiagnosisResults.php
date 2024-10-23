@@ -161,6 +161,8 @@ class CalculateHrDiagnosisResults
         $hr_practices = array();
         $emp_practices = array();
         $function_Lables = array();
+        //function total=0
+        $function_total = 0;
         foreach ($functions as $function) {
             $function_Lables[] = ['title' => $function->translated_title, 'id' => $function->id];
             $total = 0;
@@ -367,6 +369,7 @@ class CalculateHrDiagnosisResults
             $priorityVal = $count_answers > 0 ? round((($total_answers / $count_answers) / 3), 2) : 0;
             $priority = ["priority" => number_format($priorityVal * 100), "function" => $function->translated_title, "function_id" => $function->id, "performance" => number_format($avgl * 100), "performancez" => number_format($avgl * 100)];
             array_push($priorities, $priority);
+            $function_total+=($totalz / count($function->practices));
             $performence_ = [
                 "function" => $function->translated_title,
                 "function_id" => $function->id,
@@ -375,6 +378,7 @@ class CalculateHrDiagnosisResults
             ];
             array_push($performences_, $performence_);
         }
+        $overallResult = ($function_total/count($functions))*100;
         $unsorted_performences = $performences_;
         $sorted_leader_performences = $leader_performences_;
         $sorted_hr_performences = $hr_performences_;
