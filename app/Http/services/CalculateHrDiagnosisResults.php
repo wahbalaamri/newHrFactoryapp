@@ -524,6 +524,7 @@ class CalculateHrDiagnosisResults
             $planID = Surveys::where('id', $survey)->first()->plans->service;
             $functions = Functions::where('service_id', $planID)->select(['id', 'title_ar', 'title'])->get();
             $prioritiesArray = [];
+            $priorities = [];
             $asc_performArray = [];
             $desc_perfomArray = [];
             $asc_perform = [];
