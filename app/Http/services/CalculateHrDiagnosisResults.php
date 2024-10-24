@@ -136,8 +136,7 @@ class CalculateHrDiagnosisResults
     }
     public function startCalculate($company, $survey, $hr_teams_respondents, $leaders_respondents, $normal_respondents, $SurveyResult, $respondents_count)
     {
-        Log::info("startCalculate");
-        Log::info("leaders_respondents" . count($leaders_respondents). " hr_teams_respondents" . count($hr_teams_respondents) . " normal_respondents" . count($normal_respondents));
+
         $Answers_by_leaders = $SurveyResult->whereIn('answered_by', $leaders_respondents)->unique('answered_by')->count();
         $Answers_by_hr = $SurveyResult->whereIn('answered_by', $hr_teams_respondents)->unique('answered_by')->count();
         $Answers_by_emp = $SurveyResult->whereIn('answered_by', $normal_respondents)->unique('answered_by')->count();

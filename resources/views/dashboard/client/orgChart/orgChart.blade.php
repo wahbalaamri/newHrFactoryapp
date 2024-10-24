@@ -696,7 +696,6 @@
                         {
                             data: 'c{{ $item->level }}',
                             name: 'c{{ $item->level }}',
-                            // visible: {{ $orgchartAva[$loop->index] == 1 ? 'true' : 'false' }},
                         },
                     @endforeach
                     {

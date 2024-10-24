@@ -973,8 +973,7 @@ class SurveysPrepration
         $industries = Industry::where(function ($query) use ($id) {
             $query->where('system_create', true)
                 ->orWhere('client_id', $id);
-        })
-            ->get();
+        })->get();
         $data = [
             'id' => $id,
             'client' => $client,
